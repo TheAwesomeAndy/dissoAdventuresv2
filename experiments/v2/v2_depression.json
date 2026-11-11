@@ -1,0 +1,284 @@
+{
+  "design": {
+    "covariates": "not adjusted: age and sex are missing for roughly half of the cohort",
+    "estimator": "standardize + class-weighted L2 logistic (C=1), 5x5 stratified CV over participants",
+    "family": "12 tests (4 targets x 3 representations), Holm-corrected together",
+    "headline_rho": 0.025,
+    "representations": [
+      "lpp",
+      "amplitude6",
+      "bsc6_srp64"
+    ],
+    "targets_in_order": [
+      "MDE",
+      "MDD",
+      "Depression_Type",
+      "MDD_Recurrent"
+    ]
+  },
+  "targets": {
+    "Depression_Type": {
+      "amplitude6": {
+        "balanced_accuracy_percent": 33.56,
+        "chance_percent": 33.33,
+        "ci95_percent": [
+          29.02,
+          38.33
+        ],
+        "class_counts": {
+          "0": 31,
+          "1": 57,
+          "2": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 33.01,
+          "null_sd_percent": 3.87,
+          "observed_one_repeat_percent": 33.02,
+          "p_value": 0.5054945054945055,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "bsc6_srp64": {
+        "balanced_accuracy_percent": 38.38,
+        "chance_percent": 33.33,
+        "ci95_percent": [
+          33.52,
+          43.1
+        ],
+        "class_counts": {
+          "0": 31,
+          "1": 57,
+          "2": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 33.07,
+          "null_sd_percent": 3.85,
+          "observed_one_repeat_percent": 36.3,
+          "p_value": 0.1968031968031968,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "lpp": {
+        "balanced_accuracy_percent": 32.58,
+        "chance_percent": 33.33,
+        "ci95_percent": [
+          27.64,
+          38.19
+        ],
+        "class_counts": {
+          "0": 31,
+          "1": 57,
+          "2": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 33.09,
+          "null_sd_percent": 4.09,
+          "observed_one_repeat_percent": 32.4,
+          "p_value": 0.5654345654345654,
+          "p_value_holm_12": 1.0
+        }
+      }
+    },
+    "MDD": {
+      "amplitude6": {
+        "balanced_accuracy_percent": 51.5,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          45.74,
+          57.55
+        ],
+        "class_counts": {
+          "0": 64,
+          "1": 142
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.87,
+          "null_sd_percent": 4.26,
+          "observed_one_repeat_percent": 51.27,
+          "p_value": 0.3706293706293706,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "bsc6_srp64": {
+        "balanced_accuracy_percent": 50.2,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          44.67,
+          55.44
+        ],
+        "class_counts": {
+          "0": 64,
+          "1": 142
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.73,
+          "null_sd_percent": 4.19,
+          "observed_one_repeat_percent": 50.33,
+          "p_value": 0.44555444555444557,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "lpp": {
+        "balanced_accuracy_percent": 47.67,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          42.1,
+          53.52
+        ],
+        "class_counts": {
+          "0": 64,
+          "1": 142
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.71,
+          "null_sd_percent": 4.36,
+          "observed_one_repeat_percent": 47.12,
+          "p_value": 0.7272727272727273,
+          "p_value_holm_12": 1.0
+        }
+      }
+    },
+    "MDD_Recurrent": {
+      "amplitude6": {
+        "balanced_accuracy_percent": 49.31,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          43.78,
+          54.94
+        ],
+        "class_counts": {
+          "0": 88,
+          "1": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.83,
+          "null_sd_percent": 4.28,
+          "observed_one_repeat_percent": 47.15,
+          "p_value": 0.7292707292707292,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "bsc6_srp64": {
+        "balanced_accuracy_percent": 55.67,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          50.0,
+          61.04
+        ],
+        "class_counts": {
+          "0": 88,
+          "1": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.75,
+          "null_sd_percent": 4.32,
+          "observed_one_repeat_percent": 58.34,
+          "p_value": 0.027972027972027972,
+          "p_value_holm_12": 0.3356643356643357
+        }
+      },
+      "lpp": {
+        "balanced_accuracy_percent": 53.82,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          48.38,
+          59.25
+        ],
+        "class_counts": {
+          "0": 88,
+          "1": 118
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.69,
+          "null_sd_percent": 4.39,
+          "observed_one_repeat_percent": 57.79,
+          "p_value": 0.029970029970029972,
+          "p_value_holm_12": 0.3356643356643357
+        }
+      }
+    },
+    "MDE": {
+      "amplitude6": {
+        "balanced_accuracy_percent": 52.76,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          47.11,
+          58.37
+        ],
+        "class_counts": {
+          "0": 42,
+          "1": 164
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.61,
+          "null_sd_percent": 4.16,
+          "observed_one_repeat_percent": 56.27,
+          "p_value": 0.06393606393606394,
+          "p_value_holm_12": 0.6393606393606394
+        }
+      },
+      "bsc6_srp64": {
+        "balanced_accuracy_percent": 48.69,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          44.15,
+          53.79
+        ],
+        "class_counts": {
+          "0": 42,
+          "1": 164
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.63,
+          "null_sd_percent": 3.75,
+          "observed_one_repeat_percent": 53.03,
+          "p_value": 0.1878121878121878,
+          "p_value_holm_12": 1.0
+        }
+      },
+      "lpp": {
+        "balanced_accuracy_percent": 54.01,
+        "chance_percent": 50.0,
+        "ci95_percent": [
+          47.54,
+          60.53
+        ],
+        "class_counts": {
+          "0": 42,
+          "1": 164
+        },
+        "n_participants": 206,
+        "permutation": {
+          "n_permutations": 1000,
+          "null_mean_percent": 49.81,
+          "null_sd_percent": 4.74,
+          "observed_one_repeat_percent": 49.84,
+          "p_value": 0.4805194805194805,
+          "p_value_holm_12": 1.0
+        }
+      }
+    }
+  }
+}
