@@ -4,6 +4,17 @@
 [![License: MIT](https://img.shields.io/badge/code%20license-MIT-blue.svg)](LICENSE)
 <!-- DOI badge added after the frozen release is archived. See RELEASE.md. -->
 
+> **This is ARSPI-Net v2.** It keeps the v1 confirmatory protocol and tests what an
+> external methods review found untested: the reservoir's fading memory, matched
+> non-reservoir controls, the destruction controls, the permutation test and the
+> subject-variance statistics. All of it was run on the authorized SHAPE data. The short
+> version: the v1 reservoir has no fading memory, the v2 reservoir does, recurrence adds
+> nothing measurable, six-bin amplitudes match the reservoir code, random projection beats
+> PCA by 9 points, and v1's per-epoch z-scoring destroys temporal localisation.
+> Read [`V2_UPGRADE.md`](V2_UPGRADE.md) first. Tables are in
+> [`experiments/v2/V2_RESULTS.md`](experiments/v2/V2_RESULTS.md). The text below is the
+> v1 README, kept for provenance. Where it and `V2_UPGRADE.md` disagree, v2 governs.
+
 **Dissertation:** Lane, A. A. (2026). *Affective Reservoir-Spike Processing and Inference Network (ARSPI-Net): A Four-Level Interpretable Neuromorphic Framework for Clinical EEG Analysis.* PhD Dissertation, Department of Electrical and Computer Engineering, Stony Brook University.
 
 ARSPI-Net is a neuromorphic signal-processing framework for transforming multichannel EEG into explicit temporal, dynamical, and graph-organized representations. A fixed-weight leaky integrate-and-fire reservoir maps continuous EEG to spike trains. A six-bin spike-count code, BSC6, preserves coarse temporal order. A fixed data-independent projection compresses each electrode representation. Named dynamical descriptors, graph quantities, and structure-function coupling statistics remain available for direct inspection.
