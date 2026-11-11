@@ -35,7 +35,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install "numpy>=2.0" "scipy>=1.13" "scikit-learn>=1.5" \
-                      "pandas>=2.2.3" "matplotlib>=3.9"
+                      "pandas>=2.2.3" "matplotlib>=3.9" "joblib>=1.4"
 
       - name: Prepare verifier logs
         run: mkdir -p ci-logs
@@ -192,6 +192,13 @@ jobs:
           set -o pipefail
           python experiments/novel/check_novel_manifest.py 2>&1 | tee ci-logs/novelmanifest.log
 
+      - name: Verify v2 measurement chain
+        id: v2
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python experiments/v2/verify_v2.py 2>&1 | tee ci-logs/v2.log
+
       - name: Check repository and dissertation consistency
         id: claims
         continue-on-error: true
@@ -219,7 +226,7 @@ jobs:
             "${{ steps.threecond.outcome }}" "${{ steps.ablation.outcome }}"
             "${{ steps.validators.outcome }}" "${{ steps.confirmatory.outcome }}"
             "${{ steps.manifest.outcome }}" "${{ steps.provenance.outcome }}"
-            "${{ steps.claims.outcome }}"
+            "${{ steps.claims.outcome }}" "${{ steps.v2.outcome }}"
             "${{ steps.novel.outcome }}" "${{ steps.nuisance.outcome }}"
             "${{ steps.external.outcome }}" "${{ steps.novelmanifest.outcome }}"
           )
