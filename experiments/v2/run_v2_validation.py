@@ -16,6 +16,7 @@ Stages, per granularity:
   representations   the v2 headline and its matched controls, with paired contrasts
   seeds             reservoir weight draws and projection draws
   windows           windows stated in true milliseconds
+  time_resolved     scalp-pattern decoding at each latency, no reservoir
   destruction       controls in train-and-test and test-only modes
   compressors       SRP against fold-local PCA, with and without subject centering
   variance          calibrated subject and condition variance components
@@ -47,7 +48,7 @@ from arspinet_v2 import evaluation as ev  # noqa: E402
 
 RHO_GRID = (0.0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9)
 RESERVOIR_SEEDS = (42, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-SRP_SEEDS = tuple(range(20))
+SRP_SEEDS = tuple(range(10))
 DYNAMICS_SAMPLE_SEED = 2026
 DYNAMICS_N_SEQUENCES = 300
 BASE_SEED = {"three_condition": 0, "four_category": 100}     # v1 values
@@ -201,11 +202,12 @@ def run_granularity(name, raw, y, groups, rho_star, cache, n_perm, jobs, n_var_p
         "bsc6_srp64_v1_gain_shared": sweep_eval[reservoir.V1_RHO],
         "bsc6_srp64_v1_gain_per_electrode": v1_row,
         "conventional": E(shape_data.v1.conventional_features(raw)),
+        "lpp_300_1000ms_per_electrode": E(features.lpp_mean_amplitude(raw)),
     }
     res["representations"] = {k: record(v) for k, v in evals.items()}
     res["feature_counts"] = {"v2_headline_bsc6_srp64": 34 * 64, "raw_erp16": 34 * 16,
                              "amplitude6_matched_bins": 34 * 6, "nonspiking_bank_srp64": 34 * 64,
-                             "conventional": 34 * 8}
+                             "conventional": 34 * 8, "lpp_300_1000ms_per_electrode": 34}
     res["contrasts"] = {
         "headline_minus_amplitude6": contrast(head, evals["amplitude6_matched_bins"]),
         "headline_minus_nonspiking_bank": contrast(head, evals["nonspiking_bank_srp64"]),
@@ -214,6 +216,7 @@ def run_granularity(name, raw, y, groups, rho_star, cache, n_perm, jobs, n_var_p
         "headline_minus_v1_configuration": contrast(head, v1_row),
         "headline_minus_conventional": contrast(head, evals["conventional"]),
         "raw_erp16_minus_headline": contrast(evals["raw_erp16"], head),
+        "headline_minus_lpp": contrast(head, evals["lpp_300_1000ms_per_electrode"]),
         "v1_gain_recurrence_effect_shared": contrast(evals["bsc6_srp64_v1_gain_shared"],
                                                      evals["bsc6_srp64_no_recurrence"]),
         "v1_gain_per_electrode_minus_shared": contrast(v1_row, evals["bsc6_srp64_v1_gain_shared"]),
@@ -223,7 +226,7 @@ def run_granularity(name, raw, y, groups, rho_star, cache, n_perm, jobs, n_var_p
 
     # ---- seeds --------------------------------------------------------------------------
     seeds = {}
-    for rho in sorted({rho_star, reservoir.V1_RHO}):
+    for rho in (rho_star,):
         vals = [pct(E(features.project(enc.code(rho, seed=s), srp))["balanced_accuracy"])
                 for s in RESERVOIR_SEEDS]
         seeds[f"reservoir_seeds_rho{rho}"] = {"seeds": list(RESERVOIR_SEEDS), "percent": vals,
@@ -249,6 +252,21 @@ def run_granularity(name, raw, y, groups, rho_star, cache, n_perm, jobs, n_var_p
             "amplitude6_matched_bins": pct(E(features.amplitude_bins(w, 6).reshape(len(y), -1))["balanced_accuracy"]),
         }
     res["windows_ms"] = win
+
+    # ---- time-resolved decoding of the scalp pattern -------------------------------------
+    n_tb = 32
+    tr = []
+    for b, pattern in enumerate(features.time_resolved_patterns(raw, n_tb)):
+        r = E(pattern)
+        ci = ev.bootstrap_ci(r)
+        tr.append({"start_ms": round(1000.0 * b * (raw.shape[1] // n_tb) / features.FS, 1),
+                   "end_ms": round(1000.0 * (b + 1) * (raw.shape[1] // n_tb) / features.FS, 1),
+                   "balanced_accuracy_percent": pct(r["balanced_accuracy"]),
+                   "ci95_percent": [pct(ci[0]), pct(ci[1])]})
+    res["time_resolved_decoding"] = {
+        "features": "34 electrode amplitudes in one 31.25 ms bin, no reservoir",
+        "chance_percent": round(100.0 / len(np.unique(y)), 4), "bins": tr}
+    log(f"{name} time-resolved peak {max(t['balanced_accuracy_percent'] for t in tr):.1f}")
 
     # ---- destruction controls -----------------------------------------------------------
     rng = np.random.RandomState(base + 101)

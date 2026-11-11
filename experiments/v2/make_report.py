@@ -88,6 +88,7 @@ def main():
         "bsc6_srp64_v1_gain_shared": "BSC6 / SRP-64, v1 gain (rho = 0.9), shared reservoir",
         "bsc6_srp64_v1_gain_per_electrode": "BSC6 / SRP-64, v1 configuration (rho = 0.9, per-electrode reservoirs)",
         "conventional": "Conventional band power and Hjorth",
+        "lpp_300_1000ms_per_electrode": "LPP mean amplitude, 300 to 1000 ms, per electrode",
     }
     fc = gr[names[0][0]]["feature_counts"]
     L.append(table(["Representation", "Features"] + hdr, [
@@ -100,6 +101,7 @@ def main():
         "headline_minus_v1_configuration": "Headline minus v1 configuration",
         "headline_minus_conventional": "Headline minus conventional",
         "raw_erp16_minus_headline": "Raw ERP-16 minus headline",
+        "headline_minus_lpp": "Headline minus LPP mean amplitude",
         "v1_gain_recurrence_effect_shared": "Effect of v1 recurrence (rho 0.9 minus rho 0, shared)",
         "v1_gain_per_electrode_minus_shared": "Per-electrode minus shared reservoir at rho 0.9",
     }
@@ -121,6 +123,14 @@ def main():
         rows.append([w] + [f"{gr[k]['windows_ms'][w]['v2_headline_bsc6_srp64']:.1f}% / "
                            f"{gr[k]['windows_ms'][w]['amplitude6_matched_bins']:.1f}%" for k, _ in names])
     L.append(table(["Window (headline / 6-bin amplitude)"] + hdr, rows))
+
+    L.append("\n## 6b. Time-resolved decoding of the scalp pattern (no reservoir)\n")
+    T0 = gr[names[0][0]]["time_resolved_decoding"]
+    L.append(f"Features: {T0['features']}. Chance: " + ", ".join(
+        f"{label.lower()} {gr[k]['time_resolved_decoding']['chance_percent']:.1f}%" for k, label in names) + ".\n")
+    L.append(table(["Bin (ms)"] + hdr, [
+        [f"{b['start_ms']:.0f} to {b['end_ms']:.0f}"] + [ba(gr[k]["time_resolved_decoding"]["bins"][i]) for k, _ in names]
+        for i, b in enumerate(T0["bins"])]))
 
     L.append("\n## 7. Destruction controls on the headline code\n")
     L.append("Change in balanced accuracy against the intact headline. `train and test` refits on destroyed "

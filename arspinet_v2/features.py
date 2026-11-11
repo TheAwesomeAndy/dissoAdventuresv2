@@ -55,3 +55,22 @@ WINDOWS_MS = {
     "750-1000ms": (750, 1000),
     "0-1000ms_full": (0, 1000),
 }
+
+
+LPP_WINDOW_MS = (300, 1000)
+
+
+def lpp_mean_amplitude(raw, window_ms=LPP_WINDOW_MS):
+    """Late positive potential scored the way the source laboratory scores it: mean
+    amplitude from 300 to 1000 ms after picture onset (Nelson et al. 2015, Psychological
+    Medicine 45:2545; Weinberg and Hajcak 2011, J. Cogn. Neurosci. 23:2994). Those papers
+    pool occipital and parietal sites. The SHAPE text files carry no channel labels, so
+    the score is kept per electrode. (N, T, C) -> (N, C)."""
+    return ms_window(raw, *window_ms).mean(axis=1)
+
+
+def time_resolved_patterns(raw, n_bins=32):
+    """Scalp pattern in consecutive short bins, for time-resolved decoding in the manner
+    of Bae and Luck (2018, J. Neurosci. 38:409): the classifier sees only the voltages
+    across electrodes at one latency. (N, T, C) -> (n_bins, N, C)."""
+    return amplitude_bins(raw, n_bins).transpose(2, 0, 1)
