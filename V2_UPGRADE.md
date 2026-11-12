@@ -89,6 +89,15 @@ conclusion 6 comes from the non-z-scored rerun.
    runner uses the feedforward reservoir (gain 0) and records the outcome. Record:
    `experiments/v2/v2_baseline_input.json`.
 
+## Replication on public data
+
+The z-scoring artefact replicates on ERP CORE (Kappenman et al. 2021), N170 and P3, 40
+participants each. Across participant averages, pre-stimulus decoding is 58.6% and
+70.8% under per-epoch z-scoring (chance 50%, permutation p <= 0.001) and at chance
+without it. On single trials within participants the leak is small (at most 2 points).
+The mechanism and prediction were committed before the results. Details in
+`experiments/zscore_artifact/RESULTS.md`.
+
 ## Finding-by-finding record
 
 "Done" means implemented, verified on synthetic data in CI, and run on SHAPE.

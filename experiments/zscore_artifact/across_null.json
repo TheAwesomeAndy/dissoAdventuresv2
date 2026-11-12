@@ -1,0 +1,61 @@
+{
+  "design": {
+    "n_permutations": 1000,
+    "null": "condition labels swapped within participant with probability 1/2",
+    "statistic": "mean balanced accuracy over pre-stimulus bins, across-participant regime"
+  },
+  "paradigms": {
+    "N170": {
+      "baseline_z": {
+        "null_mean_percent": 49.98,
+        "null_p95_percent": 53.65,
+        "observed_percent": 48.46,
+        "p_value": 0.7512487512487512
+      },
+      "epoch_z_full": {
+        "null_mean_percent": 50.0,
+        "null_p95_percent": 54.42,
+        "observed_percent": 58.56,
+        "p_value": 0.000999000999000999
+      },
+      "epoch_z_post": {
+        "null_mean_percent": 50.03,
+        "null_p95_percent": 55.0,
+        "observed_percent": 59.62,
+        "p_value": 0.002997002997002997
+      },
+      "none": {
+        "null_mean_percent": 50.0,
+        "null_p95_percent": 53.75,
+        "observed_percent": 46.73,
+        "p_value": 0.9110889110889111
+      }
+    },
+    "P3": {
+      "baseline_z": {
+        "null_mean_percent": 50.01,
+        "null_p95_percent": 53.75,
+        "observed_percent": 51.83,
+        "p_value": 0.23276723276723277
+      },
+      "epoch_z_full": {
+        "null_mean_percent": 50.03,
+        "null_p95_percent": 55.29,
+        "observed_percent": 70.77,
+        "p_value": 0.000999000999000999
+      },
+      "epoch_z_post": {
+        "null_mean_percent": 50.06,
+        "null_p95_percent": 56.06,
+        "observed_percent": 70.38,
+        "p_value": 0.000999000999000999
+      },
+      "none": {
+        "null_mean_percent": 50.09,
+        "null_p95_percent": 54.13,
+        "observed_percent": 51.35,
+        "p_value": 0.3106893106893107
+      }
+    }
+  }
+}
