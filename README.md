@@ -9,8 +9,9 @@
 > non-reservoir controls, the destruction controls, the permutation test and the
 > subject-variance statistics. All of it was run on the authorized SHAPE data. The short
 > version: the v1 reservoir has no fading memory, the v2 reservoir does, recurrence adds
-> nothing measurable, six-bin amplitudes match the reservoir code, random projection beats
-> PCA by 9 points, and v1's per-epoch z-scoring destroys temporal localisation.
+> nothing measurable, six-bin amplitudes match or beat the reservoir code, random projection
+> ties PCA once PCA is left unwhitened and tuned, and v1's per-epoch z-scoring destroys
+> temporal localisation.
 > Read [`V2_UPGRADE.md`](V2_UPGRADE.md) first. Tables are in
 > [`experiments/v2/V2_RESULTS.md`](experiments/v2/V2_RESULTS.md). The text below is the
 > v1 README, kept for provenance. Where it and `V2_UPGRADE.md` disagree, v2 governs.
