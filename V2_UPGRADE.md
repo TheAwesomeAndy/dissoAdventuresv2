@@ -7,6 +7,10 @@ v2 keeps the protocol and tests the rest on the authorized SHAPE data.
 
 v1 files are unchanged. Everything new is in `arspinet_v2/` and `experiments/v2/`.
 
+This repository is self-contained. It carries the complete history of the v1 `main`
+branch and a copy of every other v1 branch under the same name. The commit that v1
+tagged `v1.0-defense` (`9496ba4`) is kept as the branch `archive/v1.0-defense-tag`.
+
 Every number below is read from a committed execution record:
 `experiments/v2/v2_results.json` (tables in `experiments/v2/V2_RESULTS.md`),
 `experiments/v2/v2_normalization_check.json` and `experiments/v2/v2_depression.json`.

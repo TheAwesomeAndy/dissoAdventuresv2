@@ -5,8 +5,8 @@ authors:
   - family-names: Lane
     given-names: Andrew A.
 type: software
-repository-code: "https://github.com/TheAwesomeAndy/dissoAdventureExperiments"
-url: "https://github.com/TheAwesomeAndy/dissoAdventureExperiments"
+repository-code: "https://github.com/TheAwesomeAndy/dissoAdventuresv2"
+url: "https://github.com/TheAwesomeAndy/dissoAdventuresv2"
 abstract: >-
   Software and experiments accompanying the PhD dissertation "Affective
   Reservoir-Spike Processing and Inference Network (ARSPI-Net): A Four-Level

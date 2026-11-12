@@ -1,6 +1,6 @@
 # ARSPI-Net: An Interpretable Neuromorphic Framework for Clinical EEG Analysis
 
-[![verify](https://github.com/TheAwesomeAndy/dissoAdventureExperiments/actions/workflows/verify.yml/badge.svg)](https://github.com/TheAwesomeAndy/dissoAdventureExperiments/actions/workflows/verify.yml)
+[![verify](https://github.com/TheAwesomeAndy/dissoAdventuresv2/actions/workflows/verify.yml/badge.svg)](https://github.com/TheAwesomeAndy/dissoAdventuresv2/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/code%20license-MIT-blue.svg)](LICENSE)
 <!-- DOI badge added after the frozen release is archived. See RELEASE.md. -->
 
@@ -140,7 +140,7 @@ The archived message-passing sweep reports 63.4% for PCA-64 concatenation plus S
 ## Repository structure
 
 ```text
-dissoAdventureExperiments/
+dissoAdventuresv2/
 ├── README.md
 ├── LICENSE
 ├── LICENSES.md

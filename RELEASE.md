@@ -121,7 +121,7 @@ Create a GitHub Release from that exact tag. The release notes should identify:
 ## 6. Mint and record the Zenodo DOI **[owner action]**
 
 1. Enable the GitHub-to-Zenodo integration for
-   `TheAwesomeAndy/dissoAdventureExperiments`.
+   `TheAwesomeAndy/dissoAdventuresv2`.
 2. Publish the GitHub Release. Zenodo will archive the tagged snapshot and mint
    a version DOI and concept DOI.
 3. Replace the placeholder DOI, version, and release date in `CITATION.cff`.
