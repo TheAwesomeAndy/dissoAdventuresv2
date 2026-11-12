@@ -14,7 +14,8 @@ inputs that never use a later sample to transform an earlier one:
                   post-stimulus SD of the three-condition cohort. A units choice; it
                   uses no labels and no per-observation information
 
-For each input: the label-free fading-memory rule picks the recurrent gain, then
+For each input: the label-free fading-memory rule picks the recurrent gain (if no gain
+passes, the feedforward reservoir is used and the outcome recorded), then
 held-out accuracy for the reservoir at that gain, recurrence off and v1's gain; six-
 bin amplitudes and raw ERP-16 on the same input; ten reservoir weight draws; windows
 in milliseconds including 0-62 ms, where no picture-content response should exist.
@@ -69,15 +70,22 @@ def main():
                       "fading_memory_rule": v2.dynamics.RULE},
            "fading_memory": {}, "granularities": {}}
     inp3, _, _ = inputs_for("three_condition", args, scale)
-    rho = {}
+    rho_epoch_z = json.load(open(os.path.join(_HERE, "v2_results.json")))["fading_memory"]["selected_rho"]
+    rho, outcome = {"epoch_z": rho_epoch_z}, {}
     for k in ("baseline_z", "global_scale"):
         fm = v2.fading_memory(inp3[k])
         out["fading_memory"][k] = fm
-        rho[k] = fm["selected_rho"]
-        v2.log(f"{k}: selected rho {rho[k]}  input SD {inp3[k].std():.2f}  "
-               f"driven rate at selected {next(s['driven_population_rate'] for s in fm['sweep_seed42'] if s['rho'] == rho[k]):.3f}")
-    rho["epoch_z"] = json.load(open(os.path.join(_HERE, "v2_results.json")))["fading_memory"]["selected_rho"]
-    out["selected_rho"] = rho
+        # The rule is applied as written. If no gain passes, the feedforward reservoir
+        # (rho = 0, no recurrent memory by construction) is used and that is recorded.
+        if fm["selected_rho"] is None:
+            rho[k], outcome[k] = 0.0, "no gain on the grid passes; feedforward fallback rho = 0"
+        else:
+            rho[k], outcome[k] = fm["selected_rho"], "selected by the fading-memory rule"
+        s0 = fm["sweep_seed42"][0]
+        v2.log(f"{k}: rho {rho[k]} ({outcome[k]}); input SD {inp3[k].std():.2f}; at rho 0: "
+               f"ESP converged {s0['esp_converged_fraction']:.2f}, disagreement {s0['esp_mean_disagreement']:.3f}, "
+               f"reliability {s0['reliability_median_r']:.4f}")
+    out["selected_rho"], out["rule_outcome"] = rho, outcome
     del inp3
 
     for name in ("three_condition", "four_category"):
@@ -93,6 +101,7 @@ def main():
             ev_ = {"reservoir_selected_rho": E(features.project(enc.code(r_sel), srp)),
                    "reservoir_no_recurrence": E(features.project(enc.code(0.0), srp)),
                    "reservoir_v1_gain": E(features.project(enc.code(reservoir.V1_RHO), srp)),
+                   "reservoir_epoch_z_gain": E(features.project(enc.code(rho_epoch_z), srp)),
                    "amplitude6_matched_bins": E(features.amplitude_bins(raw, 6).reshape(len(y), -1)),
                    "raw_erp16": E(features.amplitude_bins(raw, 16).reshape(len(y), -1))}
             rec = {"selected_rho": r_sel, "representations": {kk: v2.record(v) for kk, v in ev_.items()}}

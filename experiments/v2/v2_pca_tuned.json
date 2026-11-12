@@ -1,0 +1,270 @@
+{
+  "design": {
+    "C_grid": [
+      0.0001,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      10.0,
+      100.0
+    ],
+    "code": "v2 headline, shared reservoir, rho=0.025, seed 42",
+    "inner_folds": 4,
+    "k": 64,
+    "outer": "v1 splits, 5 x 5 participant-grouped"
+  },
+  "granularities": {
+    "four_category": {
+      "best_pca_variant": "pca64_centered_Ctuned",
+      "best_srp_variant": "srp64_standardized_Ctuned",
+      "contrasts": {
+        "best_srp_minus_best_pca": {
+          "ci95_pp": [
+            -1.1196,
+            1.881
+          ],
+          "difference_pp": 0.3333
+        },
+        "srp_default_minus_best_pca": {
+          "ci95_pp": [
+            -2.2381,
+            0.1429
+          ],
+          "difference_pp": -1.0714
+        },
+        "srp_default_minus_pca_default": {
+          "ci95_pp": [
+            6.9756,
+            12.619
+          ],
+          "difference_pp": 9.6429
+        }
+      },
+      "variants": {
+        "pca64_centered_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 54.8571,
+          "ci95_percent": [
+            52.3327,
+            57.3339
+          ]
+        },
+        "pca64_centered_Ctuned": {
+          "C_chosen": {
+            "0.0001": 21,
+            "0.001": 3,
+            "0.01": 1
+          },
+          "balanced_accuracy_percent": 57.2857,
+          "ci95_percent": [
+            54.5238,
+            59.8571
+          ]
+        },
+        "pca64_standardized_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 46.5714,
+          "ci95_percent": [
+            43.8095,
+            49.2857
+          ]
+        },
+        "pca64_standardized_Ctuned": {
+          "C_chosen": {
+            "0.0001": 8,
+            "0.001": 13,
+            "0.01": 1,
+            "0.1": 1,
+            "1.0": 1,
+            "10.0": 1
+          },
+          "balanced_accuracy_percent": 47.5714,
+          "ci95_percent": [
+            44.9994,
+            50.0
+          ]
+        },
+        "srp64_centered_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 55.5,
+          "ci95_percent": [
+            52.9042,
+            57.9286
+          ]
+        },
+        "srp64_centered_Ctuned": {
+          "C_chosen": {
+            "0.0001": 22,
+            "0.001": 1,
+            "0.01": 1,
+            "0.1": 1
+          },
+          "balanced_accuracy_percent": 56.9286,
+          "ci95_percent": [
+            54.3095,
+            59.4524
+          ]
+        },
+        "srp64_standardized_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 56.2143,
+          "ci95_percent": [
+            53.5946,
+            58.7863
+          ]
+        },
+        "srp64_standardized_Ctuned": {
+          "C_chosen": {
+            "0.001": 13,
+            "0.01": 9,
+            "0.1": 3
+          },
+          "balanced_accuracy_percent": 57.619,
+          "ci95_percent": [
+            55.0476,
+            60.1667
+          ]
+        }
+      }
+    },
+    "three_condition": {
+      "best_pca_variant": "pca64_centered_Ctuned",
+      "best_srp_variant": "srp64_standardized_Ctuned",
+      "contrasts": {
+        "best_srp_minus_best_pca": {
+          "ci95_pp": [
+            -0.4739,
+            1.8957
+          ],
+          "difference_pp": 0.6951
+        },
+        "srp_default_minus_best_pca": {
+          "ci95_pp": [
+            -2.2749,
+            0.8531
+          ],
+          "difference_pp": -0.7583
+        },
+        "srp_default_minus_pca_default": {
+          "ci95_pp": [
+            5.4344,
+            11.6588
+          ],
+          "difference_pp": 8.594
+        }
+      },
+      "variants": {
+        "pca64_centered_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 64.2338,
+          "ci95_percent": [
+            61.2322,
+            67.109
+          ]
+        },
+        "pca64_centered_Ctuned": {
+          "C_chosen": {
+            "0.0001": 21,
+            "0.001": 2,
+            "0.01": 1,
+            "0.1": 1
+          },
+          "balanced_accuracy_percent": 67.1722,
+          "ci95_percent": [
+            64.297,
+            69.9218
+          ]
+        },
+        "pca64_standardized_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 57.8199,
+          "ci95_percent": [
+            54.9447,
+            60.5063
+          ]
+        },
+        "pca64_standardized_Ctuned": {
+          "C_chosen": {
+            "0.0001": 17,
+            "0.001": 7,
+            "0.01": 1
+          },
+          "balanced_accuracy_percent": 60.4107,
+          "ci95_percent": [
+            57.4408,
+            63.2859
+          ]
+        },
+        "srp64_centered_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 65.4344,
+          "ci95_percent": [
+            62.6224,
+            68.1201
+          ]
+        },
+        "srp64_centered_Ctuned": {
+          "C_chosen": {
+            "0.0001": 19,
+            "0.001": 3,
+            "0.1": 1,
+            "1.0": 1,
+            "100.0": 1
+          },
+          "balanced_accuracy_percent": 67.2354,
+          "ci95_percent": [
+            64.3918,
+            69.8902
+          ]
+        },
+        "srp64_standardized_C1": {
+          "C_chosen": {
+            "1.0": 25
+          },
+          "balanced_accuracy_percent": 66.4139,
+          "ci95_percent": [
+            63.5703,
+            69.1311
+          ]
+        },
+        "srp64_standardized_Ctuned": {
+          "C_chosen": {
+            "0.001": 4,
+            "0.01": 16,
+            "0.1": 2,
+            "1.0": 1,
+            "100.0": 2
+          },
+          "balanced_accuracy_percent": 67.8673,
+          "ci95_percent": [
+            65.1817,
+            70.4897
+          ]
+        }
+      }
+    }
+  },
+  "provenance": {
+    "code_sha256": {
+      "arspinet_v2/evaluation.py": "f46a5b5f46dffa3d5f469afcbd17e55d4fa901adc97afb84894194df72fc07e8",
+      "arspinet_v2/features.py": "13fa00216596f39d7c541b93fbfc3397e64815ee87550c9b2faa843bb0b61ab5",
+      "experiments/v2/run_v2_pca_tuned.py": "056c30b6590e79e72e3e7821f3979c2d672a7b8b76ef9c915fd9ff305d83122c"
+    },
+    "git_commit": "1eb198a4eded49b4c2996517d646ea06de5c2c57"
+  }
+}
