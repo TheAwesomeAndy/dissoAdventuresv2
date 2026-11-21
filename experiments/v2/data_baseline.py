@@ -4,21 +4,26 @@ Same files, cohort, exclusions, order and anti-alias decimation as data.py and v
 without per-epoch z-scoring. Kept separate so data.py stays identical to the file
 hashed in v2_results.json.
 """
+
 import os
-
-import numpy as np
-
 
 # ---------------------------------------------------------------- non-z-scored inputs
 import re
 
+import numpy as np
 from scipy.signal import decimate
 
 _PATTERNS = {
-    "three_condition": (re.compile(r"SHAPE_Community_(\d+)_IAPS(Neg|Neu|Pos)_BC\.txt$"),
-                        ("Neg", "Neu", "Pos"), {127}),
-    "four_category": (re.compile(r"SHAPE_Community_(\d+)_IAPS(?:Neg|Pos)_(Threat|Mutilation|Cute|Erotic)_BC\.txt$"),
-                      ("Threat", "Mutilation", "Cute", "Erotic"), {127, 195}),
+    "three_condition": (
+        re.compile(r"SHAPE_Community_(\d+)_IAPS(Neg|Neu|Pos)_BC\.txt$"),
+        ("Neg", "Neu", "Pos"),
+        {127},
+    ),
+    "four_category": (
+        re.compile(r"SHAPE_Community_(\d+)_IAPS(?:Neg|Pos)_(Threat|Mutilation|Cute|Erotic)_BC\.txt$"),
+        ("Threat", "Mutilation", "Cute", "Erotic"),
+        {127, 195},
+    ),
 }
 PRESTIM = 205
 
@@ -27,9 +32,11 @@ def _decimated(path):
     """Baseline (204 samples) and post-stimulus (1024 samples), each decimated by four
     with the same zero-phase anti-alias filter v1 uses. Returns (51, C) and (256, C)."""
     x = np.loadtxt(path)
-    dec = lambda seg: np.column_stack([decimate(seg[:, c], 4, zero_phase=True)  # noqa: E731
-                                       for c in range(seg.shape[1])])
-    return dec(x[1:PRESTIM]), dec(x[PRESTIM:PRESTIM + 1024])
+
+    def dec(seg):
+        return np.column_stack([decimate(seg[:, c], 4, zero_phase=True) for c in range(seg.shape[1])])
+
+    return dec(x[1:PRESTIM]), dec(x[PRESTIM : PRESTIM + 1024])
 
 
 def load_baseline_referenced(name, data_dir, cache=None):

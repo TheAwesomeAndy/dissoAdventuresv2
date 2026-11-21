@@ -1,4 +1,5 @@
 """arspinet_v2.reservoir: parity with the v1 operator and pinned dynamics."""
+
 import numpy as np
 import pytest
 
@@ -8,8 +9,13 @@ from arspinet_v2 import reservoir
 def _v1_code(raw, seed_for_channel):
     from experiment_zero import LIFReservoir as V1
     from experiment_zero import bsc6_encode
-    return np.stack([[bsc6_encode(V1(seed=seed_for_channel(ch)).forward(raw[i, :, ch]))
-                      for ch in range(raw.shape[2])] for i in range(len(raw))]).astype(np.float32)
+
+    return np.stack(
+        [
+            [bsc6_encode(V1(seed=seed_for_channel(ch)).forward(raw[i, :, ch])) for ch in range(raw.shape[2])]
+            for i in range(len(raw))
+        ]
+    ).astype(np.float32)
 
 
 def test_per_electrode_mode_is_bit_identical_to_v1(cohort):
@@ -38,8 +44,10 @@ def test_dynamics_are_pinned():
 
 # Computed with the code at commit 913d457 (numpy 2.5.3). RandomState streams are stable
 # across numpy versions, and spike counts are integers, so these are exact.
-GOLDEN = {0.0: {"total": 3192, "per_bin": [478, 594, 593, 542, 592, 393]},
-          0.9: {"total": 31363, "per_bin": [4786, 5295, 5380, 5368, 5229, 5305]}}
+GOLDEN = {
+    0.0: {"total": 3192, "per_bin": [478, 594, 593, 542, 592, 393]},
+    0.9: {"total": 31363, "per_bin": [4786, 5295, 5380, 5368, 5229, 5305]},
+}
 
 
 def test_rho_zero_has_no_recurrent_matrix():
@@ -70,7 +78,7 @@ def test_trailing_samples_are_dropped_like_v1():
     """256 samples in 6 bins: 42 per bin, the last 4 samples are not counted."""
     res = reservoir.LIFReservoir(rho=0.0)
     x = np.zeros((1, 256))
-    x[0, 252:] = 50.0          # huge drive only in the dropped tail
+    x[0, 252:] = 50.0  # huge drive only in the dropped tail
     assert res.run(x, n_bins=6)["counts"].sum() == 0
     assert res.run(x, return_spikes=True)["spikes"].sum() > 0
 

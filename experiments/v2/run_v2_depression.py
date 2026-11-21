@@ -29,6 +29,7 @@ Only aggregate results are written. No participant-level value leaves this scrip
     python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels labels.csv \
         --cache ./v2_cache --out experiments/v2/v2_depression.json
 """
+
 import argparse
 import json
 import os
@@ -45,12 +46,25 @@ _REPO = os.path.abspath(os.path.join(_HERE, "..", ".."))
 sys.path.insert(0, _HERE)
 sys.path.insert(0, _REPO)
 
-import data as shape_data  # noqa: E402
-from arspinet_v2 import features, reservoir  # noqa: E402
-from arspinet_v2 import evaluation as ev  # noqa: E402
+from arspinet_v2 import evaluation as ev
+from arspinet_v2 import features, reservoir
+from arspinet_v2 import provenance as prov
 
-TARGETS = ("MDE", "MDD", "Depression_Type", "MDD_Recurrent")     # the laboratory's order
-N_REPEATS, N_FOLDS = 5, 5
+import data as shape_data
+import run_v2_validation as v2
+
+_D = v2.CONFIG["depression"]
+TARGETS = tuple(_D["targets"])  # the laboratory's order
+N_REPEATS, N_FOLDS = _D["repeats"], _D["folds"]
+CODE_FILES = [
+    "experiments/v2/run_v2_depression.py",
+    "experiments/v2/config.toml",
+    "experiments/v2/data.py",
+    "experiments/confirmatory/run_confirmatory_validation.py",
+    "arspinet_v2/features.py",
+    "arspinet_v2/reservoir.py",
+    "arspinet_v2/evaluation.py",
+]
 
 
 def participant_matrix(X, y, groups):
@@ -88,22 +102,27 @@ def analyse(X, t, n_perm, seed):
     boot = []
     for _ in range(2000):
         idx = rng.randint(0, len(t), len(t))
-        boot.append(np.mean([(pred[:, idx][:, t[idx] == c] == c).mean() for c in np.unique(t)
-                             if (t[idx] == c).any()]))
+        boot.append(
+            np.mean([(pred[:, idx][:, t[idx] == c] == c).mean() for c in np.unique(t) if (t[idx] == c).any()])
+        )
     ds1 = [(0, d) for r, d in ds if r == 0]
     obs1, _ = score(ds1, t, 1)
     rng = np.random.RandomState(seed + 777)
     null = np.array([score(ds1, rng.permutation(t), 1)[0] for _ in range(n_perm)])
     return {
         "balanced_accuracy_percent": round(100 * observed, 2),
-        "ci95_percent": [round(100 * float(np.percentile(boot, 2.5)), 2),
-                         round(100 * float(np.percentile(boot, 97.5)), 2)],
+        "ci95_percent": [
+            round(100 * float(np.percentile(boot, 2.5)), 2),
+            round(100 * float(np.percentile(boot, 97.5)), 2),
+        ],
         "chance_percent": round(100.0 / len(np.unique(t)), 2),
-        "permutation": {"observed_one_repeat_percent": round(100 * obs1, 2),
-                        "null_mean_percent": round(100 * float(null.mean()), 2),
-                        "null_sd_percent": round(100 * float(null.std(ddof=1)), 2),
-                        "n_permutations": int(n_perm),
-                        "p_value": float((1 + (null >= obs1).sum()) / (1 + n_perm))},
+        "permutation": {
+            "observed_one_repeat_percent": round(100 * obs1, 2),
+            "null_mean_percent": round(100 * float(null.mean()), 2),
+            "null_sd_percent": round(100 * float(null.std(ddof=1)), 2),
+            "n_permutations": int(n_perm),
+            "p_value": float((1 + (null >= obs1).sum()) / (1 + n_perm)),
+        },
     }
 
 
@@ -121,7 +140,9 @@ def main():
     ap.add_argument("--data3", required=True)
     ap.add_argument("--labels", required=True, help="CSV or XLSX with an ID column and the SCID-5 variables")
     ap.add_argument("--cache", default=None)
-    ap.add_argument("--rho", type=float, default=None, help="headline recurrent gain (default: read from v2_results.json)")
+    ap.add_argument(
+        "--rho", type=float, default=None, help="headline recurrent gain (default: read from v2_results.json)"
+    )
     ap.add_argument("--out", default=os.path.join(_HERE, "v2_depression.json"))
     ap.add_argument("--n-perm", type=int, default=1000)
     args = ap.parse_args()
@@ -139,12 +160,17 @@ def main():
         "amplitude6": features.amplitude_bins(raw, 6).reshape(len(y), -1),
         "bsc6_srp64": features.project(code, features.make_srp(code.shape[2])),
     }
-    out = {"design": {"targets_in_order": list(TARGETS), "representations": list(reps),
-                      "estimator": "standardize + class-weighted L2 logistic (C=1), 5x5 stratified CV over participants",
-                      "family": "12 tests (4 targets x 3 representations), Holm-corrected together",
-                      "headline_rho": rho,
-                      "covariates": "not adjusted: age and sex are missing for roughly half of the cohort"},
-           "targets": {}}
+    out = {
+        "design": {
+            "targets_in_order": list(TARGETS),
+            "representations": list(reps),
+            "estimator": "standardize + class-weighted L2 logistic (C=1), 5x5 stratified CV over participants",
+            "family": "12 tests (4 targets x 3 representations), Holm-corrected together",
+            "headline_rho": rho,
+            "covariates": "not adjusted: age and sex are missing for roughly half of the cohort",
+        },
+        "targets": {},
+    }
     keys, pvals = [], []
     for ti, target in enumerate(TARGETS):
         out["targets"][target] = {}
@@ -159,10 +185,19 @@ def main():
             out["targets"][target][name] = res
             keys.append((target, name))
             pvals.append(res["permutation"]["p_value"])
-            print(f"[{time.strftime('%H:%M:%S')}] {target:16s} {name:11s} BA {res['balanced_accuracy_percent']:.1f} "
-                  f"{res['ci95_percent']} chance {res['chance_percent']} p {res['permutation']['p_value']:.4f}", flush=True)
-    for (target, name), p_adj in zip(keys, holm(np.array(pvals))):
+            print(
+                f"[{time.strftime('%H:%M:%S')}] {target:16s} {name:11s} BA {res['balanced_accuracy_percent']:.1f} "
+                f"{res['ci95_percent']} chance {res['chance_percent']} p {res['permutation']['p_value']:.4f}",
+                flush=True,
+            )
+    for (target, name), p_adj in zip(keys, holm(np.array(pvals)), strict=True):
         out["targets"][target][name]["permutation"]["p_value_holm_12"] = float(p_adj)
+    out["provenance"] = prov.provenance(
+        _REPO,
+        CODE_FILES,
+        input_file_counts={"data3": prov.count_files(args.data3)},
+        note="Aggregates only. No participant-level value is written.",
+    )
     with open(args.out, "w") as fh:
         json.dump(out, fh, indent=2, sort_keys=True)
         fh.write("\n")

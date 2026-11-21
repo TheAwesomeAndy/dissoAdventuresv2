@@ -16,6 +16,7 @@ What v2 adds is control over the three things the v1 code fixed silently:
 * ``spiking`` ``False`` gives the matched non-spiking control: the same input weights
               and leak, no threshold, no reset, no recurrence, rectified output.
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -27,8 +28,15 @@ V1_RHO = 0.9
 
 
 class LIFReservoir:
-    def __init__(self, n_res=N_RES, beta=BETA, theta=THETA, rho=V1_RHO, seed=42,
-                 spiking=True):
+    def __init__(
+        self,
+        n_res: int = N_RES,
+        beta: float = BETA,
+        theta: float = THETA,
+        rho: float = V1_RHO,
+        seed: int = 42,
+        spiking: bool = True,
+    ) -> None:
         rng = np.random.RandomState(seed)
         self.n_res, self.beta, self.theta = int(n_res), float(beta), float(theta)
         self.rho, self.seed, self.spiking = float(rho), int(seed), bool(spiking)
@@ -41,8 +49,15 @@ class LIFReservoir:
         self.w_rec = w * (self.rho / radius) if (radius > 0 and self.rho > 0) else None
 
     # ------------------------------------------------------------------ simulation
-    def run(self, x, mem0=None, n_bins=None, return_spikes=False, return_rate=False,
-            use_recurrence=True):
+    def run(
+        self,
+        x: np.ndarray,
+        mem0: np.ndarray | None = None,
+        n_bins: int | None = None,
+        return_spikes: bool = False,
+        return_rate: bool = False,
+        use_recurrence: bool = True,
+    ) -> dict[str, np.ndarray]:
         """Drive the reservoir with a batch of scalar signals.
 
         x : (B, T) array. Returns a dict with any of
@@ -58,8 +73,7 @@ class LIFReservoir:
         N = self.n_res
         mem = np.zeros((B, N)) if mem0 is None else np.array(mem0, dtype=np.float64)
         spike = np.zeros((B, N))
-        w_rec_t = self.w_rec.T if (self.w_rec is not None and use_recurrence
-                                   and self.spiking) else None
+        w_rec_t = self.w_rec.T if (self.w_rec is not None and use_recurrence and self.spiking) else None
         out = {}
         if n_bins:
             bin_size = T // n_bins
@@ -84,7 +98,7 @@ class LIFReservoir:
                 emit = np.maximum(mem, 0.0)
             if n_bins:
                 b = t // bin_size
-                if b < n_bins:          # v1 drops the T % n_bins trailing samples
+                if b < n_bins:  # v1 drops the T % n_bins trailing samples
                     counts[:, b, :] += emit
             if return_spikes:
                 spikes[:, t, :] = spike > 0
@@ -102,8 +116,17 @@ class LIFReservoir:
         return out
 
 
-def encode(raw, rho=V1_RHO, seed=42, shared=True, n_bins=6, spiking=True, chunk=4096,
-           beta=BETA, theta=THETA):
+def encode(
+    raw: np.ndarray,
+    rho: float = V1_RHO,
+    seed: int = 42,
+    shared: bool = True,
+    n_bins: int = 6,
+    spiking: bool = True,
+    chunk: int = 4096,
+    beta: float = BETA,
+    theta: float = THETA,
+) -> np.ndarray:
     """Electrode-resolved binned spike counts.
 
     raw : (observations, time, channels). Returns (observations, channels, n_bins * N)
@@ -117,12 +140,11 @@ def encode(raw, rho=V1_RHO, seed=42, shared=True, n_bins=6, spiking=True, chunk=
         flat = raw.transpose(0, 2, 1).reshape(n_obs * n_ch, T)
         flat_out = out.reshape(n_obs * n_ch, n_bins * N_RES)
         for lo in range(0, len(flat), chunk):
-            c = res.run(flat[lo:lo + chunk], n_bins=n_bins)["counts"]
-            flat_out[lo:lo + chunk] = c.reshape(len(c), -1)
+            c = res.run(flat[lo : lo + chunk], n_bins=n_bins)["counts"]
+            flat_out[lo : lo + chunk] = c.reshape(len(c), -1)
     else:
-        for ch in range(n_ch):       # v1 committed runner: seed + 17 * channel
-            res = LIFReservoir(rho=rho, seed=seed + ch * 17, spiking=spiking,
-                               beta=beta, theta=theta)
+        for ch in range(n_ch):  # v1 committed runner: seed + 17 * channel
+            res = LIFReservoir(rho=rho, seed=seed + ch * 17, spiking=spiking, beta=beta, theta=theta)
             c = res.run(raw[:, :, ch], n_bins=n_bins)["counts"]
             out[:, ch, :] = c.reshape(n_obs, -1)
     return out

@@ -19,27 +19,33 @@ the input it actually receives, with finite perturbations. None of them uses a l
 ``passes`` applies one fixed rule to those numbers. The rule is label-free, so choosing
 the recurrent gain with it cannot leak condition information.
 """
+
 from __future__ import annotations
+
+from collections.abc import Iterable, Mapping
+from typing import Any
 
 import numpy as np
 
 from .reservoir import LIFReservoir
 
-RULE = {
+RULE: dict[str, float] = {
     "esp_converged_fraction_min": 0.95,
     "autonomous_rate_max": 1e-3,
     "reliability_median_r_min": 0.95,
 }
 
 
-def _disagreement(a, b, lo):
+def _disagreement(a: np.ndarray, b: np.ndarray, lo: int) -> tuple[np.ndarray, np.ndarray]:
     """Per-sequence spike disagreement over [lo:], and whether the trains are identical."""
     diff = (a[:, lo:] != b[:, lo:]).sum(axis=(1, 2)).astype(float)
     total = (a[:, lo:].sum(axis=(1, 2)) + b[:, lo:].sum(axis=(1, 2))).astype(float)
     return diff / np.maximum(total, 1.0), diff == 0
 
 
-def fading_memory_report(signals, rho, seed=42, noise_seed=0, tail=256, n_bins=6):
+def fading_memory_report(
+    signals: np.ndarray, rho: float, seed: int = 42, noise_seed: int = 0, tail: int = 256, n_bins: int = 6
+) -> dict[str, Any]:
     """signals : (B, T) sample of the real per-electrode input."""
     x = np.asarray(signals, dtype=np.float64)
     B, T = x.shape
@@ -60,7 +66,7 @@ def fading_memory_report(signals, rho, seed=42, noise_seed=0, tail=256, n_bins=6
     drive = np.concatenate([x, np.zeros((B, tail))], axis=1)
     rate = res.run(drive, return_rate=True)["rate"]
     driven_rate = float(rate[:, :T].mean())
-    autonomous = float(rate[:, -(tail // 4):].mean())
+    autonomous = float(rate[:, -(tail // 4) :].mean())
 
     noisy = x + 0.01 * x.std(axis=1, keepdims=True) * rng.standard_normal(x.shape)
     c0 = base["counts"].reshape(B, -1).astype(np.float64)
@@ -97,7 +103,7 @@ def fading_memory_report(signals, rho, seed=42, noise_seed=0, tail=256, n_bins=6
     return report
 
 
-def passes(report, rule=RULE):
+def passes(report: Mapping[str, Any], rule: Mapping[str, float] = RULE) -> bool:
     return bool(
         report["esp_converged_fraction"] >= rule["esp_converged_fraction_min"]
         and report["autonomous_rate_after_input_off"] <= rule["autonomous_rate_max"]
@@ -105,7 +111,7 @@ def passes(report, rule=RULE):
     )
 
 
-def select_rho(reports):
+def select_rho(reports: Iterable[Mapping[str, Any]]) -> float | None:
     """Largest recurrent gain that passes the fading-memory rule (None if none pass)."""
     ok = [r["rho"] for r in reports if r["passes"]]
     return max(ok) if ok else None

@@ -21,15 +21,20 @@ changed after they were written, or that were annotated by hand. Only their own 
 checked. They are evidence of what was once computed, not of what the code computes now.
 
 Changing a frozen file is allowed only together with a rerun on the authorized data and
-a regenerated record. Then refresh the lock entry:
+a regenerated record. While that rerun is in progress the record's lock entry carries
+``pending_regeneration``: its code checks are skipped and reported as PENDING, and
+``--strict`` (used for the main branch) fails. When the new record is committed, refresh
+the lock entry, which clears the flag:
 
     python scripts/check_records.py --update experiments/v2/v2_results.json
 
 Usage:
 
     python scripts/check_records.py              # verify everything, exit 1 on failure
+    python scripts/check_records.py --strict     # also fail if any record is pending
     python scripts/check_records.py --list-frozen
 """
+
 from __future__ import annotations
 
 import argparse
@@ -79,8 +84,17 @@ def embedded_hashes(record_path: Path) -> dict[str, str]:
     return dict(prov.get("code_sha256") or {})
 
 
+def pending(lock: dict | None = None) -> list[str]:
+    """Records whose code has changed and whose regeneration is in progress."""
+    lock = lock or load_lock()
+    return sorted(name for name, rec in lock["records"].items() if rec.get("pending_regeneration"))
+
+
 def check(lock: dict | None = None, use_history: bool = True) -> list[str]:
-    """Return a list of human-readable problems. Empty means every record verifies."""
+    """Return a list of human-readable problems. Empty means every record verifies.
+
+    Records marked ``pending_regeneration`` get only the record-file check.
+    """
     lock = lock or load_lock()
     problems: list[str] = []
     for name, rec in lock["records"].items():
@@ -89,8 +103,12 @@ def check(lock: dict | None = None, use_history: bool = True) -> list[str]:
             problems.append(f"{name}: record file is missing")
             continue
         if sha256_file(path) != rec["sha256"]:
-            problems.append(f"{name}: record file differs from the lock (edited by hand, or regenerated "
-                            f"without `check_records.py --update`)")
+            problems.append(
+                f"{name}: record file differs from the lock (edited by hand, or regenerated "
+                f"without `check_records.py --update`)"
+            )
+        if rec.get("pending_regeneration"):
+            continue
         embedded = embedded_hashes(path)
         for code, want in rec["code_sha256"].items():
             cpath = REPO / code
@@ -104,7 +122,9 @@ def check(lock: dict | None = None, use_history: bool = True) -> list[str]:
             if use_history:
                 at = blob_sha256(rec["code_commit"], code)
                 if at is not None and at != want:
-                    problems.append(f"{name}: {code} at commit {rec['code_commit'][:10]} does not have the locked hash")
+                    problems.append(
+                        f"{name}: {code} at commit {rec['code_commit'][:10]} does not have the locked hash"
+                    )
         missing = set(embedded) - set(rec["code_sha256"])
         if missing:
             problems.append(f"{name}: record hashes files the lock does not list: {sorted(missing)}")
@@ -122,11 +142,15 @@ def update(name: str) -> None:
     lock = load_lock()
     rec = lock["records"].get(name)
     if rec is None:
-        raise SystemExit(f"{name} is not in {LOCK.relative_to(REPO)}; add an entry by hand first "
-                         f"(produced_by, command, data, tier, code_sha256 keys)")
+        raise SystemExit(
+            f"{name} is not in {LOCK.relative_to(REPO)}; add an entry by hand first "
+            f"(produced_by, command, data, tier, code_sha256 keys)"
+        )
     path = REPO / name
     embedded = embedded_hashes(path)
-    files = sorted(set(rec["code_sha256"]) | set(embedded))
+    # A record with an embedded provenance block defines its own code list.
+    files = sorted(embedded) if embedded else sorted(rec["code_sha256"])
+    rec.pop("pending_regeneration", None)
     rec["sha256"] = sha256_file(path)
     rec["code_sha256"] = {f: sha256_file(REPO / f) for f in files}
     prov = json.loads(path.read_text()).get("provenance", {})
@@ -137,7 +161,9 @@ def update(name: str) -> None:
     print(f"updated {name}: code_commit {commit[:10]}, {len(files)} code files")
     for f in files:
         if blob_sha256(commit, f) not in (None, rec["code_sha256"][f]):
-            print(f"  WARNING: {f} in the working tree differs from commit {commit[:10]}; commit the code first")
+            print(
+                f"  WARNING: {f} in the working tree differs from commit {commit[:10]}; commit the code first"
+            )
 
 
 def main() -> int:
@@ -145,6 +171,7 @@ def main() -> int:
     ap.add_argument("--update", metavar="RECORD", help="refresh the lock entry of a regenerated record")
     ap.add_argument("--list-frozen", action="store_true", help="print the frozen code files and exit")
     ap.add_argument("--no-history", action="store_true", help="skip the check against git blobs")
+    ap.add_argument("--strict", action="store_true", help="fail if any record is pending regeneration")
     args = ap.parse_args()
     if args.update:
         update(args.update)
@@ -154,14 +181,20 @@ def main() -> int:
         print("\n".join(frozen_files(lock)))
         return 0
     problems = check(lock, use_history=not args.no_history)
+    waiting = pending(lock)
     n = len(lock["records"])
-    if problems:
-        print(f"record check: {len(problems)} problem(s) across {n} records")
+    for name in waiting:
+        print(f"PENDING {name}: {lock['records'][name]['pending_regeneration']['reason']}")
+    if problems or (args.strict and waiting):
+        print(f"record check: {len(problems)} problem(s), {len(waiting)} pending, across {n} records")
         for p in problems:
             print("  - " + p)
         return 1
-    print(f"record check: OK ({n} records, {len(frozen_files(lock))} frozen code files, "
-          f"{len(lock.get('unverified_records', {}))} unverified legacy records)")
+    print(
+        f"record check: OK ({n - len(waiting)} records verified, {len(waiting)} pending regeneration, "
+        f"{len(frozen_files(lock))} frozen code files, "
+        f"{len(lock.get('unverified_records', {}))} unverified legacy records)"
+    )
     return 0
 
 

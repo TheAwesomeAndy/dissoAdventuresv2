@@ -34,6 +34,10 @@
         "experiments/confirmatory/run_confirmatory_validation.py": "dbc56cbf5645b2c173f72991e5ff5a60f8e190cb3deccb15cca9efeac92fdbdd",
         "experiments/v2/data.py": "34451637b6e3a707c7e71ff2c349687d34e75b631b54675ac1a69b621bb2c33b",
         "experiments/v2/run_v2_validation.py": "1bf621389f4c15b9fb5a79492b07c4d77e0b8a021b51bc38358270743460bf35"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/v2/v2_baseline_input.json": {
@@ -56,6 +60,10 @@
         "experiments/v2/data_baseline.py": "8584b6ac29ccdca3c963111c6eaf63b2684e1b040c36dbffe527f69fc763d89e",
         "experiments/v2/run_v2_baseline_input.py": "4b41e14c4138abca1ff37206ee1cad9de4651fc3d759f7b51512da1de278f289",
         "experiments/v2/run_v2_validation.py": "1bf621389f4c15b9fb5a79492b07c4d77e0b8a021b51bc38358270743460bf35"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/v2/v2_pca_tuned.json": {
@@ -70,6 +78,10 @@
         "arspinet_v2/evaluation.py": "f46a5b5f46dffa3d5f469afcbd17e55d4fa901adc97afb84894194df72fc07e8",
         "arspinet_v2/features.py": "13fa00216596f39d7c541b93fbfc3397e64815ee87550c9b2faa843bb0b61ab5",
         "experiments/v2/run_v2_pca_tuned.py": "056c30b6590e79e72e3e7821f3979c2d672a7b8b76ef9c915fd9ff305d83122c"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/v2/v2_normalization_check.json": {
@@ -86,6 +98,10 @@
         "experiments/confirmatory/run_confirmatory_validation.py": "dbc56cbf5645b2c173f72991e5ff5a60f8e190cb3deccb15cca9efeac92fdbdd",
         "experiments/v2/data.py": "34451637b6e3a707c7e71ff2c349687d34e75b631b54675ac1a69b621bb2c33b",
         "experiments/v2/run_v2_normalization_check.py": "902a35b9f6a989fa9874a58409bb0d86f39ca61e61370ae4c1e9d43560f81086"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/v2/v2_depression.json": {
@@ -103,6 +119,10 @@
         "experiments/confirmatory/run_confirmatory_validation.py": "dbc56cbf5645b2c173f72991e5ff5a60f8e190cb3deccb15cca9efeac92fdbdd",
         "experiments/v2/data.py": "34451637b6e3a707c7e71ff2c349687d34e75b631b54675ac1a69b621bb2c33b",
         "experiments/v2/run_v2_depression.py": "9e31fa8873dee55bc1ad7a68af67bae39259559c7bcc577fba8ee71c3aed5fda"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/zscore_artifact/erpcore_results.json": {
@@ -115,6 +135,10 @@
       "sha256": "ca57e5e5ec8420a93987e19532121ecf733707955f09f05c0b3ac285ee2d027c",
       "code_sha256": {
         "experiments/zscore_artifact/run_erpcore.py": "452ef76bdab050d1dd0ebbf7a06427e6878929b1e966ba9dff7a85e36fb07e78"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     },
     "experiments/zscore_artifact/across_null.json": {
@@ -128,6 +152,10 @@
       "code_sha256": {
         "experiments/zscore_artifact/run_erpcore.py": "452ef76bdab050d1dd0ebbf7a06427e6878929b1e966ba9dff7a85e36fb07e78",
         "experiments/zscore_artifact/run_erpcore_across_null.py": "c673b1ae4857e2baa13ddbffc3b17e7d584df6cea1ffbab4c51d2488c93950ff"
+      },
+      "pending_regeneration": {
+        "since": "2026-11-21",
+        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
       }
     }
   },

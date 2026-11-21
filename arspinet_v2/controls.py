@@ -17,22 +17,23 @@ is a sanity control: one permutation shared by all observations only relabels th
 so under ``train_and_test`` it should move accuracy by no more than a different
 projection draw would.
 """
+
 from __future__ import annotations
 
 import numpy as np
 
 
-def _blocks(code, n_bins):
+def _blocks(code: np.ndarray, n_bins: int) -> np.ndarray:
     n, c, d = code.shape
     return code.reshape(n, c, n_bins, d // n_bins)
 
 
-def collapse(code, n_bins=6):
+def collapse(code: np.ndarray, n_bins: int = 6) -> np.ndarray:
     b = _blocks(code, n_bins)
     return np.repeat(b.mean(axis=2, keepdims=True), n_bins, axis=2).reshape(code.shape)
 
 
-def shuffle_bins(code, rng, n_bins=6):
+def shuffle_bins(code: np.ndarray, rng: np.random.RandomState, n_bins: int = 6) -> np.ndarray:
     b = _blocks(code, n_bins).copy()
     n, c = b.shape[:2]
     for i in range(n):
@@ -41,14 +42,14 @@ def shuffle_bins(code, rng, n_bins=6):
     return b.reshape(code.shape)
 
 
-def fixed_bin_permutation(code, rng, n_bins=6):
+def fixed_bin_permutation(code: np.ndarray, rng: np.random.RandomState, n_bins: int = 6) -> np.ndarray:
     perm = rng.permutation(n_bins)
     while np.array_equal(perm, np.arange(n_bins)):
         perm = rng.permutation(n_bins)
     return _blocks(code, n_bins)[:, :, perm, :].reshape(code.shape)
 
 
-def shuffle_electrodes(code, rng):
+def shuffle_electrodes(code: np.ndarray, rng: np.random.RandomState) -> np.ndarray:
     out = code.copy()
     for i in range(len(out)):
         out[i] = out[i][rng.permutation(out.shape[1])]

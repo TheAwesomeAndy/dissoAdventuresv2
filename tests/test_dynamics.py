@@ -1,4 +1,5 @@
 """arspinet_v2.dynamics: the label-free fading-memory tests and the gain rule."""
+
 import math
 
 import numpy as np
@@ -41,18 +42,29 @@ def test_report_is_deterministic(signals):
 
 def test_rule_thresholds_are_the_published_ones():
     """The rule that selected the v2 gain. Changing it changes the headline configuration."""
-    assert dynamics.RULE == {"esp_converged_fraction_min": 0.95, "autonomous_rate_max": 1e-3,
-                             "reliability_median_r_min": 0.95}
+    assert dynamics.RULE == {
+        "esp_converged_fraction_min": 0.95,
+        "autonomous_rate_max": 1e-3,
+        "reliability_median_r_min": 0.95,
+    }
 
 
-@pytest.mark.parametrize("key,value,expected", [
-    ("esp_converged_fraction", 0.94, False), ("esp_converged_fraction", 0.95, True),
-    ("autonomous_rate_after_input_off", 0.002, False), ("reliability_median_r", 0.94, False),
-    ("reliability_median_r", math.nan, False),
-])
+@pytest.mark.parametrize(
+    "key,value,expected",
+    [
+        ("esp_converged_fraction", 0.94, False),
+        ("esp_converged_fraction", 0.95, True),
+        ("autonomous_rate_after_input_off", 0.002, False),
+        ("reliability_median_r", 0.94, False),
+        ("reliability_median_r", math.nan, False),
+    ],
+)
 def test_passes_applies_each_criterion(key, value, expected):
-    report = {"esp_converged_fraction": 1.0, "autonomous_rate_after_input_off": 0.0,
-              "reliability_median_r": 1.0}
+    report = {
+        "esp_converged_fraction": 1.0,
+        "autonomous_rate_after_input_off": 0.0,
+        "reliability_median_r": 1.0,
+    }
     report[key] = value
     assert dynamics.passes(report) is expected
 

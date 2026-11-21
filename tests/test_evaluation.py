@@ -1,4 +1,5 @@
 """arspinet_v2.evaluation: splits, readout, bootstrap and permutation test."""
+
 import numpy as np
 import pytest
 from sklearn.metrics import balanced_accuracy_score
@@ -25,6 +26,7 @@ def test_every_repeat_predicts_every_observation_once(cohort):
 def test_direct_fit_reproduces_the_v1_estimator(cohort):
     """Same splits, same standardization, same readout as v1's evaluate_features."""
     import confirmatory_pipeline as cp
+
     raw, y, g = cohort
     X = features.amplitude_bins(raw, 6).reshape(len(y), -1)
     v1 = cp.evaluate_features(X, y, g, base_seed=7)
@@ -35,7 +37,7 @@ def test_direct_fit_reproduces_the_v1_estimator(cohort):
 
 def test_row_space_fit_is_the_same_model(projected, cohort):
     _, y, g = cohort
-    assert projected.shape[1] > len(y)                      # the p > n regime the reduction is for
+    assert projected.shape[1] > len(y)  # the p > n regime the reduction is for
     row, direct = ev.evaluate(projected, y, g), ev.evaluate(projected, y, g, reduce=False)
     assert (row["pred"] == direct["pred"]).mean() >= 0.97
     assert row["balanced_accuracy"] > 0.5
@@ -53,8 +55,9 @@ def test_vectorized_bootstrap_equals_explicit_resampling(projected, cohort):
     w = ev._weights(len(np.unique(g)), 40, 3)
     slow = []
     for b in range(40):
-        idx = np.concatenate([np.flatnonzero(g == u) for u, k in zip(np.unique(g), w[b], strict=True)
-                              for _ in range(int(k))])
+        idx = np.concatenate(
+            [np.flatnonzero(g == u) for u, k in zip(np.unique(g), w[b], strict=True) for _ in range(int(k))]
+        )
         slow.append(np.mean([(res["pred"][:, idx][:, y[idx] == c] == c).mean() for c in np.unique(y)]))
     assert np.allclose(ev._boot_ba(res, w), slow)
 
@@ -64,7 +67,7 @@ def test_bootstrap_intervals(projected, cohort):
     res = ev.evaluate(projected, y, g, n_repeats=2)
     lo, hi = ev.bootstrap_ci(res)
     assert lo <= res["balanced_accuracy"] <= hi
-    assert ev.bootstrap_ci(res) == [lo, hi]                 # seeded
+    assert ev.bootstrap_ci(res) == [lo, hi]  # seeded
     assert ev.bootstrap_difference_ci(res, res) == [0.0, 0.0]
 
 

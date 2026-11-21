@@ -22,6 +22,7 @@ runs in place.
 Exit status is non-zero if a suite fails or reports fewer checks than the recorded
 baseline (a suite that silently loses checks is a regression too).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -54,10 +55,24 @@ VERIFIERS: list[tuple[str, list[str], bool]] = [
     ("ablation", ["experiments/ablation/verify_ablation.py"], False),
     ("validators", ["validation/verify_validators.py"], False),
     ("confirmatory", ["experiments/confirmatory/verify_confirmatory.py"], False),
-    ("manifest", ["experiments/confirmatory/check_against_manifest.py",
-                  "experiments/confirmatory/confirmatory_results.json", "--tol", "0.05"], False),
-    ("provenance", ["experiments/confirmatory/validate_provenance.py",
-                    "experiments/confirmatory/confirmatory_results.json"], True),
+    (
+        "manifest",
+        [
+            "experiments/confirmatory/check_against_manifest.py",
+            "experiments/confirmatory/confirmatory_results.json",
+            "--tol",
+            "0.05",
+        ],
+        False,
+    ),
+    (
+        "provenance",
+        [
+            "experiments/confirmatory/validate_provenance.py",
+            "experiments/confirmatory/confirmatory_results.json",
+        ],
+        True,
+    ),
     ("novel", ["experiments/novel/verify_novel.py"], False),
     ("nuisance", ["experiments/novel/verify_nuisance.py"], False),
     ("external", ["experiments/external/verify_external.py"], False),
@@ -69,10 +84,28 @@ VERIFIERS: list[tuple[str, list[str], bool]] = [
 # Checks each suite reported at commit 913d457 (2026-11-21, Python 3.13.18). None means
 # the suite prints no count. A suite may gain checks; it may not lose them.
 BASELINE_CHECKS: dict[str, int | None] = {
-    "ch4": 31, "ch5": 32, "ch5zero": 37, "ch5repro": 33, "ch5base": 55, "ch6": 31, "ch6repro": 42,
-    "ch7": 38, "ch7util": 40, "fourcat": 25, "threecond": 28, "ablation": 23, "validators": 20,
-    "confirmatory": 18, "manifest": None, "provenance": None, "novel": 13, "nuisance": 14,
-    "external": 11, "novelmanifest": 42, "v2": 32, "claims": 207,
+    "ch4": 31,
+    "ch5": 32,
+    "ch5zero": 37,
+    "ch5repro": 33,
+    "ch5base": 55,
+    "ch6": 31,
+    "ch6repro": 42,
+    "ch7": 38,
+    "ch7util": 40,
+    "fourcat": 25,
+    "threecond": 28,
+    "ablation": 23,
+    "validators": 20,
+    "confirmatory": 18,
+    "manifest": None,
+    "provenance": None,
+    "novel": 13,
+    "nuisance": 14,
+    "external": 11,
+    "novelmanifest": 42,
+    "v2": 32,
+    "claims": 207,
 }
 
 _COUNT_PATTERNS = (
@@ -95,8 +128,11 @@ def parse_counts(text: str) -> tuple[int, int] | None:
 
 def isolated_copy(dst: Path) -> None:
     """Copy tracked and untracked-but-not-ignored files, preserving paths."""
-    out = subprocess.run(["git", "-C", str(REPO), "ls-files", "-co", "--exclude-standard", "-z"],
-                         capture_output=True, check=True).stdout
+    out = subprocess.run(
+        ["git", "-C", str(REPO), "ls-files", "-co", "--exclude-standard", "-z"],
+        capture_output=True,
+        check=True,
+    ).stdout
     for rel in filter(None, out.decode().split("\0")):
         src = REPO / rel
         if src.is_file():
@@ -115,8 +151,15 @@ def run_one(vid: str, argv: list[str], cwd: Path, log_dir: Path) -> dict:
     base = BASELINE_CHECKS.get(vid)
     ok = proc.returncode == 0 and (counts is None or counts[1] == 0)
     lost = counts is not None and base is not None and counts[0] < base
-    return {"id": vid, "ok": ok and not lost, "returncode": proc.returncode, "counts": counts,
-            "baseline": base, "lost_checks": lost, "seconds": time.time() - start}
+    return {
+        "id": vid,
+        "ok": ok and not lost,
+        "returncode": proc.returncode,
+        "counts": counts,
+        "baseline": base,
+        "lost_checks": lost,
+        "seconds": time.time() - start,
+    }
 
 
 def main() -> int:
@@ -141,8 +184,10 @@ def main() -> int:
         log_dir.mkdir(parents=True, exist_ok=True)
         isolated_copy(copy)
         with cf.ThreadPoolExecutor(max(1, args.jobs)) as pool:
-            futures = [pool.submit(run_one, vid, argv, REPO if in_place else copy, log_dir)
-                       for vid, argv, in_place in chosen]
+            futures = [
+                pool.submit(run_one, vid, argv, REPO if in_place else copy, log_dir)
+                for vid, argv, in_place in chosen
+            ]
             results = [f.result() for f in futures]
         failed = [r for r in results if not r["ok"]]
         total = 0
@@ -151,12 +196,16 @@ def main() -> int:
             total += c[0] if c else 0
             status = "ok" if r["ok"] else ("LOST CHECKS" if r["lost_checks"] else "FAIL")
             detail = f"{c[0]} passed, {c[1]} failed" if c else "no count"
-            print(f"  {r['id']:14s} {status:12s} {detail:22s} baseline {r['baseline']!s:5s} {r['seconds']:6.1f} s")
+            print(
+                f"  {r['id']:14s} {status:12s} {detail:22s} baseline {r['baseline']!s:5s} {r['seconds']:6.1f} s"
+            )
         for r in failed:
             print(f"\n--- last lines of {r['id']} ---")
             print("\n".join((log_dir / f"{r['id']}.log").read_text().splitlines()[-15:]))
-        print(f"\n{len(results) - len(failed)} of {len(results)} suites ok, {total} checks passed"
-              + (f"; logs in {log_dir}" if args.log_dir else ""))
+        print(
+            f"\n{len(results) - len(failed)} of {len(results)} suites ok, {total} checks passed"
+            + (f"; logs in {log_dir}" if args.log_dir else "")
+        )
         return 1 if failed else 0
 
 

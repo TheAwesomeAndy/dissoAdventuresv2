@@ -23,6 +23,7 @@ is deliberate: if SRP still wins, the result does not depend on how PCA was set 
 
     python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 4
 """
+
 import argparse
 import json
 import os
@@ -38,12 +39,20 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(_HERE, "..", "..")))
 
 sys.path.insert(0, _HERE)
-import run_v2_validation as v2  # noqa: E402
-from arspinet_v2 import features  # noqa: E402
-from arspinet_v2 import evaluation as ev  # noqa: E402
+from arspinet_v2 import evaluation as ev
+from arspinet_v2 import features
+from arspinet_v2 import provenance as prov
 
-C_GRID = (1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0)
-N_INNER = 4
+import run_v2_validation as v2
+
+C_GRID = tuple(v2.CONFIG["pca_tuned"]["c_grid"])
+N_INNER = v2.CONFIG["pca_tuned"]["inner_folds"]
+CODE_FILES = [
+    "experiments/v2/run_v2_pca_tuned.py",
+    "experiments/v2/config.toml",
+    "arspinet_v2/features.py",
+    "arspinet_v2/evaluation.py",
+]
 BASE_SEED = {"three_condition": 0, "four_category": 100}
 
 
@@ -98,31 +107,56 @@ def outer_fold(code, srp_X, y, g, r, tr, te, seed):
 def run(name, code, y, g, jobs):
     srp_X = features.project(code, features.make_srp(code.shape[2]))
     splits = ev.make_splits(y, g, base_seed=BASE_SEED[name])
-    res = Parallel(n_jobs=jobs)(delayed(outer_fold)(code, srp_X, y, g, r, tr, te, BASE_SEED[name])
-                                for r, tr, te in splits)
+    res = Parallel(n_jobs=jobs)(
+        delayed(outer_fold)(code, srp_X, y, g, r, tr, te, BASE_SEED[name]) for r, tr, te in splits
+    )
     preds, chosen = {}, {}
     for r, te, out in res:
         for k, (p, C) in out.items():
             preds.setdefault(k, np.full((ev.N_REPEATS, len(y)), -1, dtype=int))[r, te] = p
             chosen.setdefault(k, []).append(C)
-    results = {k: {"balanced_accuracy": float(np.mean([ev.balanced_accuracy(y, q) for q in p])),
-                   "per_repeat": [ev.balanced_accuracy(y, q) for q in p], "pred": p, "y": y, "groups": g}
-               for k, p in preds.items()}
-    pct = lambda v: round(100 * float(v), 4)  # noqa: E731
+    results = {
+        k: {
+            "balanced_accuracy": float(np.mean([ev.balanced_accuracy(y, q) for q in p])),
+            "per_repeat": [ev.balanced_accuracy(y, q) for q in p],
+            "pred": p,
+            "y": y,
+            "groups": g,
+        }
+        for k, p in preds.items()
+    }
+
+    def pct(v):
+        return round(100 * float(v), 4)
+
     table = {}
     for k, r in results.items():
         ci = ev.bootstrap_ci(r)
         Cs = np.asarray(chosen[k])
-        table[k] = {"balanced_accuracy_percent": pct(r["balanced_accuracy"]), "ci95_percent": [pct(ci[0]), pct(ci[1])],
-                    "C_chosen": {str(c): int((Cs == c).sum()) for c in np.unique(Cs)}}
+        table[k] = {
+            "balanced_accuracy_percent": pct(r["balanced_accuracy"]),
+            "ci95_percent": [pct(ci[0]), pct(ci[1])],
+            "C_chosen": {str(c): int((Cs == c).sum()) for c in np.unique(Cs)},
+        }
     best_pca = max((k for k in results if k.startswith("pca")), key=lambda k: results[k]["balanced_accuracy"])
     best_srp = max((k for k in results if k.startswith("srp")), key=lambda k: results[k]["balanced_accuracy"])
-    contrast = lambda a, b: {"difference_pp": pct(results[a]["balanced_accuracy"] - results[b]["balanced_accuracy"]),  # noqa: E731
-                             "ci95_pp": [pct(v) for v in ev.bootstrap_difference_ci(results[a], results[b])]}
-    return {"variants": table, "best_pca_variant": best_pca, "best_srp_variant": best_srp,
-            "contrasts": {"srp_default_minus_best_pca": contrast("srp64_standardized_C1", best_pca),
-                          "best_srp_minus_best_pca": contrast(best_srp, best_pca),
-                          "srp_default_minus_pca_default": contrast("srp64_standardized_C1", "pca64_standardized_C1")}}
+
+    def contrast(a, b):
+        return {
+            "difference_pp": pct(results[a]["balanced_accuracy"] - results[b]["balanced_accuracy"]),
+            "ci95_pp": [pct(v) for v in ev.bootstrap_difference_ci(results[a], results[b])],
+        }
+
+    return {
+        "variants": table,
+        "best_pca_variant": best_pca,
+        "best_srp_variant": best_srp,
+        "contrasts": {
+            "srp_default_minus_best_pca": contrast("srp64_standardized_C1", best_pca),
+            "best_srp_minus_best_pca": contrast(best_srp, best_pca),
+            "srp_default_minus_pca_default": contrast("srp64_standardized_C1", "pca64_standardized_C1"),
+        },
+    }
 
 
 def main():
@@ -132,10 +166,21 @@ def main():
     ap.add_argument("--out", default=os.path.join(_HERE, "v2_pca_tuned.json"))
     ap.add_argument("--jobs", type=int, default=1)
     args = ap.parse_args()
-    rho = args.rho if args.rho is not None else json.load(open(os.path.join(_HERE, "v2_results.json")))["fading_memory"]["selected_rho"]
-    out = {"design": {"C_grid": list(C_GRID), "inner_folds": N_INNER, "outer": "v1 splits, 5 x 5 participant-grouped",
-                      "code": f"v2 headline, shared reservoir, rho={rho}, seed 42", "k": features.N_SRP},
-           "granularities": {}}
+    rho = (
+        args.rho
+        if args.rho is not None
+        else json.load(open(os.path.join(_HERE, "v2_results.json")))["fading_memory"]["selected_rho"]
+    )
+    out = {
+        "design": {
+            "C_grid": list(C_GRID),
+            "inner_folds": N_INNER,
+            "outer": "v1 splits, 5 x 5 participant-grouped",
+            "code": f"v2 headline, shared reservoir, rho={rho}, seed 42",
+            "k": features.N_SRP,
+        },
+        "granularities": {},
+    }
     for name in ("three_condition", "four_category"):
         z = np.load(os.path.join(args.cache, f"{name}.npz"))
         code = np.load(os.path.join(args.cache, f"{name}_rho{rho}_s42_sh_spk_full.npy"))
@@ -144,11 +189,12 @@ def main():
         g = out["granularities"][name]
         print(f"[{time.strftime('%H:%M:%S')}] {name} ({time.time() - t:.0f} s)", flush=True)
         for k, v in g["variants"].items():
-            print(f"    {k:28s} {v['balanced_accuracy_percent']:.1f} {v['ci95_percent']} C {v['C_chosen']}", flush=True)
+            print(
+                f"    {k:28s} {v['balanced_accuracy_percent']:.1f} {v['ci95_percent']} C {v['C_chosen']}",
+                flush=True,
+            )
         print("    ", g["contrasts"], flush=True)
-        out["provenance"] = {"code_sha256": {f: v2._sha(os.path.join(v2._REPO, f)) for f in (
-            "experiments/v2/run_v2_pca_tuned.py", "arspinet_v2/features.py", "arspinet_v2/evaluation.py")},
-            "git_commit": v2._git("rev-parse", "HEAD")}
+        out["provenance"] = prov.provenance(v2._REPO, CODE_FILES)
         with open(args.out, "w") as fh:
             json.dump(out, fh, indent=2, sort_keys=True)
             fh.write("\n")

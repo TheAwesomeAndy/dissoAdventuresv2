@@ -261,6 +261,15 @@ jobs:
       - name: Lint
         run: ruff check .
 
+      - name: Check formatting of the v2 code, tests and tooling
+        run: >
+          ruff format --check arspinet_v2 experiments/v2 experiments/zscore_artifact tests
+          scripts/check_records.py scripts/run_verifiers.py scripts/build_registry_doc.py
+          scripts/compare_records.py
+
+      - name: Type-check the library
+        run: mypy
+
       - name: Check result records against the code that produced them
         run: python scripts/check_records.py
 

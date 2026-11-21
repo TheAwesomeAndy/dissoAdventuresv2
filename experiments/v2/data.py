@@ -6,6 +6,7 @@ samples, anti-alias decimate by four to 256 samples at 256 Hz, z-score each epoc
 channel. Exclusions are v1's (participant 127 from both streams, 195 from the
 four-category stream). The preprocessed arrays can be cached outside the repository.
 """
+
 import os
 import sys
 
@@ -16,13 +17,15 @@ _REPO = os.path.abspath(os.path.join(_HERE, "..", ".."))
 sys.path.insert(0, os.path.join(_REPO, "experiments", "confirmatory"))
 sys.path.insert(0, _REPO)
 
-import run_confirmatory_validation as v1  # noqa: E402
+import run_confirmatory_validation as v1
 
 
 def load(data3, data4, cache=None):
     out = {}
-    for name, path, loader in (("three_condition", data3, v1.load_3class),
-                               ("four_category", data4, v1.load_4class)):
+    for name, path, loader in (
+        ("three_condition", data3, v1.load_3class),
+        ("four_category", data4, v1.load_4class),
+    ):
         if not path:
             continue
         f = os.path.join(cache, f"{name}.npz") if cache else None

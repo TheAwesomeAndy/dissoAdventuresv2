@@ -4,12 +4,13 @@ The mechanism (experiments/zscore_artifact/MECHANISM.md): z-scoring a trial over
 epoch subtracts the epoch mean, which contains the evoked response, from every sample,
 including the pre-stimulus ones.
 """
+
 import numpy as np
 import pytest
 
 import run_erpcore as R
 
-TIMES = 1000.0 * (-0.2 + np.arange(256) / 256.0)        # -200 .. 796 ms, as in ERP CORE
+TIMES = 1000.0 * (-0.2 + np.arange(256) / 256.0)  # -200 .. 796 ms, as in ERP CORE
 PRE = TIMES < 0
 
 
@@ -26,12 +27,13 @@ def trials(n=60, n_ch=8, seed=0, late_effect=0.0):
     return x, y
 
 
-@pytest.mark.parametrize("how,uses_post", [("none", False), ("baseline_z", False),
-                                           ("epoch_z_full", True), ("epoch_z_post", True)])
+@pytest.mark.parametrize(
+    "how,uses_post", [("none", False), ("baseline_z", False), ("epoch_z_full", True), ("epoch_z_post", True)]
+)
 def test_which_normalizations_let_the_future_change_the_past(how, uses_post):
     x, _ = trials()
     altered = x.copy()
-    altered[:, ~PRE] += 5.0                                 # change only post-stimulus samples
+    altered[:, ~PRE] += 5.0  # change only post-stimulus samples
     a, b = R.normalize(x, TIMES, how)[:, PRE], R.normalize(altered, TIMES, how)[:, PRE]
     assert (not np.allclose(a, b)) is uses_post
 
@@ -47,7 +49,8 @@ def test_epoch_z_post_is_the_shape_v1_convention():
 def _pre_stimulus_accuracy(x, y):
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import cross_val_predict
-    feats = x[:, PRE].mean(axis=1)                          # one pre-stimulus scalp pattern per trial
+
+    feats = x[:, PRE].mean(axis=1)  # one pre-stimulus scalp pattern per trial
     pred = cross_val_predict(LogisticRegression(max_iter=1000), feats, y, cv=5)
     return R.bal_acc(y, pred)
 

@@ -24,7 +24,7 @@ dependencies = [
 legacy = ["pandas>=2.2.3", "matplotlib>=3.9"]
 # reading the SCID-5 spreadsheet for experiments/v2/run_v2_depression.py
 clinical = ["pandas>=2.2.3", "openpyxl>=3.1"]
-dev = ["pytest>=8", "ruff>=0.6", "pandas>=2.2.3", "matplotlib>=3.9"]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10", "pandas>=2.2.3", "matplotlib>=3.9"]
 
 [tool.setuptools]
 packages = ["arspinet_v2"]
@@ -44,11 +44,10 @@ filterwarnings = ["ignore::sklearn.exceptions.ConvergenceWarning"]
 [tool.ruff]
 line-length = 110
 target-version = "py311"
-# Two kinds of code are deliberately outside the linter.
-#  1. The v1 dissertation record. It is frozen as defended; see AGENTS.md.
-#  2. v2 files whose bytes are hashed in committed result records
-#     (experiments/records.lock.json). Reformatting them would break the link between
-#     a record and the code that produced it. Lint them when a record is regenerated.
+# The v1 dissertation record is outside the linter. It is frozen as defended, and three of
+# its files are hashed in the v1 confirmatory record (experiments/records.lock.json).
+# All v2 code is linted and formatted; when a frozen v2 file changes, its records are
+# regenerated in the same change (AGENTS.md, "Changing frozen code").
 extend-exclude = [
     "chapter4Experiments", "chapter5Experiments", "chapter6Experiments", "chapter7Experiments",
     "defense_figures", "validation", "dissertation", "pictures",
@@ -56,19 +55,23 @@ extend-exclude = [
     "experiments/ablation", "experiments/confirmatory", "experiments/external",
     "experiments/interpretability", "experiments/novel",
     "scripts/make_release_manifest.py",
-    "arspinet_v2/controls.py", "arspinet_v2/dynamics.py", "arspinet_v2/evaluation.py",
-    "arspinet_v2/features.py", "arspinet_v2/nuisance.py", "arspinet_v2/reservoir.py",
-    "experiments/v2/data.py", "experiments/v2/data_baseline.py",
-    "experiments/v2/run_v2_validation.py", "experiments/v2/run_v2_baseline_input.py",
-    "experiments/v2/run_v2_pca_tuned.py", "experiments/v2/run_v2_depression.py",
-    "experiments/v2/run_v2_normalization_check.py",
-    "experiments/zscore_artifact/run_erpcore.py",
-    "experiments/zscore_artifact/run_erpcore_across_null.py",
 ]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]
-ignore = ["E501"]   # line length is handled by the formatter where it is applied
+ignore = ["E501"]   # line length is the formatter's job
+
+[tool.ruff.lint.per-file-ignores]
+# Experiment scripts put the repository on sys.path before importing from it.
+"experiments/**" = ["E402"]
+"tests/**" = ["E402"]
+
+[tool.mypy]
+files = ["arspinet_v2"]
+python_version = "3.11"
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
 
 [tool.ruff.lint.isort]
 known-first-party = ["arspinet_v2"]

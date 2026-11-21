@@ -4,6 +4,7 @@ The real run needs the restricted SHAPE files and takes hours. This drives the s
 stage functions with a small synthetic cohort and shrunken grids, so a refactor that
 breaks the pipeline is caught without data. It checks structure and sanity, not values.
 """
+
 import json
 import subprocess
 import sys
@@ -14,9 +15,20 @@ from conftest import make_cohort
 
 pytestmark = pytest.mark.slow
 
-STAGES = ("v1_reproduction", "rho_sweep_shared_reservoir", "representations", "contrasts", "seeds",
-          "windows_ms", "time_resolved_decoding", "destruction_controls", "compressors",
-          "compressor_contrasts", "variance_components", "permutation")
+STAGES = (
+    "v1_reproduction",
+    "rho_sweep_shared_reservoir",
+    "representations",
+    "contrasts",
+    "seeds",
+    "windows_ms",
+    "time_resolved_decoding",
+    "destruction_controls",
+    "compressors",
+    "compressor_contrasts",
+    "variance_components",
+    "permutation",
+)
 
 
 @pytest.fixture(scope="module")
@@ -31,8 +43,9 @@ def synthetic_run():
     try:
         raw, y, g = make_cohort(n_subj=30, n_ch=4, seed=11)
         fm = v2.fading_memory(raw)
-        gran = v2.run_granularity("three_condition", raw, y, g, fm["selected_rho"], cache=None,
-                                  n_perm=19, jobs=1, n_var_perm=20)
+        gran = v2.run_granularity(
+            "three_condition", raw, y, g, fm["selected_rho"], cache=None, n_perm=19, jobs=1, n_var_perm=20
+        )
     finally:
         mp.undo()
     return v2, fm, gran
@@ -64,14 +77,27 @@ def test_every_stage_reports(synthetic_run):
 
 def test_report_renders_whatever_the_runner_emits(synthetic_run, tmp_path):
     v2, fm, gran = synthetic_run
-    record = {"version": "test", "fading_memory": fm, "granularities": {"three_condition": gran},
-              "protocol": {"cv": "synthetic", "readout": "synthetic", "intervals": "synthetic"},
-              "provenance": {"generated_utc": "n/a", "git_commit": "0" * 40, "python": "n/a",
-                             "numpy": np.__version__, "scipy": "n/a", "scikit_learn": "n/a",
-                             "input_file_counts": {"data3": 0, "data4": 0}}}
+    record = {
+        "version": "test",
+        "fading_memory": fm,
+        "granularities": {"three_condition": gran},
+        "protocol": {"cv": "synthetic", "readout": "synthetic", "intervals": "synthetic"},
+        "provenance": {
+            "generated_utc": "n/a",
+            "git_commit": "0" * 40,
+            "python": "n/a",
+            "numpy": np.__version__,
+            "scipy": "n/a",
+            "scikit_learn": "n/a",
+            "input_file_counts": {"data3": 0, "data4": 0},
+        },
+    }
     src, dst = tmp_path / "r.json", tmp_path / "r.md"
     src.write_text(json.dumps(record))
-    subprocess.run([sys.executable, v2._REPO + "/experiments/v2/make_report.py", str(src), str(dst)],
-                   check=True, capture_output=True)
+    subprocess.run(
+        [sys.executable, v2._REPO + "/experiments/v2/make_report.py", str(src), str(dst)],
+        check=True,
+        capture_output=True,
+    )
     text = dst.read_text()
     assert "## 4. Representations and matched controls" in text and "## 10." in text

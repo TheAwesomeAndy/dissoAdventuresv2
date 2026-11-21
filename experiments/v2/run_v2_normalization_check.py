@@ -17,6 +17,7 @@ If early-latency decoding is far above chance under ``epoch_z`` and at chance un
     python experiments/v2/run_v2_normalization_check.py --data3 ./batch_data \
         --out experiments/v2/v2_normalization_check.json
 """
+
 import argparse
 import json
 import os
@@ -30,9 +31,20 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 sys.path.insert(0, os.path.abspath(os.path.join(_HERE, "..", "..")))
 
-import data as shape_data  # noqa: E402
-from arspinet_v2 import features  # noqa: E402
-from arspinet_v2 import evaluation as ev  # noqa: E402
+from arspinet_v2 import evaluation as ev
+from arspinet_v2 import features
+from arspinet_v2 import provenance as prov
+
+import data as shape_data
+
+_REPO = os.path.abspath(os.path.join(_HERE, "..", ".."))
+CODE_FILES = [
+    "experiments/v2/run_v2_normalization_check.py",
+    "experiments/v2/data.py",
+    "experiments/confirmatory/run_confirmatory_validation.py",
+    "arspinet_v2/features.py",
+    "arspinet_v2/evaluation.py",
+]
 
 LABELS = {"Neg": 0, "Neu": 1, "Pos": 2}
 EXCLUDED = {127}
@@ -49,7 +61,7 @@ def load_baseline_only(data_dir):
     X, y, g = [], [], []
     for sid in sorted({s for s, _ in found}):
         for cond in ("Neg", "Neu", "Pos"):
-            x = np.loadtxt(found[(sid, cond)])[205:205 + 1024]
+            x = np.loadtxt(found[(sid, cond)])[205 : 205 + 1024]
             X.append(np.column_stack([decimate(x[:, c], 4, zero_phase=True) for c in range(x.shape[1])]))
             y.append(LABELS[cond])
             g.append(sid)
@@ -57,22 +69,33 @@ def load_baseline_only(data_dir):
 
 
 def profile(raw, y, g):
-    E = lambda X: ev.evaluate(X, y, g, base_seed=0)  # noqa: E731
+    def E(X):
+        return ev.evaluate(X, y, g, base_seed=0)
+
     bins = []
     for b, pattern in enumerate(features.time_resolved_patterns(raw, 32)):
         r = E(pattern)
         ci = ev.bootstrap_ci(r)
-        bins.append({"start_ms": round(b * 31.25, 1), "end_ms": round((b + 1) * 31.25, 1),
-                     "balanced_accuracy_percent": round(100 * r["balanced_accuracy"], 2),
-                     "ci95_percent": [round(100 * ci[0], 2), round(100 * ci[1], 2)]})
+        bins.append(
+            {
+                "start_ms": round(b * 31.25, 1),
+                "end_ms": round((b + 1) * 31.25, 1),
+                "balanced_accuracy_percent": round(100 * r["balanced_accuracy"], 2),
+                "ci95_percent": [round(100 * ci[0], 2), round(100 * ci[1], 2)],
+            }
+        )
     whole = {}
-    for name, X in (("raw_erp16", features.amplitude_bins(raw, 16).reshape(len(y), -1)),
-                    ("amplitude6", features.amplitude_bins(raw, 6).reshape(len(y), -1)),
-                    ("lpp_300_1000ms", features.lpp_mean_amplitude(raw))):
+    for name, X in (
+        ("raw_erp16", features.amplitude_bins(raw, 16).reshape(len(y), -1)),
+        ("amplitude6", features.amplitude_bins(raw, 6).reshape(len(y), -1)),
+        ("lpp_300_1000ms", features.lpp_mean_amplitude(raw)),
+    ):
         r = E(X)
         ci = ev.bootstrap_ci(r)
-        whole[name] = {"balanced_accuracy_percent": round(100 * r["balanced_accuracy"], 2),
-                       "ci95_percent": [round(100 * ci[0], 2), round(100 * ci[1], 2)]}
+        whole[name] = {
+            "balanced_accuracy_percent": round(100 * r["balanced_accuracy"], 2),
+            "ci95_percent": [round(100 * ci[0], 2), round(100 * ci[1], 2)],
+        }
     return {"time_resolved": bins, "whole_epoch": whole}
 
 
@@ -86,13 +109,29 @@ def main():
     raw_b, yb, gb = load_baseline_only(args.data3)
     assert np.array_equal(y, yb) and np.array_equal(g, gb)
     z = (raw_b - raw_b.mean(axis=1, keepdims=True)) / raw_b.std(axis=1, keepdims=True)
-    out = {"cohort": "three_condition", "n_participants": int(len(np.unique(g))), "chance_percent": 33.33,
-           "epoch_z_reconstruction_max_abs_error": float(np.abs(z - raw_z).max()),
-           "epoch_z": profile(raw_z, y, g), "baseline_only": profile(raw_b, y, g)}
+    out = {
+        "cohort": "three_condition",
+        "n_participants": int(len(np.unique(g))),
+        "chance_percent": 33.33,
+        "epoch_z_reconstruction_max_abs_error": float(np.abs(z - raw_z).max()),
+        "epoch_z": profile(raw_z, y, g),
+        "baseline_only": profile(raw_b, y, g),
+    }
     for k in ("epoch_z", "baseline_only"):
         t = out[k]["time_resolved"]
-        print(k, "0-31 ms", t[0]["balanced_accuracy_percent"], "| 31-62", t[1]["balanced_accuracy_percent"],
-              "| peak", max(b["balanced_accuracy_percent"] for b in t), out[k]["whole_epoch"])
+        print(
+            k,
+            "0-31 ms",
+            t[0]["balanced_accuracy_percent"],
+            "| 31-62",
+            t[1]["balanced_accuracy_percent"],
+            "| peak",
+            max(b["balanced_accuracy_percent"] for b in t),
+            out[k]["whole_epoch"],
+        )
+    out["provenance"] = prov.provenance(
+        _REPO, CODE_FILES, input_file_counts={"data3": prov.count_files(args.data3)}
+    )
     with open(args.out, "w") as fh:
         json.dump(out, fh, indent=2, sort_keys=True)
         fh.write("\n")

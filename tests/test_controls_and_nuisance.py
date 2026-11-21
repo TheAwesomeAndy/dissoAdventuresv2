@@ -1,4 +1,5 @@
 """arspinet_v2.controls and arspinet_v2.nuisance."""
+
 import numpy as np
 import pytest
 
@@ -19,7 +20,9 @@ def test_collapse_removes_timing_and_keeps_the_mean(code):
 def test_bin_shuffle_only_reorders_bins(code):
     shuffled = controls.shuffle_bins(code, np.random.RandomState(1))
     assert not np.array_equal(shuffled, code)
-    assert np.allclose(np.sort(_blocks(shuffled).sum(axis=3), axis=2), np.sort(_blocks(code).sum(axis=3), axis=2))
+    assert np.allclose(
+        np.sort(_blocks(shuffled).sum(axis=3), axis=2), np.sort(_blocks(code).sum(axis=3), axis=2)
+    )
 
 
 def test_fixed_bin_permutation_is_not_the_identity_and_changes_no_fit(code, cohort):
@@ -47,10 +50,12 @@ def test_controls_do_not_modify_their_input(code):
 
 def test_noise_has_no_variance_components(cohort):
     _, y, g = cohort
-    vc = nuisance.variance_components(np.random.RandomState(4).standard_normal((len(y), 300)), y, g, n_perm=200)
+    vc = nuisance.variance_components(
+        np.random.RandomState(4).standard_normal((len(y), 300)), y, g, n_perm=200
+    )
     assert abs(vc["fraction_subject"]) < 0.03 and abs(vc["fraction_condition"]) < 0.03
     assert vc["subject_p_value"] > 0.01 and vc["condition_p_value"] > 0.01
-    assert vc["uncalibrated_v1_style_ratio"] > 5        # the ratio v1 reported has no noise floor
+    assert vc["uncalibrated_v1_style_ratio"] > 5  # the ratio v1 reported has no noise floor
 
 
 def test_planted_subject_effect_is_recovered(cohort):
@@ -58,7 +63,7 @@ def test_planted_subject_effect_is_recovered(cohort):
     rng = np.random.RandomState(6)
     X = rng.standard_normal((len(y), 300)) + rng.standard_normal((len(np.unique(g)), 300))[g]
     vc = nuisance.variance_components(X, y, g, n_perm=200)
-    assert 0.4 < vc["fraction_subject"] < 0.6           # equal variances -> one half
+    assert 0.4 < vc["fraction_subject"] < 0.6  # equal variances -> one half
     assert vc["subject_p_value"] == pytest.approx(1 / 201)
     assert vc["fraction_subject"] + vc["fraction_condition"] + vc["fraction_residual"] == pytest.approx(1.0)
 

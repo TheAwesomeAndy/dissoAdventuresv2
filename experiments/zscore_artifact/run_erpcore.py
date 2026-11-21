@@ -36,6 +36,7 @@ Primary test, fixed in advance: mean accuracy over the pre-stimulus window (-200
 
     python experiments/zscore_artifact/run_erpcore.py --data ./erpcore --out erpcore_results.json
 """
+
 import argparse
 import json
 import os
@@ -51,10 +52,17 @@ from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-PARADIGMS = {"N170": (("faces, correct",), ("cars, correct",)),
-             "P3": (("rare",), ("frequent",))}
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.abspath(os.path.join(_HERE, "..", ".."))
+sys.path.insert(0, _REPO)
+
+from arspinet_v2 import provenance as prov
+
+CODE_FILES = ["experiments/zscore_artifact/run_erpcore.py"]
+
+PARADIGMS = {"N170": (("faces, correct",), ("cars, correct",)), "P3": (("rare",), ("frequent",))}
 N_SCALP = 28
-BIN = 4            # samples per decoding bin: 15.6 ms at 256 Hz
+BIN = 4  # samples per decoding bin: 15.6 ms at 256 Hz
 NORMS = ("none", "baseline_z", "epoch_z_full", "epoch_z_post")
 PRE = (-200.0, 0.0)
 
@@ -69,7 +77,11 @@ def load_participant(path_set):
     for e in np.atleast_1d(m.epoch):
         b = np.atleast_1d(e.eventbini)[0]
         bini.append(int(np.atleast_1d(b)[0]))
-    rej = np.asarray(m.reject.rejmanual, dtype=bool) if np.size(m.reject.rejmanual) else np.zeros(m.trials, bool)
+    rej = (
+        np.asarray(m.reject.rejmanual, dtype=bool)
+        if np.size(m.reject.rejmanual)
+        else np.zeros(m.trials, bool)
+    )
     return x, times, np.asarray(bini), rej, labels
 
 
@@ -96,7 +108,7 @@ def normalize(x, times, how):
 def binned(x):
     n, T, c = x.shape
     nb = T // BIN
-    return x[:, :nb * BIN].reshape(n, nb, BIN, c).mean(axis=2)
+    return x[:, : nb * BIN].reshape(n, nb, BIN, c).mean(axis=2)
 
 
 def bal_acc(y, p):
@@ -109,7 +121,9 @@ def within(xb, y, seed):
     for r in range(2):
         for tr, te in StratifiedKFold(5, shuffle=True, random_state=seed + r).split(xb[:, 0], y):
             for b in range(nb):
-                clf = make_pipeline(StandardScaler(), LinearDiscriminantAnalysis(solver="lsqr", shrinkage="auto"))
+                clf = make_pipeline(
+                    StandardScaler(), LinearDiscriminantAnalysis(solver="lsqr", shrinkage="auto")
+                )
                 clf.fit(xb[tr, b], y[tr])
                 acc[b] += bal_acc(y[te], clf.predict(xb[te, b])) / 10.0
     return acc
@@ -129,7 +143,7 @@ def across(avg, y, g, seed):
 
 
 def summarize(per_participant, centers):
-    A = np.asarray(per_participant)          # participants x bins
+    A = np.asarray(per_participant)  # participants x bins
     pre = (centers >= PRE[0]) & (centers < PRE[1])
     early = (centers >= 0) & (centers < 62.5)
     pre_vals = A[:, pre].mean(axis=1)
@@ -138,13 +152,19 @@ def summarize(per_participant, centers):
     mean = A.mean(axis=0)
     sem = A.std(axis=0, ddof=1) / np.sqrt(len(A))
     return {
-        "time_course": {"bin_center_ms": [round(float(c), 2) for c in centers],
-                        "mean_percent": [round(100 * float(v), 2) for v in mean],
-                        "sem_percent": [round(100 * float(v), 2) for v in sem]},
+        "time_course": {
+            "bin_center_ms": [round(float(c), 2) for c in centers],
+            "mean_percent": [round(100 * float(v), 2) for v in mean],
+            "sem_percent": [round(100 * float(v), 2) for v in sem],
+        },
         "prestimulus_mean_percent": round(100 * float(pre_vals.mean()), 2),
-        "prestimulus_ci95_percent": [round(100 * float(pre_vals.mean() - 1.96 * pre_vals.std(ddof=1) / np.sqrt(len(pre_vals))), 2),
-                                     round(100 * float(pre_vals.mean() + 1.96 * pre_vals.std(ddof=1) / np.sqrt(len(pre_vals))), 2)],
-        "prestimulus_t": round(float(t), 3), "prestimulus_p": float(p), "prestimulus_wilcoxon_p": float(w.pvalue),
+        "prestimulus_ci95_percent": [
+            round(100 * float(pre_vals.mean() - 1.96 * pre_vals.std(ddof=1) / np.sqrt(len(pre_vals))), 2),
+            round(100 * float(pre_vals.mean() + 1.96 * pre_vals.std(ddof=1) / np.sqrt(len(pre_vals))), 2),
+        ],
+        "prestimulus_t": round(float(t), 3),
+        "prestimulus_p": float(p),
+        "prestimulus_wilcoxon_p": float(w.pvalue),
         "prestimulus_participants_above_50": int((pre_vals > 0.5).sum()),
         "first_62ms_mean_percent": round(100 * float(A[:, early].mean()), 2),
         "peak_percent": round(100 * float(mean.max()), 2),
@@ -157,10 +177,16 @@ def main():
     ap.add_argument("--data", required=True, help="folder with N170/<id>/<id>_N170_ar.set and P3/<id>/...")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
-    out = {"design": {"normalizations": list(NORMS), "bin_ms": 1000.0 * BIN / 256, "prestimulus_window_ms": list(PRE),
-                      "primary_test": "within regime: participant mean accuracy over -200 to 0 ms, one-sample t-test vs 50%",
-                      "source": "ERP CORE (Kappenman et al. 2021, NeuroImage 225:117465), doi:10.18115/D5JW4R"},
-           "paradigms": {}}
+    out = {
+        "design": {
+            "normalizations": list(NORMS),
+            "bin_ms": 1000.0 * BIN / 256,
+            "prestimulus_window_ms": list(PRE),
+            "primary_test": "within regime: participant mean accuracy over -200 to 0 ms, one-sample t-test vs 50%",
+            "source": "ERP CORE (Kappenman et al. 2021, NeuroImage 225:117465), doi:10.18115/D5JW4R",
+        },
+        "paradigms": {},
+    }
     for para, (ka, kb) in PARADIGMS.items():
         root = os.path.join(args.data, para)
         sids = sorted((d for d in os.listdir(root) if d.isdigit()), key=int)
@@ -174,7 +200,7 @@ def main():
             keep = ~rej & np.isin(bini, (a, b))
             x, y = x[keep], (bini[keep] == b).astype(int)
             counts.append([int((y == 0).sum()), int((y == 1).sum())])
-            tb = times[:(len(times) // BIN) * BIN].reshape(-1, BIN).mean(axis=1)
+            tb = times[: (len(times) // BIN) * BIN].reshape(-1, BIN).mean(axis=1)
             centers = tb
             for n in NORMS:
                 xb = binned(normalize(x, times, n))
@@ -184,25 +210,44 @@ def main():
             ys += [0, 1]
             gs += [int(sid), int(sid)]
         y_, g_ = np.asarray(ys), np.asarray(gs)
-        P = {"n_participants": len(sids), "contrast": [ka[0], kb[0]],
-             "trials_per_class_median": [int(np.median([c[0] for c in counts])), int(np.median([c[1] for c in counts]))],
-             "within": {}, "across": {}}
+        P = {
+            "n_participants": len(sids),
+            "contrast": [ka[0], kb[0]],
+            "trials_per_class_median": [
+                int(np.median([c[0] for c in counts])),
+                int(np.median([c[1] for c in counts])),
+            ],
+            "within": {},
+            "across": {},
+        }
         for n in NORMS:
             P["within"][n] = summarize(W[n], centers)
             acc = across(np.asarray(avgs[n]), y_, g_, seed=0)
             pre = (centers >= PRE[0]) & (centers < PRE[1])
-            P["across"][n] = {"time_course": {"bin_center_ms": [round(float(c), 2) for c in centers],
-                                              "accuracy_percent": [round(100 * float(v), 2) for v in acc]},
-                              "prestimulus_mean_percent": round(100 * float(acc[pre].mean()), 2),
-                              "first_62ms_mean_percent": round(100 * float(acc[(centers >= 0) & (centers < 62.5)].mean()), 2),
-                              "peak_percent": round(100 * float(acc.max()), 2)}
+            P["across"][n] = {
+                "time_course": {
+                    "bin_center_ms": [round(float(c), 2) for c in centers],
+                    "accuracy_percent": [round(100 * float(v), 2) for v in acc],
+                },
+                "prestimulus_mean_percent": round(100 * float(acc[pre].mean()), 2),
+                "first_62ms_mean_percent": round(
+                    100 * float(acc[(centers >= 0) & (centers < 62.5)].mean()), 2
+                ),
+                "peak_percent": round(100 * float(acc.max()), 2),
+            }
             w = P["within"][n]
-            print(f"[{time.strftime('%H:%M:%S')}] {para} {n:13s} within: pre {w['prestimulus_mean_percent']:.1f} "
-                  f"{w['prestimulus_ci95_percent']} t {w['prestimulus_t']:.2f} p {w['prestimulus_p']:.2g} "
-                  f"({w['prestimulus_participants_above_50']}/{len(sids)} above 50) 0-62 {w['first_62ms_mean_percent']:.1f} "
-                  f"peak {w['peak_percent']:.1f}@{w['peak_ms']:.0f} | across: pre {P['across'][n]['prestimulus_mean_percent']:.1f} "
-                  f"0-62 {P['across'][n]['first_62ms_mean_percent']:.1f} peak {P['across'][n]['peak_percent']:.1f}", flush=True)
+            print(
+                f"[{time.strftime('%H:%M:%S')}] {para} {n:13s} within: pre {w['prestimulus_mean_percent']:.1f} "
+                f"{w['prestimulus_ci95_percent']} t {w['prestimulus_t']:.2f} p {w['prestimulus_p']:.2g} "
+                f"({w['prestimulus_participants_above_50']}/{len(sids)} above 50) 0-62 {w['first_62ms_mean_percent']:.1f} "
+                f"peak {w['peak_percent']:.1f}@{w['peak_ms']:.0f} | across: pre {P['across'][n]['prestimulus_mean_percent']:.1f} "
+                f"0-62 {P['across'][n]['first_62ms_mean_percent']:.1f} peak {P['across'][n]['peak_percent']:.1f}",
+                flush=True,
+            )
         out["paradigms"][para] = P
+        out["provenance"] = prov.provenance(
+            _REPO, CODE_FILES, input_file_counts={"set_files": prov.count_files(args.data, ".set")}
+        )
         with open(args.out, "w") as fh:
             json.dump(out, fh, indent=2, sort_keys=True)
             fh.write("\n")

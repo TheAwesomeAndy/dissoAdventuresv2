@@ -3,7 +3,9 @@
 These tests need no data. They guard the link between records, the code that produced
 them and the numbers quoted in prose, which is where this repository drifted before.
 """
+
 import json
+import os
 import re
 import subprocess
 import sys
@@ -28,8 +30,9 @@ def test_records_and_frozen_code_match_the_lock(lock):
 
 @pytest.mark.history
 def test_frozen_code_is_recoverable_from_git(lock, repo):
-    shallow = subprocess.run(["git", "-C", str(repo), "rev-parse", "--is-shallow-repository"],
-                             capture_output=True, text=True).stdout.strip()
+    shallow = subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--is-shallow-repository"], capture_output=True, text=True
+    ).stdout.strip()
     if shallow != "false":
         pytest.skip("needs full git history")
     assert check_records.check(lock, use_history=True) == []
@@ -39,32 +42,55 @@ def test_frozen_code_is_recoverable_from_git(lock, repo):
 
 
 def test_every_record_json_in_the_v2_trees_is_locked(lock, repo):
-    found = {str(p.relative_to(repo)) for d in ("experiments/v2", "experiments/zscore_artifact")
-             for p in (repo / d).glob("*.json")}
+    found = {
+        str(p.relative_to(repo))
+        for d in ("experiments/v2", "experiments/zscore_artifact")
+        for p in (repo / d).glob("*.json")
+    }
     assert found <= set(lock["records"]), f"unlocked records: {sorted(found - set(lock['records']))}"
 
 
 def test_lock_entries_are_complete(lock, repo):
     for name, rec in lock["records"].items():
-        assert {"produced_by", "command", "data", "tier", "provenance", "code_commit", "sha256",
-                "code_sha256"} <= set(rec), name
+        assert {
+            "produced_by",
+            "command",
+            "data",
+            "tier",
+            "provenance",
+            "code_commit",
+            "sha256",
+            "code_sha256",
+        } <= set(rec), name
         assert (repo / rec["produced_by"]).exists(), name
         assert rec["produced_by"] in rec["code_sha256"], name
         assert rec["produced_by"] in rec["command"], name
 
 
-def test_frozen_files_are_excluded_from_the_linter(lock, repo):
-    """A frozen file must not be reformatted, so it must be outside ruff's reach."""
-    import tomllib
-    excluded = tomllib.loads((repo / "pyproject.toml").read_text())["tool"]["ruff"]["extend-exclude"]
-    for f in check_records.frozen_files(lock):
-        assert any(f == e or f.startswith(e.rstrip("/") + "/") for e in excluded), f
+def test_no_record_awaits_regeneration_on_main(lock, repo):
+    """A record may be pending while its rerun is in progress on a branch. Never on main."""
+    branch = (
+        os.environ.get("GITHUB_REF_NAME")
+        or subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
+        ).stdout.strip()
+    )
+    if branch == "main":
+        assert check_records.pending(lock) == []
 
 
 def test_v2_results_report_is_generated_from_the_record(repo, tmp_path):
     out = tmp_path / "V2_RESULTS.md"
-    subprocess.run([sys.executable, str(repo / "experiments/v2/make_report.py"),
-                    str(repo / "experiments/v2/v2_results.json"), str(out)], check=True, capture_output=True)
+    subprocess.run(
+        [
+            sys.executable,
+            str(repo / "experiments/v2/make_report.py"),
+            str(repo / "experiments/v2/v2_results.json"),
+            str(out),
+        ],
+        check=True,
+        capture_output=True,
+    )
     assert out.read_text() == (repo / "experiments/v2/V2_RESULTS.md").read_text()
 
 
@@ -83,7 +109,7 @@ def test_v2_reproduces_the_v1_confirmatory_record(v2, repo):
         assert a["per_repeat_percent"] == b["per_repeat_percent"]
         raw_v2 = v2["granularities"][name]["representations"]["raw_erp16"]["balanced_accuracy_percent"]
         raw_v1 = v1["granularities"][name]["representations"]["raw_erp16"]["balanced_accuracy_percent"]
-        assert abs(raw_v2 - raw_v1) < 0.5                    # same features, row-space vs direct fit
+        assert abs(raw_v2 - raw_v1) < 0.5  # same features, row-space vs direct fit
 
 
 def test_headline_gain_is_the_one_the_rule_selected(v2):
@@ -108,10 +134,15 @@ def test_numbers_quoted_in_v2_upgrade_come_from_the_records(v2, repo):
     expected = []
     for g in (g3, g4):
         r, c = g["representations"], g["contrasts"]
-        expected += [_fmt(g["v1_reproduction"]["v1_estimator_direct_fit"]), _fmt(r["v2_headline_bsc6_srp64"]),
-                     _fmt(r["amplitude6_matched_bins"]), _fmt(r["raw_erp16"]),
-                     _fmt(r["lpp_300_1000ms_per_electrode"]),
-                     _pp(c["headline_minus_amplitude6"]).replace("+-", "-"), _pp(c["raw_erp16_minus_headline"])]
+        expected += [
+            _fmt(g["v1_reproduction"]["v1_estimator_direct_fit"]),
+            _fmt(r["v2_headline_bsc6_srp64"]),
+            _fmt(r["amplitude6_matched_bins"]),
+            _fmt(r["raw_erp16"]),
+            _fmt(r["lpp_300_1000ms_per_electrode"]),
+            _pp(c["headline_minus_amplitude6"]).replace("+-", "-"),
+            _pp(c["raw_erp16_minus_headline"]),
+        ]
         s = g["seeds"]["reservoir_seeds_rho0.025"]
         expected.append(f"{s['mean']:.1f}% (sd {s['sd']:.2f})")
     for name in ("three_condition", "four_category"):
@@ -140,9 +171,12 @@ def test_readme_table_comes_from_the_records(v2, repo):
     rows = {
         "Raw ERP, 16 time bins": [acc(g, "raw_erp16") for g in (g3, g4)],
         "Six-bin amplitudes, no reservoir": [acc(g, "amplitude6_matched_bins") for g in (g3, g4)],
-        "v2 reservoir code, mean of 10 weight draws": [g["seeds"]["reservoir_seeds_rho0.025"]["mean"] for g in (g3, g4)],
-        "v1 reservoir configuration": [g["v1_reproduction"]["v1_estimator_direct_fit"]["balanced_accuracy_percent"]
-                                       for g in (g3, g4)],
+        "v2 reservoir code, mean of 10 weight draws": [
+            g["seeds"]["reservoir_seeds_rho0.025"]["mean"] for g in (g3, g4)
+        ],
+        "v1 reservoir configuration": [
+            g["v1_reproduction"]["v1_estimator_direct_fit"]["balanced_accuracy_percent"] for g in (g3, g4)
+        ],
         "LPP mean amplitude, 300 to 1000 ms": [acc(g, "lpp_300_1000ms_per_electrode") for g in (g3, g4)],
         "Band power and Hjorth features": [acc(g, "conventional") for g in (g3, g4)],
     }

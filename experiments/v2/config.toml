@@ -1,0 +1,29 @@
+# Parameters of the v2 experiments. The runners read this file; nothing here is
+# duplicated in code. It is hashed into every record it shapes, so changing a value
+# means regenerating that record (see AGENTS.md, "Changing frozen code").
+
+[validation]
+# Recurrent gains swept. The headline gain is the largest that passes the
+# fading-memory rule in arspinet_v2/dynamics.py; it is never chosen on accuracy.
+rho_grid = [0.0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9]
+reservoir_seeds = [42, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+projection_seeds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+# Label-free sample of single-electrode sequences for the dynamics tests.
+dynamics_sample_seed = 2026
+dynamics_n_sequences = 300
+
+[validation.base_seed]
+# v1 values, so v2 uses v1's cross-validation splits.
+three_condition = 0
+four_category = 100
+
+[pca_tuned]
+c_grid = [1e-4, 1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0]
+inner_folds = 4
+
+[depression]
+# SCID-5 variables in the order the source laboratory suggested. This fixes the family
+# of tests before any is run.
+targets = ["MDE", "MDD", "Depression_Type", "MDD_Recurrent"]
+repeats = 5
+folds = 5

@@ -24,11 +24,11 @@ The v1-style ``epoch_z`` input is included for the window comparison.
     python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories \
         --cache ./v2_cache --out experiments/v2/v2_baseline_input.json
 """
+
 import argparse
 import json
 import os
 import sys
-import time
 
 import numpy as np
 
@@ -36,11 +36,12 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, _HERE)
 sys.path.insert(0, os.path.abspath(os.path.join(_HERE, "..", "..")))
 
-import data as shape_data  # noqa: E402
-import data_baseline  # noqa: E402
-import run_v2_validation as v2  # noqa: E402
-from arspinet_v2 import features, reservoir  # noqa: E402
-from arspinet_v2 import evaluation as ev  # noqa: E402
+from arspinet_v2 import evaluation as ev
+from arspinet_v2 import features, reservoir
+
+import data as shape_data
+import data_baseline
+import run_v2_validation as v2
 
 WINDOWS_MS = {"0-62ms": (0, 62.5), **features.WINDOWS_MS}
 SEEDS = v2.RESERVOIR_SEEDS
@@ -48,7 +49,8 @@ SEEDS = v2.RESERVOIR_SEEDS
 
 def inputs_for(name, args, scale):
     raw_uv, bsd, y, g = data_baseline.load_baseline_referenced(
-        name, args.data3 if name == "three_condition" else args.data4, args.cache)
+        name, args.data3 if name == "three_condition" else args.data4, args.cache
+    )
     rz, yz, gz = shape_data.load(args.data3, args.data4, args.cache)[name]
     if not (np.array_equal(y, yz) and np.array_equal(g, gz)):
         raise RuntimeError("cohort order differs from the v1 loader")
@@ -65,10 +67,17 @@ def main():
 
     raw3_uv, _, _, _ = data_baseline.load_baseline_referenced("three_condition", args.data3, args.cache)
     scale = float(raw3_uv.std())
-    out = {"design": {"inputs": ["baseline_z", "global_scale", "epoch_z (v1, windows only)"],
-                      "global_scale_uv": scale, "rho_grid": list(v2.RHO_GRID), "reservoir_seeds": list(SEEDS),
-                      "fading_memory_rule": v2.dynamics.RULE},
-           "fading_memory": {}, "granularities": {}}
+    out = {
+        "design": {
+            "inputs": ["baseline_z", "global_scale", "epoch_z (v1, windows only)"],
+            "global_scale_uv": scale,
+            "rho_grid": list(v2.RHO_GRID),
+            "reservoir_seeds": list(SEEDS),
+            "fading_memory_rule": v2.dynamics.RULE,
+        },
+        "fading_memory": {},
+        "granularities": {},
+    }
     inp3, _, _ = inputs_for("three_condition", args, scale)
     rho_epoch_z = json.load(open(os.path.join(_HERE, "v2_results.json")))["fading_memory"]["selected_rho"]
     rho, outcome = {"epoch_z": rho_epoch_z}, {}
@@ -82,41 +91,64 @@ def main():
         else:
             rho[k], outcome[k] = fm["selected_rho"], "selected by the fading-memory rule"
         s0 = fm["sweep_seed42"][0]
-        v2.log(f"{k}: rho {rho[k]} ({outcome[k]}); input SD {inp3[k].std():.2f}; at rho 0: "
-               f"ESP converged {s0['esp_converged_fraction']:.2f}, disagreement {s0['esp_mean_disagreement']:.3f}, "
-               f"reliability {s0['reliability_median_r']:.4f}")
+        v2.log(
+            f"{k}: rho {rho[k]} ({outcome[k]}); input SD {inp3[k].std():.2f}; at rho 0: "
+            f"ESP converged {s0['esp_converged_fraction']:.2f}, disagreement {s0['esp_mean_disagreement']:.3f}, "
+            f"reliability {s0['reliability_median_r']:.4f}"
+        )
     out["selected_rho"], out["rule_outcome"] = rho, outcome
     del inp3
 
     for name in ("three_condition", "four_category"):
         inp, y, g = inputs_for(name, args, scale)
         base = v2.BASE_SEED[name]
-        E = lambda X: ev.evaluate(X, y, g, base_seed=base)  # noqa: E731
+
+        def E(X, y=y, g=g, base=base):
+            return ev.evaluate(X, y, g, base_seed=base)
+
         srp = features.make_srp(6 * reservoir.N_RES)
         G = {}
         for k in ("baseline_z", "global_scale"):
             raw = inp[k]
             enc = v2.Encoder(f"{name}_{k}", raw, args.cache)
             r_sel = rho[k]
-            ev_ = {"reservoir_selected_rho": E(features.project(enc.code(r_sel), srp)),
-                   "reservoir_no_recurrence": E(features.project(enc.code(0.0), srp)),
-                   "reservoir_v1_gain": E(features.project(enc.code(reservoir.V1_RHO), srp)),
-                   "reservoir_epoch_z_gain": E(features.project(enc.code(rho_epoch_z), srp)),
-                   "amplitude6_matched_bins": E(features.amplitude_bins(raw, 6).reshape(len(y), -1)),
-                   "raw_erp16": E(features.amplitude_bins(raw, 16).reshape(len(y), -1))}
+            ev_ = {
+                "reservoir_selected_rho": E(features.project(enc.code(r_sel), srp)),
+                "reservoir_no_recurrence": E(features.project(enc.code(0.0), srp)),
+                "reservoir_v1_gain": E(features.project(enc.code(reservoir.V1_RHO), srp)),
+                "reservoir_epoch_z_gain": E(features.project(enc.code(rho_epoch_z), srp)),
+                "amplitude6_matched_bins": E(features.amplitude_bins(raw, 6).reshape(len(y), -1)),
+                "raw_erp16": E(features.amplitude_bins(raw, 16).reshape(len(y), -1)),
+            }
             rec = {"selected_rho": r_sel, "representations": {kk: v2.record(v) for kk, v in ev_.items()}}
             rec["contrasts"] = {
-                "reservoir_minus_amplitude6": v2.contrast(ev_["reservoir_selected_rho"], ev_["amplitude6_matched_bins"]),
-                "reservoir_minus_no_recurrence": v2.contrast(ev_["reservoir_selected_rho"], ev_["reservoir_no_recurrence"]),
-                "reservoir_minus_v1_gain": v2.contrast(ev_["reservoir_selected_rho"], ev_["reservoir_v1_gain"]),
+                "reservoir_minus_amplitude6": v2.contrast(
+                    ev_["reservoir_selected_rho"], ev_["amplitude6_matched_bins"]
+                ),
+                "reservoir_minus_no_recurrence": v2.contrast(
+                    ev_["reservoir_selected_rho"], ev_["reservoir_no_recurrence"]
+                ),
+                "reservoir_minus_v1_gain": v2.contrast(
+                    ev_["reservoir_selected_rho"], ev_["reservoir_v1_gain"]
+                ),
                 "raw_erp16_minus_reservoir": v2.contrast(ev_["raw_erp16"], ev_["reservoir_selected_rho"]),
             }
             for kk, v in rec["representations"].items():
                 v2.log(f"{name} {k:12s} {kk:26s} {v['balanced_accuracy_percent']:.1f} {v['ci95_percent']}")
-            vals = [v2.pct(E(features.project(enc.code(r_sel, seed=s), srp))["balanced_accuracy"]) for s in SEEDS]
-            rec["reservoir_seeds"] = {"seeds": list(SEEDS), "percent": vals, "mean": round(float(np.mean(vals)), 4),
-                                      "sd": round(float(np.std(vals, ddof=1)), 4), "min": min(vals), "max": max(vals)}
-            v2.log(f"{name} {k:12s} seeds mean {rec['reservoir_seeds']['mean']:.1f} sd {rec['reservoir_seeds']['sd']:.2f}")
+            vals = [
+                v2.pct(E(features.project(enc.code(r_sel, seed=s), srp))["balanced_accuracy"]) for s in SEEDS
+            ]
+            rec["reservoir_seeds"] = {
+                "seeds": list(SEEDS),
+                "percent": vals,
+                "mean": round(float(np.mean(vals)), 4),
+                "sd": round(float(np.std(vals, ddof=1)), 4),
+                "min": min(vals),
+                "max": max(vals),
+            }
+            v2.log(
+                f"{name} {k:12s} seeds mean {rec['reservoir_seeds']['mean']:.1f} sd {rec['reservoir_seeds']['sd']:.2f}"
+            )
             G[k] = rec
         win = {}
         for k in ("baseline_z", "global_scale", "epoch_z"):
@@ -129,15 +161,19 @@ def main():
                     "reservoir": v2.record(E(features.project(enc.code(rho[k], tag=w, raw=xw), srp))),
                     "amplitude6": v2.record(E(features.amplitude_bins(xw, 6).reshape(len(y), -1))),
                 }
-            v2.log(f"{name} windows {k:12s} " + " ".join(
-                f"{w}:{v['reservoir']['balanced_accuracy_percent']:.1f}/{v['amplitude6']['balanced_accuracy_percent']:.1f}"
-                for w, v in win[k].items()))
+            v2.log(
+                f"{name} windows {k:12s} "
+                + " ".join(
+                    f"{w}:{v['reservoir']['balanced_accuracy_percent']:.1f}/{v['amplitude6']['balanced_accuracy_percent']:.1f}"
+                    for w, v in win[k].items()
+                )
+            )
         G["windows_ms"] = win
         G["chance_percent"] = round(100.0 / len(np.unique(y)), 4)
         out["granularities"][name] = G
-        out["provenance"] = v2.provenance(args)
-        for f in ("experiments/v2/run_v2_baseline_input.py", "experiments/v2/data_baseline.py"):
-            out["provenance"]["code_sha256"][f] = v2._sha(os.path.join(v2._REPO, f))
+        out["provenance"] = v2.provenance(
+            args, extra_code=("experiments/v2/run_v2_baseline_input.py", "experiments/v2/data_baseline.py")
+        )
         with open(args.out, "w") as fh:
             json.dump(out, fh, indent=2, sort_keys=True)
             fh.write("\n")
