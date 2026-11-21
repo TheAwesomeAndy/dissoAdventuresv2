@@ -74,7 +74,7 @@ class LIFReservoir:
         mem = np.zeros((B, N)) if mem0 is None else np.array(mem0, dtype=np.float64)
         spike = np.zeros((B, N))
         w_rec_t = self.w_rec.T if (self.w_rec is not None and use_recurrence and self.spiking) else None
-        out = {}
+        out: dict[str, np.ndarray] = {}
         if n_bins:
             bin_size = T // n_bins
             if bin_size < 1:
