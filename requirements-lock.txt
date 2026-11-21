@@ -1,0 +1,14 @@
+# Exact environment that produced the committed v2 and z-scoring records
+# (experiments/v2/*.json, experiments/zscore_artifact/*.json), Python 3.13.18, Linux x86-64.
+# The v1 confirmatory record lists its own environment in its provenance block.
+# Install with:  pip install -r requirements-lock.txt && pip install -e . --no-deps
+numpy==2.5.3
+scipy==1.18.1
+scikit-learn==1.9.1
+joblib==1.6.0
+threadpoolctl==3.8.0
+# figures, v1 scripts, validators
+pandas==3.0.5
+matplotlib==3.11.2
+# reading the SCID-5 spreadsheet (experiments/v2/run_v2_depression.py)
+openpyxl==3.1.5

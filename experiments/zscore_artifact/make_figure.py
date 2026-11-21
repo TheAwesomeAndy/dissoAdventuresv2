@@ -7,6 +7,7 @@ import json
 import sys
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
@@ -30,8 +31,8 @@ def main():
                 y = tc["mean_percent"] if regime == "within" else tc["accuracy_percent"]
                 ax.plot(t, y, color=col, ls=ls, lw=1.6, label=lab)
                 if regime == "within":
-                    lo = [a - 1.96 * s for a, s in zip(y, tc["sem_percent"])]
-                    hi = [a + 1.96 * s for a, s in zip(y, tc["sem_percent"])]
+                    lo = [a - 1.96 * s for a, s in zip(y, tc["sem_percent"], strict=True)]
+                    hi = [a + 1.96 * s for a, s in zip(y, tc["sem_percent"], strict=True)]
                     ax.fill_between(t, lo, hi, color=col, alpha=0.12, lw=0)
             ax.axvspan(-200, 0, color="0.9", zorder=0)
             ax.axhline(50, color="0.4", lw=0.8)

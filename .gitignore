@@ -49,3 +49,10 @@ experiments/external/external_data/
 *.dat
 *.vhdr
 *.vmrk
+
+# Packaging
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/

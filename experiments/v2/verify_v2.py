@@ -51,7 +51,8 @@ def main():
     raw, y, g = synthetic_cohort()
 
     print("Reservoir")
-    from experiment_zero import LIFReservoir as V1Reservoir, bsc6_encode
+    from experiment_zero import LIFReservoir as V1Reservoir
+    from experiment_zero import bsc6_encode
     pc = reservoir.encode(raw[:6], rho=0.9, seed=42, shared=False)
     ref = np.stack([[bsc6_encode(V1Reservoir(seed=42 + ch * 17).forward(raw[i, :, ch]))
                      for ch in range(raw.shape[2])] for i in range(6)])
@@ -111,7 +112,7 @@ def main():
     fast = ev._boot_ba(row, w)
     slow = []
     for b in range(50):
-        idx = np.concatenate([np.flatnonzero(g == u) for u, k in zip(np.unique(g), w[b]) for _ in range(int(k))])
+        idx = np.concatenate([np.flatnonzero(g == u) for u, k in zip(np.unique(g), w[b], strict=True) for _ in range(int(k))])
         slow.append(np.mean([(row["pred"][:, idx][:, y[idx] == c] == c).mean() for c in np.unique(y)]))
     check("vectorized participant bootstrap equals explicit resampling", np.allclose(fast, slow))
     ci = ev.bootstrap_ci(row)

@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arspinet"
+description = "ARSPI-Net: a characterized spiking-reservoir measurement chain for multichannel EEG"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Andrew A. Lane" }]
+dynamic = ["version"]
+# Lower bounds are the versions CI installs. The exact versions that produced the
+# committed v2 records are in requirements-lock.txt.
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.13",
+    "scikit-learn>=1.5",
+    "joblib>=1.4",
+]
+
+[project.optional-dependencies]
+# v1 chapter scripts, figure generators and validators
+legacy = ["pandas>=2.2.3", "matplotlib>=3.9"]
+# reading the SCID-5 spreadsheet for experiments/v2/run_v2_depression.py
+clinical = ["pandas>=2.2.3", "openpyxl>=3.1"]
+dev = ["pytest>=8", "ruff>=0.6", "pandas>=2.2.3", "matplotlib>=3.9"]
+
+[tool.setuptools]
+packages = ["arspinet_v2"]
+
+[tool.setuptools.dynamic]
+version = { attr = "arspinet_v2.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: end-to-end smoke tests that take more than a few seconds",
+    "history: needs full git history (skipped in shallow clones)",
+]
+filterwarnings = ["ignore::sklearn.exceptions.ConvergenceWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+# Two kinds of code are deliberately outside the linter.
+#  1. The v1 dissertation record. It is frozen as defended; see AGENTS.md.
+#  2. v2 files whose bytes are hashed in committed result records
+#     (experiments/records.lock.json). Reformatting them would break the link between
+#     a record and the code that produced it. Lint them when a record is regenerated.
+extend-exclude = [
+    "chapter4Experiments", "chapter5Experiments", "chapter6Experiments", "chapter7Experiments",
+    "defense_figures", "validation", "dissertation", "pictures",
+    "experiments/chapter3", "experiments/ch5_4class", "experiments/ch6_ch7_3class",
+    "experiments/ablation", "experiments/confirmatory", "experiments/external",
+    "experiments/interpretability", "experiments/novel",
+    "scripts/make_release_manifest.py",
+    "arspinet_v2/controls.py", "arspinet_v2/dynamics.py", "arspinet_v2/evaluation.py",
+    "arspinet_v2/features.py", "arspinet_v2/nuisance.py", "arspinet_v2/reservoir.py",
+    "experiments/v2/data.py", "experiments/v2/data_baseline.py",
+    "experiments/v2/run_v2_validation.py", "experiments/v2/run_v2_baseline_input.py",
+    "experiments/v2/run_v2_pca_tuned.py", "experiments/v2/run_v2_depression.py",
+    "experiments/v2/run_v2_normalization_check.py",
+    "experiments/zscore_artifact/run_erpcore.py",
+    "experiments/zscore_artifact/run_erpcore_across_null.py",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]   # line length is handled by the formatter where it is applied
+
+[tool.ruff.lint.isort]
+known-first-party = ["arspinet_v2"]
