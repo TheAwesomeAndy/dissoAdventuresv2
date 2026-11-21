@@ -10,11 +10,13 @@ For the reasoning behind these choices and the list of known problems, see
 |---|---|---|---|
 | **v2 library** | `arspinet_v2/` | import it; add new modules | change the six existing modules without regenerating records |
 | **v2 and ongoing experiments** | `experiments/v2/`, `experiments/zscore_artifact/` | add runners and studies | edit a runner whose record is locked |
-| **v1 record** | everything else outside `tests/`, `scripts/`, `docs/` | read it, cite it, test against it | edit, move or "fix" it |
+| **v1 record** | everything else outside `tests/`, `scripts/`, `docs/` | read it, cite it, test against it | edit, move or "fix" it on your own initiative |
 
-The v1 record is the defended dissertation's code and its corrective audit. It contains
-known defects (`docs/REPOSITORY_AUDIT.md`, findings I3 to I7). They are documented, not
-repaired, because repairing them changes archived results.
+The v1 record is the defended dissertation's code and its corrective audit. The defects
+the 2026-11 audit confirmed in it were fixed at the owner's request, with a regression
+test each, and are logged in `docs/v1/DEFECT_FIXES.md` together with which outputs were
+and were not regenerated. Its protocol choices (for example PCA fitted before the split
+in the archived Chapter 5 analyses) are not defects and were left as they are.
 
 ## 2. The measurement chain
 
@@ -51,9 +53,11 @@ average. `y` holds condition labels and `groups` participant IDs, aligned with a
 | `arspinet_v2/evaluation.py` | Splits, readout, bootstrap, permutation test | `evaluate`, `bootstrap_ci`, `bootstrap_difference_ci`, `permutation_test` |
 | `arspinet_v2/controls.py` | Destruction controls on the code | `collapse`, `shuffle_bins`, `shuffle_electrodes` |
 | `arspinet_v2/nuisance.py` | Unbiased subject and condition variance components with nulls | `variance_components` |
+| `arspinet_v2/provenance.py` | Provenance blocks for records. Not frozen: it shapes metadata, not results | `provenance`, `strip_provenance` |
 
-The library has no I/O and no global state. Everything that reads data or writes
-records is in `experiments/`.
+The six analysis modules have no I/O and no global state. Everything that reads data or
+writes records is in `experiments/`. All of it is typed (`mypy` runs in CI), formatted
+and linted.
 
 It is installable (`pip install -e .`), so `import arspinet_v2` works from anywhere. The
 experiment scripts still insert the repository root into `sys.path`; that is harmless
@@ -80,9 +84,15 @@ in `experiments/records.lock.json` with the hashes of the files that produced it
 files are *frozen*: `python scripts/check_records.py --list-frozen` prints them.
 
 - Editing a frozen file fails `tests/test_records.py`.
-- The only way to change one is to rerun on the data, commit the new record, and run
-  `python scripts/check_records.py --update <record>`.
-- Frozen files are excluded from the linter in `pyproject.toml` for the same reason.
+- The only way to change one is to mark its records pending, rerun on the data, show
+  with `scripts/compare_records.py` what changed, commit the new record, and run
+  `python scripts/check_records.py --update <record>`. The steps are in `AGENTS.md`.
+- A record may be `pending_regeneration` on a branch. `--strict` and a test refuse that
+  state on `main`.
+- Every runner writes its provenance block through `arspinet_v2/provenance.py`: commit,
+  code hashes, whether the hashed code matches that commit, and the environment.
+- Runner parameters (gain grid, seeds, tuning grid, the depression family) are in
+  `experiments/v2/config.toml`, which is hashed into the records it shapes.
 
 Five older records are listed as `unverified_records`: their code changed after they
 were written, so only their own hash is checked.
@@ -129,10 +139,11 @@ several of those intermediate files have no committed producer
 |---|---|
 | `scripts/run_verifiers.py` | Run the 22 legacy suites in an isolated copy. Never run `chapter4Experiments/verify_chapter4.py` or `chapter7Experiments/verify_chapter7.py` in place: they overwrite tracked files |
 | `scripts/check_records.py` | Verify every record against its code; update the lock after a rerun |
+| `scripts/compare_records.py` | Compare two records for equality outside their provenance blocks |
 | `scripts/build_registry_doc.py` | Regenerate `docs/EXPERIMENT_REGISTRY.md` from `docs/experiment_registry.json` |
 | `scripts/make_release_manifest.py` | v1 release checksums (see `RELEASE.md`) |
 | `tests/` | pytest suite. No data needed. `pytest -m "not slow"` skips the end-to-end smoke test |
-| `.github/workflows/verify.yml` | CI: the 22 legacy suites, then lint, pytest and the record check |
+| `.github/workflows/verify.yml` | CI: the 22 legacy suites; then lint, format check, mypy, the record check and pytest |
 
 ## 9. Where new work goes
 
@@ -146,5 +157,6 @@ several of those intermediate files have no committed producer
 
 Conventions for new code: type annotations and docstrings on public functions; no I/O
 in library modules; seeds as explicit arguments; `RandomState`-style seeded generators,
-never the global one; paths from command-line arguments, never hardcoded; `ruff check .`
-clean.
+never the global one; paths from command-line arguments, never hardcoded; parameters in
+`experiments/v2/config.toml` or a file like it; a provenance block from
+`arspinet_v2/provenance.py`; `ruff check .`, `ruff format --check` and `mypy` clean.

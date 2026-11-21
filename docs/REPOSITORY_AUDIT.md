@@ -381,3 +381,43 @@ moved to `docs/v1/README_v1.md`. No frozen v2 file was modified.
 5. Tune readout regularization for the raw-ERP and amplitude baselines (open in
    `V2_UPGRADE.md`).
 6. Systematic literature review for the z-scoring artefact before writing it up.
+
+## 9. Follow-up after the owner's decisions (2026-11-21)
+
+The owner reviewed section 8 and decided as follows. Sections 1 to 8 above are left as
+written on the day of the audit; this section records what changed afterwards.
+
+| Decision in section 8 | Owner's decision | What was done |
+|---|---|---|
+| 1. Published clinical table and participant-keyed files (S1, S2) | No action | Nothing was removed and no history was rewritten. The clinical table is absent from this branch's tip. `tests/test_repo_hygiene.py` still prevents new data files from being tracked |
+| 2. Code defects in archived experiments (I6) | Fix them | Nine defects fixed, each with a regression test: `docs/v1/DEFECT_FIXES.md` |
+| 3. Manifest and v1 documents that contradict the code or v2 (I2, I8) | Accepted the recommendation | Every `results_manifest.json` entry carries a `standing_2026_11` field; its generating commit was corrected; eight stale v1 documents carry a status note; two READMEs that claimed fold-local PCA were corrected |
+| 4. Dissertation erratum | Prepare it | `DISSERTATION_ERRATUM.md` |
+| A letter listed as under review | It was not accepted; remove it | References removed |
+| 6. Housekeeping | Merge to `main` | This branch was merged to `main` at the end of the pass |
+
+Proposed items from section 8 that were also carried out:
+
+- **Proposed 1, regenerate the v2 records after formatting and typing the library.**
+  `arspinet_v2/` and every v2 runner are now typed, formatted and linted, runner
+  parameters are in `experiments/v2/config.toml`, and every runner embeds a provenance
+  block. All seven v2-era records were regenerated from the raw files and compared with
+  the committed values using `scripts/compare_records.py`. The outcome is recorded in
+  `docs/REPRODUCIBILITY.md`, section 5. Finding E14 no longer applies, and E13 is
+  resolved at the source.
+- **Proposed 5, tune the readout for the amplitude baselines.**
+  `experiments/v2/run_v2_baseline_tuned.py`; result in `V2_UPGRADE.md`.
+
+Still open: the electrode map (proposed 2), replacing weak legacy checks beyond the
+areas touched here (proposed 3), a systematic literature review for the z-scoring
+artefact (proposed 6), recreating the `v1.0-defense` tag, and the two images of unknown
+licence (S5).
+
+Two things the fixes brought to light:
+
+- The unfixed attention-pooling function in `chapter5Experiments/reproduce_chapter5.py`
+  scores 55% on pure noise where chance is 33%. That quantifies the leak the audit
+  found by reading.
+- Chapter 7 experiments D and E reproduce the dissertation's values exactly when rerun
+  on the committed tables and the diagnostic spreadsheet. Those two analyses move from
+  "structural at best" to "replayed" in section 6.
