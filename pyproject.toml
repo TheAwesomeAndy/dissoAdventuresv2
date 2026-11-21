@@ -68,7 +68,7 @@ ignore = ["E501"]   # line length is the formatter's job
 "experiments/**" = ["E402"]
 "tests/**" = ["E402"]
 
-# CI runs mypy with pinned versions (mypy 2.4.1, numpy 2.5.5 stubs) in its own
+# CI runs mypy with pinned versions (mypy 2.4.1, numpy 2.4.6 stubs, the newest for Python 3.11) in its own
 # environment; see .github/workflows/verify.yml for why.
 [tool.mypy]
 files = ["arspinet_v2"]

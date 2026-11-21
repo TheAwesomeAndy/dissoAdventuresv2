@@ -273,7 +273,7 @@ jobs:
         # Raise these pins deliberately, together with any annotation they require.
         run: |
           python -m venv .typecheck
-          .typecheck/bin/pip install --quiet "mypy==2.4.1" "numpy==2.5.5"
+          .typecheck/bin/pip install --quiet "mypy==2.4.1" "numpy==2.4.6"
           .typecheck/bin/mypy
 
       - name: Check result records against the code that produced them
