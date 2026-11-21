@@ -222,8 +222,6 @@ frozen files changes without a rerun on the data. Leave a handoff in `docs/hando
    an Efficient Hybrid Deep Learning Framework." *Proceedings of the IEEE Long Island
    Systems, Applications and Technology Conference*.
 
-The BIBM paper's manuscript and analysis code are kept outside this repository.
-
 ## Citation and licence
 
 Cite the dissertation: Lane, A. A. (2026). *Affective Reservoir-Spike Processing and
