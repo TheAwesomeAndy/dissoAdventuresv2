@@ -25,6 +25,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 | [V2-04](#v2-04) | Tuned-PCA control for the random-projection comparison | v2-validation | post-dissertation | yes |
 | [V2-05](#v2-05) | Reservoir on input without per-epoch z-scoring | v2-validation | post-dissertation | yes |
 | [V2-06](#v2-06) | Replay check of the v2 record | tooling | post-dissertation | no |
+| [V2-07](#v2-07) | Tuned readout for the amplitude baselines | v2-validation | post-dissertation | no |
 | [ZS-01](#zs-01) | Per-epoch z-scoring artefact on ERP CORE | public-replication | post-dissertation | yes |
 | [ZS-02](#zs-02) | Permutation null for across-participant pre-stimulus decoding | public-replication | post-dissertation | yes |
 | [CH3-01](#ch3-01) | Chapter 3: LIF reservoir characterization on synthetic input | illustrative | 3 | no |
@@ -65,10 +66,9 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Statistics:** participant-cluster percentile bootstrap (2000) over pooled out-of-fold predictions; within-participant permutation test with a ridge stand-in, 100 permutations
 - **Seeds and determinism:** base seed 0 (three conditions) and 100 (four categories); reservoir 42 with robustness seeds 7 and 99; bootstrap 12345. Deterministic
 - **Metrics:** balanced accuracy, paired contrasts, destruction-control drops
-- **Checked by:** `experiments/confirmatory/verify_confirmatory.py`, `experiments/confirmatory/check_against_manifest.py`, `experiments/confirmatory/validate_provenance.py`, `tests/test_records.py`
+- **Checked by:** `experiments/confirmatory/verify_confirmatory.py`, `experiments/confirmatory/check_against_manifest.py`, `experiments/confirmatory/validate_provenance.py`, `tests/test_records.py`, `experiments/v2/check_v2_replay.py`
 - **Dissertation:** Chapter 5. The dissertation reports 60.6% and 53.2%; this committed pipeline produces 64.3% and 54.6%. The gap is reconciled in COMPUTATIONAL_ERRATUM.md, and the dissertation text is not edited.
 - **Known problems and limits:**
-  - The record's provenance block names commit 05acc31; results_manifest.json cites f6a0c66 in 21 places.
   - The window labels in confirmatory_pipeline.TEMPORAL_WINDOWS ('39-273ms' and so on) do not match the slices, which are quarters of the 0 to 1000 ms epoch.
   - The permutation p-value 0.0099 is the floor for 100 permutations and uses a different model from the headline. v2 repeated it with the headline model (V2-01).
   - Input is z-scored per epoch, which invalidates window-specific readings (V2-02).
@@ -80,7 +80,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Tier:** v2-validation
 - **Question:** Does the deployed reservoir have fading memory, does it add anything over matched non-reservoir controls, and do the v1 controls and statistics hold when done properly?
 - **Data:** SHAPE three-condition epochs (./batch_data, restricted); SHAPE four-category epochs (./categories, restricted)
-- **Code:** `experiments/v2/run_v2_validation.py`, `experiments/v2/data.py`, `experiments/v2/make_report.py`
+- **Code:** `experiments/v2/run_v2_validation.py`, `experiments/v2/data.py`, `experiments/v2/make_report.py`, `experiments/v2/config.toml`
 - **Run:**
   - `python experiments/v2/run_v2_validation.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache --out experiments/v2/v2_results.json --n-perm 2000 --jobs 4`
   - `python experiments/v2/make_report.py`
@@ -96,7 +96,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
   - The fading-memory rule was written after its author had seen the dynamics sweep. It uses no labels. Gain 0.025 passes at 99% and 0.05 fails at 94%.
   - The default weight draw (seed 42) is the best of ten; the ten-draw means (65.1% and 55.4%) are the fair summary.
   - Section 6 of V2_RESULTS.md (windows) is computed on z-scored epochs and cannot be read as timing.
-  - 2000 permutations, not the 5000 the review asked for.
+  - 2000 permutations, not the 5000 the review asked for. Zero exceedances at 16.9 and 19.2 null SDs.
 
 ## V2-02
 
@@ -118,7 +118,6 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Dissertation:** Bears on every window-specific statement in Chapters 4 and 5 and on the Level-1 statistic r = 0.82.
 - **Known problems and limits:**
   - Three-condition cohort only.
-  - No embedded provenance block; the producing code is pinned in experiments/records.lock.json from git history.
 
 ## V2-03
 
@@ -127,7 +126,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Tier:** exploratory
 - **Question:** Do participant-level ERP representations differentiate SCID-5 depression groups (MDE, MDD, Depression_Type, MDD_Recurrent, in that order)?
 - **Data:** SHAPE three-condition epochs (./batch_data, restricted); SCID-5 labels spreadsheet (restricted, supplied with --labels)
-- **Code:** `experiments/v2/run_v2_depression.py`
+- **Code:** `experiments/v2/run_v2_depression.py`, `experiments/v2/config.toml`
 - **Run:**
   - `python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels ./labels.xlsx --cache ./v2_cache --rho 0.025`
 - **Records and outputs:** `experiments/v2/v2_depression.json`
@@ -150,7 +149,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Tier:** v2-validation
 - **Question:** Does SRP-64 still beat fold-local PCA-64 when PCA is left unwhitened and the readout regularization is tuned?
 - **Data:** cached v2 reservoir codes of both SHAPE cohorts (./v2_cache, derived from restricted data)
-- **Code:** `experiments/v2/run_v2_pca_tuned.py`
+- **Code:** `experiments/v2/run_v2_pca_tuned.py`, `experiments/v2/config.toml`
 - **Run:**
   - `python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2`
 - **Records and outputs:** `experiments/v2/v2_pca_tuned.json`
@@ -163,7 +162,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Dissertation:** Retracts the SRP-over-PCA advantage reported in experiments/novel/NOVEL_RESULTS.md (NOV-01) and bears on every PCA-64 row in Chapters 4, 5 and 7.
 - **Known problems and limits:**
   - The best PCA variant is chosen after seeing its held-out score, which favours PCA on purpose.
-  - Raw ERP-16 and six-bin amplitudes have not had C tuned.
+  - The amplitude baselines were tuned afterwards in V2-07.
 
 ## V2-05
 
@@ -172,7 +171,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Tier:** v2-validation
 - **Question:** With input that never uses a later sample to transform an earlier one, does the early-latency artefact vanish inside the reservoir, and how does the reservoir then compare with its matched control?
 - **Data:** SHAPE three-condition epochs (./batch_data, restricted); SHAPE four-category epochs (./categories, restricted)
-- **Code:** `experiments/v2/run_v2_baseline_input.py`, `experiments/v2/data_baseline.py`
+- **Code:** `experiments/v2/run_v2_baseline_input.py`, `experiments/v2/data_baseline.py`, `experiments/v2/config.toml`
 - **Run:**
   - `python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache`
 - **Records and outputs:** `experiments/v2/v2_baseline_input.json`
@@ -208,6 +207,28 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Known problems and limits:**
   - Replays 19 of the record's values. Seed sweeps, windows, destruction controls, compressors, variance components and the permutation test are not replayed.
 
+## V2-07
+
+**Tuned readout for the amplitude baselines**
+
+- **Tier:** v2-validation
+- **Question:** When every representation gets its own readout regularization, does the ordering of reservoir code, raw ERP and amplitude bins change?
+- **Data:** cached preprocessed epochs and v2 reservoir codes of both SHAPE cohorts (./v2_cache, derived from restricted data)
+- **Code:** `experiments/v2/run_v2_baseline_tuned.py`, `experiments/v2/run_v2_pca_tuned.py`, `experiments/v2/config.toml`
+- **Run:**
+  - `python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --jobs 4`
+- **Records and outputs:** none
+- **Model and encoding:** v2 headline reservoir code, raw ERP-16, six-bin amplitudes and the per-electrode LPP score, on v1 preprocessing
+- **Validation protocol:** v1 outer splits; nested 4-fold participant-grouped CV over C in 1e-4 to 1e2, with the grid and rule of V2-04; standardized features. Nothing is chosen on outer-test accuracy
+- **Statistics:** participant bootstrap (2000) for each variant and for paired contrasts
+- **Seeds and determinism:** v1 base seeds; inner splits base + 1000 + repeat. Deterministic
+- **Metrics:** balanced accuracy
+- **Checked by:** `tests/test_records.py`
+- **Dissertation:** Not in the dissertation. Closes the open item that only the reservoir code and PCA had been tuned.
+- **Known problems and limits:**
+  - Input is z-scored per epoch, as in the headline table, so that the comparison matches V2-01. See V2-05 for input without z-scoring.
+  - PENDING: the run is queued behind the record regeneration; the record is added when it completes.
+
 ## ZS-01
 
 **Per-epoch z-scoring artefact on ERP CORE**
@@ -231,7 +252,6 @@ Each entry answers: what question, on what data, with which code, by what protoc
   - The mechanism and prediction (MECHANISM.md) were committed at 69b6c97 before the results were seen.
   - Within participants the leak is small (at most 2 points) and not larger for P3; the prediction held fully only across participants.
   - The literature check was three web searches, not a systematic review.
-  - No embedded provenance block; producing code pinned in experiments/records.lock.json.
 
 ## ZS-02
 
@@ -313,14 +333,15 @@ Each entry answers: what question, on what data, with which code, by what protoc
   - `python chapter5Experiments/run_chapter5_experiments.py --help`
 - **Records and outputs:** none
 - **Model and encoding:** N=256, beta=0.05, theta=0.5, dense uniform W_rec scaled to spectral radius 0.9, one scalar input per electrode; per-electrode seeds; PCA-64
-- **Validation protocol:** StratifiedGroupKFold(10); PCA-64 fitted on all observations before the split; in reproduce_chapter5.py held-out labels set the attention weights (line 279) and the GNN figure plots hardcoded values
+- **Validation protocol:** StratifiedGroupKFold(10); PCA-64 fitted on all observations before the split; the GNN figure in reproduce_chapter5.py plots fixed values
 - **Statistics:** pooled accuracy, balanced accuracy, macro-F1
 - **Seeds and determinism:** 42
 - **Metrics:** accuracy
-- **Checked by:** `chapter5Experiments/verify_chapter5.py`, `chapter5Experiments/verify_reproduce_chapter5.py`
+- **Checked by:** `chapter5Experiments/verify_chapter5.py`, `chapter5Experiments/verify_reproduce_chapter5.py`, `tests/test_v1_defect_fixes.py`
 - **Dissertation:** Chapter 5 archived tables (dissertation/chgraph.tex). Retained for provenance; superseded by CONF-01.
 - **Known problems and limits:**
-  - Not prospective performance: global PCA and, in one script, test-label leakage.
+  - Not prospective performance: PCA is fitted on all observations before the split.
+  - FIXED 2026-11 (D5), not rerun: reproduce_chapter5.py set its attention weights from held-out labels. On pure noise the old function scored 55% where chance is 33%. Accuracies taken from it before the fix are inflated.
   - The 'GNNs' are random-weight propagation, never trained.
   - results_manifest.json maps arch_pca64_svm and arch_gnn_sweep to run_chapter5_experiments.py, which has no SVM row, GIN or EdgeConv.
   - graph_diffusion_oversmoothing.py overwrites a tracked PDF in pictures/chGraphNeuralNetworks.
@@ -438,7 +459,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Checked by:** `chapter6Experiments/verify_chapter6.py`, `chapter6Experiments/verify_reproduce_chapter6.py`
 - **Dissertation:** Chapter 6 (archived four-category stream).
 - **Known problems and limits:**
-  - exp5 reseeds its generator identically for all 45 tests and omits the +1 in the permutation p-value.
+  - FIXED 2026-11 (D4), not rerun: the exp5 permutation p-value lacked the +1 term. Corrected values can only be larger, by at most 0.002.
   - 'Seven metrics' means different sets in Chapter 6, Chapter 7 and the three-condition extension.
   - reproduce_chapter6.py claims ten experiments in its docstring and implements three.
 
@@ -458,14 +479,14 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Statistics:** per-observation permutation p
 - **Seeds and determinism:** subject id
 - **Metrics:** kappa, p
-- **Checked by:** `chapter7Experiments/verify_chapter7.py`, `chapter7Experiments/verify_extract_utilities.py`
+- **Checked by:** `chapter7Experiments/verify_chapter7.py`, `chapter7Experiments/verify_extract_utilities.py`, `tests/test_v1_defect_fixes.py`
 - **Dissertation:** Chapter 7 (dissertation/chSynthesis.tex): per-observation median kappa = 0.273.
 - **Known problems and limits:**
   - The electrode-permutation null assumes exchangeable electrodes. For two independent but spatially smooth fields the review measured a 90% false-positive rate. A valid null needs electrode coordinates.
   - The committed pickle holds 2000 permutations per observation; the script and the manifest say 5000.
   - Includes participant 195 (844 observations), whom the corrected analysis excludes (840).
   - The result files are keyed by real participant ID (docs/REPOSITORY_AUDIT.md, finding S1).
-  - Figures are written to a hardcoded /mnt path that does not exist outside the original environment.
+  - FIXED 2026-11 (D3), not rerun: clustering was twice the Onnela coefficient. No statistic changes (coupling and kappa are rank-based); stored clustering values are 2x. The figure directory is now ARSPI_FIGURE_DIR.
 
 ## CH7-02
 
@@ -499,17 +520,18 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** committed chapter7_results CSV files; psychopathology spreadsheet (restricted)
 - **Code:** `chapter7Experiments/run_chapter7_experiment_D.py`, `chapter7Experiments/run_chapter7_experiment_E.py`
 - **Run:**
-  - `python chapter7Experiments/run_chapter7_experiment_D.py`
+  - `ARSPI_FIGURE_DIR=./ch7_figures python chapter7Experiments/run_chapter7_experiment_D.py`
+  - `ARSPI_FIGURE_DIR=./ch7_figures python chapter7Experiments/run_chapter7_experiment_E.py`
 - **Records and outputs:** `chapter7Experiments/chapter7_results/subject_features.csv`, `chapter7Experiments/chapter7_results/observation_features.csv`
 - **Model and encoding:** subject-mean kappa; feature sets T, D, T+D, T+D+kappa
 - **Validation protocol:** StratifiedKFold(5) x 10 repeats over participants, scaler in-fold, logistic regression
 - **Statistics:** Mann-Whitney for 5 diagnoses with Bonferroni 5; interaction permutation uncorrected; Wilcoxon over 50 dependent folds
 - **Seeds and determinism:** 42 and global numpy seed
 - **Metrics:** AUC, balanced accuracy, F1
-- **Checked by:** `chapter7Experiments/verify_chapter7.py`
+- **Checked by:** `chapter7Experiments/verify_chapter7.py`, `tests/test_v1_defect_fixes.py`
 - **Dissertation:** Chapter 7 clinical section. Cohort-level and hypothesis-generating by the dissertation's own scope statement.
 - **Known problems and limits:**
-  - Conclusion text in both scripts is hardcoded and does not depend on the computed output.
+  - REPLAYED 2026-11-21: both scripts rerun on the committed tables and the SCID-5 spreadsheet reproduce the dissertation's values (experiment D: p from 0.32 to 0.92; experiment E: best AUC 0.622). FIXED (D9): conclusions are now computed from the run instead of printed as fixed text.
   - No script in the repository writes subject_features.csv or observation_features.csv.
   - No age, sex or medication covariates. v2's corrected depression family (V2-03) found nothing.
 
@@ -534,8 +556,8 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Known problems and limits:**
   - Scripts 02 to 04 execute at import and read paths relative to the current directory.
   - Several metrics share names with Chapter 6 but are defined differently.
-  - The quantity labelled ICC(3,1) is not the ICC(3,1) formula.
   - The manifest describes a 'median across 211 subject-averaged kappa' and a Wilcoxon test that the script does not compute.
+  - FIXED 2026-11, not rerun: permutation p-values now use the +1 form (D4); the Fano bound includes its K-1 term (D6); a variance share is no longer labelled ICC(3,1) (D7).
 
 ## ABL-01
 
@@ -600,10 +622,10 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Statistics:** permutation over 20 fold accuracies
 - **Seeds and determinism:** 42; no torch seed
 - **Metrics:** saliency peak, accuracy
-- **Checked by:** none
+- **Checked by:** `tests/test_v1_defect_fixes.py`
 - **Dissertation:** Appendix (exploratory).
 - **Known problems and limits:**
-  - CONFIDENT BUG: the axis test at run_eegnet_saliency_comparison.py:191 is inverted, so the network sees time as channels. The reported 402 to 691 ms peak cannot come from this code.
+  - FIXED 2026-11 (D2), not rerun: the saliency script fed the network time as channels. The 402 to 691 ms peaks reported from it are unsupported until it is rerun.
   - The file named run_arspinet_v2_attention_prototype.py predates and is unrelated to the arspinet_v2 package.
   - Needs PyTorch, which CI never installs.
 
@@ -693,12 +715,12 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Statistics:** descriptive
 - **Seeds and determinism:** 42 to 44
 - **Metrics:** lambda_1, embedding dimension, memory capacity, AUC
-- **Checked by:** none
+- **Checked by:** `tests/test_v1_defect_fixes.py`
 - **Dissertation:** Defense deck (ARSPI-Net_Defense.tex) only. No output appears in the dissertation chapters.
 - **Known problems and limits:**
-  - CONFIDENT BUG: make_experiment_c_figures.py:266 unpacks run_full's (membrane, spikes) return as (spikes, _), so the fading-memory time constant is computed on membranes.
+  - FIXED 2026-11 (D1), regenerated: experiment C computed its fading-memory time constant on membranes. The unfixed script reproduced the committed CSV byte for byte; after the fix only that column changes, and it remains uninformative (7 of 20 infinite).
+  - FIXED 2026-11 (D4), not rerun: experiment D's permutation p-value lacked the +1 term; its committed CSV shows 0.000000 where the corrected value is 0.002.
   - Theoretical-bounds figure: measured lambda_1 lies above its 'upper bound' and measured dimension below its 'lower bound' (review finding M4).
-  - D reports p = 0.000000 because the permutation p-value has no +1 correction.
   - The A and B data files are keyed by real participant ID.
   - No verifier covers this directory. build_deck.py needs PyMuPDF, which is declared nowhere.
 
