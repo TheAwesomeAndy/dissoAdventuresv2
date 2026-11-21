@@ -78,4 +78,4 @@ known-first-party = ["arspinet_v2"]
 # Experiment scripts import their siblings by path. Naming them here keeps import order
 # the same on every machine: without it, ruff classifies `data` by whether a data/
 # directory happens to exist in the checkout.
-known-local-folder = ["data", "data_baseline", "run_v2_validation", "run_erpcore"]
+known-local-folder = ["data", "data_baseline", "run_v2_validation", "run_v2_pca_tuned", "run_erpcore"]
