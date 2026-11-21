@@ -211,23 +211,32 @@ frozen files changes without a rerun on the data. Leave a handoff in `docs/hando
 
 ## Publications
 
-1. A. Lane, W. Tang, and B. Nelson. "On the Edge of Stability: Spiking Reservoir
+The dissertation is the primary work and came first. Cite it for anything in this
+repository.
+
+1. Lane, A. A. (2026). *Affective Reservoir-Spike Processing and Inference Network
+   (ARSPI-Net): A Four-Level Interpretable Neuromorphic Framework for Clinical EEG
+   Analysis.* PhD dissertation, Stony Brook University.
+
+Derived from the dissertation:
+
+2. A. Lane, W. Tang, and B. Nelson. "On the Edge of Stability: Spiking Reservoir
    State-Space Encoding of Affective EEG." *2026 IEEE International Conference on
-   Bioinformatics and Biomedicine (BIBM)*, Dallas, TX, 2026. Accepted. Derived from and
-   built on ARSPI-Net.
-2. Lane, A., Nelson, B. D., and Tang, K. W. (2024). "Towards ARSPI-NET: Advancing EEG
+   Bioinformatics and Biomedicine (BIBM)*, Dallas, TX, 2026. Accepted.
+
+Earlier conference papers:
+
+3. Lane, A., Nelson, B. D., and Tang, K. W. (2024). "Towards ARSPI-NET: Advancing EEG
    Feature Extraction with Neuromorphic Algorithms." *Proceedings of the IEEE Long
    Island Systems, Applications and Technology Conference*.
-3. Lane, A., Nelson, B. D., and Tang, K. W. (2023). "Towards ARSPI-Net: Development of
+4. Lane, A., Nelson, B. D., and Tang, K. W. (2023). "Towards ARSPI-Net: Development of
    an Efficient Hybrid Deep Learning Framework." *Proceedings of the IEEE Long Island
    Systems, Applications and Technology Conference*.
 
 ## Citation and licence
 
-Cite the dissertation: Lane, A. A. (2026). *Affective Reservoir-Spike Processing and
-Inference Network (ARSPI-Net): A Four-Level Interpretable Neuromorphic Framework for
-Clinical EEG Analysis.* PhD dissertation, Stony Brook University. Machine-readable
-citation in `CITATION.cff`.
+The citation for this repository is the dissertation, item 1 above. A machine-readable
+copy is in `CITATION.cff`.
 
 Code is MIT-licensed (`LICENSE`). Terms for text, figures and data are in `LICENSES.md`.
 ERP CORE is by Kappenman et al. (2021); only aggregate results derived from it are

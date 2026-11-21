@@ -209,6 +209,6 @@ statements come from the code reading in `docs/REPOSITORY_AUDIT.md`.
 | Item | In the repository | Verifiable link to code |
 |---|---|---|
 | PhD dissertation (Lane, 2026) | LaTeX source in `dissertation/`; no PDF | Reported confirmatory values differ from the committed pipeline; reconciled in `COMPUTATIONAL_ERRATUM.md` |
+| A. Lane, W. Tang, and B. Nelson, "On the Edge of Stability: Spiking Reservoir State-Space Encoding of Affective EEG", IEEE BIBM 2026, Dallas, TX (accepted; derived from the dissertation, which came first) | not present | none |
 | Two IEEE LISAT conference papers (2023, 2024) | not present | none |
-| A. Lane, W. Tang, and B. Nelson, "On the Edge of Stability: Spiking Reservoir State-Space Encoding of Affective EEG", IEEE BIBM 2026, Dallas, TX (accepted; derived from and built on ARSPI-Net) | not present | none |
 | Defense slides | `ARSPI-Net_Defense.tex`, `ARSPI-Net_Defense.pdf` | figures from `defense_figures/` |
