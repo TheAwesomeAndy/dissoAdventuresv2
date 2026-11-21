@@ -44,3 +44,21 @@ preferred-citation:
   institution:
     name: "Stony Brook University, Department of Electrical and Computer Engineering"
   thesis-type: "PhD Dissertation"
+references:
+  - type: conference-paper
+    title: "On the Edge of Stability: Spiking Reservoir State-Space Encoding of Affective EEG"
+    authors:
+      - family-names: Lane
+        given-names: A.
+      - family-names: Tang
+        given-names: W.
+      - family-names: Nelson
+        given-names: B.
+    collection-title: "2026 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)"
+    conference:
+      name: "IEEE International Conference on Bioinformatics and Biomedicine (BIBM)"
+      city: "Dallas"
+      region: "TX"
+    year: 2026
+    status: in-press
+    notes: "Accepted. Derived from and built on ARSPI-Net."

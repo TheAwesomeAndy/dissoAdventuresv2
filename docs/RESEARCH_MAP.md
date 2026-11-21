@@ -210,4 +210,5 @@ statements come from the code reading in `docs/REPOSITORY_AUDIT.md`.
 |---|---|---|
 | PhD dissertation (Lane, 2026) | LaTeX source in `dissertation/`; no PDF | Reported confirmatory values differ from the committed pipeline; reconciled in `COMPUTATIONAL_ERRATUM.md` |
 | Two IEEE LISAT conference papers (2023, 2024) | not present | none |
+| A. Lane, W. Tang, and B. Nelson, "On the Edge of Stability: Spiking Reservoir State-Space Encoding of Affective EEG", IEEE BIBM 2026, Dallas, TX (accepted) | not present; manuscript and analysis code are kept in a separate repository | Derived from and built on ARSPI-Net, per the author. Not checked against the v2 findings in this repository; items 5 (fading memory at the original gain) and 10 (per-epoch z-scoring) are the ones that bear on a reservoir encoding of this data |
 | Defense slides | `ARSPI-Net_Defense.tex`, `ARSPI-Net_Defense.pdf` | figures from `defense_figures/` |
