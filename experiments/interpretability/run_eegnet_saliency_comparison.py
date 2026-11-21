@@ -181,6 +181,19 @@ def arspinet_feature_window_ms():
 # ============================================================
 # Main Analysis
 # ============================================================
+def channels_first(eeg):
+    """Return epochs as (N, channels, time), which is what EEGNet expects.
+
+    SHAPE epochs have more time samples (256) than channels (34), so the shorter of the
+    two trailing axes is the channel axis. Fixed 2026-11: the test was inverted, so the
+    network received time as channels for either input layout
+    (docs/v1/DEFECT_FIXES.md, D2).
+    """
+    if eeg.ndim == 3 and eeg.shape[1] < eeg.shape[2]:
+        return eeg                       # already (N, C, T)
+    return eeg.transpose(0, 2, 1)        # (N, T, C) -> (N, C, T)
+
+
 def run_comparison(eeg, labels, outdir):
     print("=" * 60)
     print("EEGNet Saliency vs ARSPI-Net Feature Window")
@@ -188,10 +201,7 @@ def run_comparison(eeg, labels, outdir):
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # EEGNet expects (N, channels, time)
-    if eeg.ndim == 3 and eeg.shape[1] > eeg.shape[2]:
-        X = eeg       # already (N, C, T)
-    else:
-        X = eeg.transpose(0, 2, 1)
+    X = channels_first(eeg)
     n_ch, n_samp = X.shape[1], X.shape[2]
     n_cls = len(np.unique(labels))
     print(f"  Shape: {X.shape}, classes: {n_cls}, device: {device}")

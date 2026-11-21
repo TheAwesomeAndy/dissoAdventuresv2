@@ -47,7 +47,7 @@ TOPO_NAMES = ['strength', 'clustering']
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, 'chapter7_results', 'ch7_full_results.pkl')
-FIGURE_DIR = '/mnt/user-data/outputs/pictures/chSynthesis'
+FIGURE_DIR = os.environ.get('ARSPI_FIGURE_DIR', os.path.join(SCRIPT_DIR, 'figures'))
 
 # ═══════════════════════════════════════════════════════════════════
 # FILE INVENTORY
@@ -218,15 +218,17 @@ def extract_topology(plv):
     strength = plv.sum(axis=1)
 
     # Weighted clustering coefficient (Onnela et al.)
-    # C_i = (2 / (k_i * (k_i - 1))) * sum_{j,h} (w_ij * w_ih * w_jh)^{1/3}
-    # The sum of weighted triangles through node i = diag(W^{1/3} @ W^{1/3} @ W^{1/3})_i
+    # C_i = (1 / (k_i * (k_i - 1))) * sum over ordered pairs (j, h) of (w_ij * w_ih * w_jh)^{1/3}
+    # diag(W^{1/3} @ W^{1/3} @ W^{1/3})_i is that ordered-pair sum: it counts each triangle
+    # through node i twice, which the 1/(k(k-1)) normalization already accounts for.
+    # Fixed 2026-11: an extra factor 2 doubled every value (docs/v1/DEFECT_FIXES.md, D3).
     W_cbrt = np.cbrt(plv)
     tri = np.diag(W_cbrt @ W_cbrt @ W_cbrt)
 
     # Degree = number of nonzero neighbors per node
     k = (plv > 0).sum(axis=1).astype(float)
     denom = k * (k - 1)
-    clustering = np.where(denom > 0, 2.0 * tri / denom, 0.0)
+    clustering = np.where(denom > 0, tri / denom, 0.0)
 
     return np.column_stack([strength, clustering])
 

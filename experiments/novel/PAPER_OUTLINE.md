@@ -1,7 +1,12 @@
 # Short-paper outline — "Random projection vs PCA on subject-grouped EEG"
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. The paper it outlines was not pursued further: its central result, a
+> random-projection advantage over PCA, disappears when PCA is left unwhitened and the
+> readout is tuned (`experiments/v2/v2_pca_tuned.json`). See `docs/RESEARCH_MAP.md`, item 9.
+
 A concrete skeleton assembled from the committed results. Target: a methods
-short paper / letter (e.g. *IEEE Signal Processing Letters*, an ML-for-health
+short paper / letter (e.g. an ML-for-health
 workshop, or a NeurIPS/ICML workshop on trustworthy ML for health). This
 outline reports only what the experiments actually show, including a negative
 control that bounds the mechanism, and flags the remaining gaps explicitly.

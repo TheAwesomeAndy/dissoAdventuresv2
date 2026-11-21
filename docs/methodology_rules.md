@@ -1,5 +1,11 @@
 # ARSPI-Net Methodology Rules
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. Rule 11 calls one clinical result "notable and real". The v2
+> analysis treats every clinical association in this repository as an uncorrected
+> screen, and a corrected family of depression tests found nothing
+> (`experiments/v2/v2_depression.json`). Rules for current work are in `AGENTS.md`.
+
 Established March 2026 from advisor feedback.
 These rules govern all experimental design and writing in this dissertation.
 

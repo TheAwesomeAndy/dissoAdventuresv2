@@ -1,5 +1,12 @@
 # Frozen Publication Release and DOI Archival
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. Three points to correct before using it: `ARSPI-Net_Defense.pdf` is
+> the defense slide deck, not the dissertation, and no dissertation PDF is tracked; the
+> existing v1 reference is named `v1.0-defense`, not `v1.0.0`; and the verification list
+> in section 2 predates `scripts/run_verifiers.py`, `scripts/check_records.py` and the
+> pytest suite, which are the current checks (`docs/REPRODUCIBILITY.md`).
+
 This repository accompanies a dissertation. A publication release must bind the
 reported results, source code, dissertation source, rendered dissertation, and
 figure set to one immutable commit. A moving `main` branch is not an archival

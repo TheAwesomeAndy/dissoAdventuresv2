@@ -541,7 +541,10 @@ print(f"  information tradeoff of the neuromorphic representation.\n")
 K = 3
 P_e = 1.0 - 0.794
 H_b = -P_e * np.log2(P_e + 1e-12) - (1 - P_e) * np.log2(1 - P_e + 1e-12)
-I_decoded = np.log2(K) - H_b
+# Fano: I >= log2(K) - H_b(P_e) - P_e * log2(K - 1). The last term is zero only for
+# K = 2 and was missing until 2026-11 (docs/v1/DEFECT_FIXES.md, D6). It lowers the bound
+# by a constant, so every comparison of Phi between groups is unchanged.
+I_decoded = np.log2(K) - H_b - P_e * np.log2(K - 1)
 print(f"  I_decoded ≥ {I_decoded:.4f} bits (from 79.4% accuracy, Fano bound)")
 
 total_spikes_obs = D[:, :, 0].mean(axis=1)

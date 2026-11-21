@@ -65,7 +65,9 @@ For each class c (one-vs-rest):
      a. Random permutation π_k of the channel index.
      b. Apply π_k to the channel axis of every trial's feature tensor.
      c. Recompute the cross-validated AUC.
-  3. p_perm(c) = (count of null AUC ≥ observed) / N_PERMS.
+  3. p_perm(c) = (1 + count of null AUC ≥ observed) / (1 + N_PERMS).
+     (Fixed 2026-11: the +1 was missing, so p could be reported as exactly 0;
+     docs/v1/DEFECT_FIXES.md, D4.)
 
 PRE-REGISTRATION
 ----------------
@@ -287,7 +289,7 @@ def make_analysisD_4d(observations: dict, outdir: Path, n_perms: int,
         ax = axes[i // ncols, i % ncols]
         obs = observations[c]["observed"]
         null = np.asarray(observations[c]["null"])
-        p_perm = float((null >= obs).mean())
+        p_perm = float((1 + (null >= obs).sum()) / (1 + len(null)))
 
         ax.hist(null, bins=30, color=PALETTE["neutral_gray"],
                 edgecolor="white", alpha=0.7, label="channel-permutation null")
@@ -302,8 +304,8 @@ def make_analysisD_4d(observations: dict, outdir: Path, n_perms: int,
         ax.set_title(f"{class_titles.get(c, f'class {c}')}",
                      fontsize=12, fontweight="bold", color=title_color)
         # p_perm annotation
-        if p_perm < 1.0 / n_perms:
-            p_str = f"p_perm < {1.0/n_perms:.4f}"
+        if p_perm <= 1.0 / (1 + n_perms):
+            p_str = f"p_perm = {p_perm:.4f} (floor)"
         else:
             p_str = f"p_perm = {p_perm:.4f}"
         verdict = ("survives" if p_perm < 0.01
@@ -362,7 +364,7 @@ def write_csv(observations, outdir: Path, n_perms: int, args):
         for c, obsdat in sorted(observations.items()):
             obs = obsdat["observed"]
             null = np.asarray(obsdat["null"])
-            p_perm = float((null >= obs).mean())
+            p_perm = float((1 + (null >= obs).sum()) / (1 + len(null)))
             f.write(f"{c},{obs:.6f},{null.mean():.6f},{null.std():.6f},{p_perm:.6f}\n")
         # Detail block: per-permutation null AUC
         f.write("# detail: per-permutation null AUC per class (one row per class)\n")
@@ -462,7 +464,7 @@ def main():
                 n_perms=args.n_perms, seed=args.seed,
                 n_splits=args.cv_splits, C=args.C,
             )
-            p_perm = float((null >= obs).mean())
+            p_perm = float((1 + (null >= obs).sum()) / (1 + len(null)))
             observations[int(c)] = {
                 "observed": obs, "null": null, "p_perm": p_perm,
             }

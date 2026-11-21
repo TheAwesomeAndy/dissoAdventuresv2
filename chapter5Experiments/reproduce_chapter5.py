@@ -271,12 +271,18 @@ def attention_pooling_cv(node_feats, y, subjects, temp=5, top_k=10):
     gkf = StratifiedGroupKFold(n_splits=10, shuffle=True, random_state=42)
     N, C, D = node_feats.shape; accs = []
     for tr, te in gkf.split(node_feats, y, subjects):
+        # Channel scores come from a split of the TRAINING participants only.
+        # Fixed 2026-11: they were computed on the test fold's labels, which leaked the
+        # held-out labels into the attention weights (docs/v1/DEFECT_FIXES.md, D5).
+        inner = StratifiedGroupKFold(n_splits=3, shuffle=True, random_state=42)
+        fit_i, val_i = next(inner.split(node_feats[tr], y[tr], subjects[tr]))
+        fit_idx, val_idx = tr[fit_i], tr[val_i]
         scores = np.zeros(C)
         for ch in range(C):
             sc = StandardScaler()
             clf = LogisticRegression(C=0.1, max_iter=1000, random_state=42)
-            clf.fit(sc.fit_transform(node_feats[tr, ch]), y[tr])
-            scores[ch] = clf.score(sc.transform(node_feats[te, ch]), y[te])
+            clf.fit(sc.fit_transform(node_feats[fit_idx, ch]), y[fit_idx])
+            scores[ch] = clf.score(sc.transform(node_feats[val_idx, ch]), y[val_idx])
         w = np.exp(temp * scores); w /= w.sum()
         pool_tr = sum(w[c] * node_feats[tr, c] for c in range(C))
         pool_te = sum(w[c] * node_feats[te, c] for c in range(C))

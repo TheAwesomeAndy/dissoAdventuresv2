@@ -56,6 +56,8 @@ DOCS = [
     "docs/REPRODUCIBILITY.md",
     "docs/AGENT_HANDOFF.md",
     "docs/REPOSITORY_AUDIT.md",
+    "DISSERTATION_ERRATUM.md",
+    "docs/v1/DEFECT_FIXES.md",
 ]
 _PATHLIKE = re.compile(
     r"`([A-Za-z0-9_.\-]+(?:/[A-Za-z0-9_.\-]+)+/?|[A-Za-z0-9_\-]+\.(?:py|md|json|toml|txt|yml|cff|tex))`"

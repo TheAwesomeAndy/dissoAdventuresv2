@@ -49,7 +49,7 @@ import time
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 C_MATRIX_FILE = os.path.join(SCRIPT_DIR, 'chapter7_results', 'C_matrices.csv')
 PSYCH_FILE = os.path.join(SCRIPT_DIR, '..', 'SHAPE_Community_Andrew_Psychopathology.xlsx')
-FIGURE_DIR = '/mnt/user-data/outputs/pictures/chSynthesis'
+FIGURE_DIR = os.environ.get('ARSPI_FIGURE_DIR', os.path.join(SCRIPT_DIR, 'figures'))
 CATS = ['Threat', 'Mutilation', 'Cute', 'Erotic']
 DX_LIST = ['MDD', 'SUD', 'PTSD', 'GAD', 'ADHD']
 N_PERM_INTERACTION = 5000
@@ -150,7 +150,7 @@ by the comorbidity structure, not disorder-specific signatures.
                and all(psych_dict[sid].get(dx, 0) == 0 for dx in DX_LIST)
                and not np.isnan(psych_dict[sid].get('MDD', np.nan)))
     print(f"\nAssessed subjects: {n_assessed} of {len(subjects_all)} "
-          f"(5 missing clinical data)")
+          f"({len(subjects_all) - n_assessed} missing clinical data)")
     print(f"Strict healthy controls (0 of 5 Dx): {n_hc}")
     print(f"\nPrimary diagnoses (one-vs-rest):")
     for dx in DX_LIST:
@@ -405,16 +405,25 @@ Diagnosis × category interactions (uncorrected p < 0.05):
     for dx in sig_interact:
         ir = interaction_results[dx]
         print(f"  {dx}: var = {ir['observed']:.6f}, p = {ir['p']:.4f}")
+    # Every number below is computed from this run. Until 2026-11 this paragraph was a
+    # fixed string that asserted its conclusion whatever the data showed
+    # (docs/v1/DEFECT_FIXES.md, D9).
+    comorbidity = [sum(int(psych_dict[sid].get(dx, 0) == 1) for dx in DX_LIST)
+                   for sid in subjects_all if sid in psych_dict
+                   and not np.isnan(psych_dict[sid].get('MDD', np.nan))]
+    below_mde = [r['dx'] for r in dx_results
+                 if abs(r['cohen_d']) < min_detectable_d(r['n_pos'], r['n_neg'])]
+    max_abs_d = max(abs(r['cohen_d']) for r in dx_results)
     print(f"""
 Interpretation: All primary comparisons are one-vs-rest in a
-transdiagnostic sample with mean comorbidity of 2.0 diagnoses per
-subject. These are diagnosis-associated coupling differences, not
-disorder-specific signatures. The comorbidity structure means that
-a coupling difference attributed to one diagnosis may partly reflect
-shared variance with co-occurring conditions.
-All observed Cohen's d values are below the minimum detectable effect
-for this sample geometry. Diagnosis-associated coupling differences,
-if they exist at the scalar κ̄ level, are smaller than d ≈ 0.12.
+transdiagnostic sample with mean comorbidity of {np.mean(comorbidity):.1f} of these
+{len(DX_LIST)} diagnoses per assessed subject. These are diagnosis-associated
+coupling differences, not disorder-specific signatures. The comorbidity
+structure means that a coupling difference attributed to one diagnosis
+may partly reflect shared variance with co-occurring conditions.
+Largest observed |d| = {max_abs_d:.3f}. Observed |d| is below the minimum
+detectable effect (alpha 0.05, power 0.80) for: {below_mde if below_mde else 'none'}
+of {[r['dx'] for r in dx_results]}.
 """)
     # ==============================================================
     # SUMMARY TABLE

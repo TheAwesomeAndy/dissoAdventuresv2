@@ -216,7 +216,8 @@ for p in range(N_PERM):
     null_kappa[p] = np.mean(kappas_perm)
 
 observed_kappa = kappa_all.mean()
-p_perm = (null_kappa >= observed_kappa).sum() / N_PERM
+# (1 + count) / (1 + n). Fixed 2026-11 (docs/v1/DEFECT_FIXES.md, D4).
+p_perm = (1 + (null_kappa >= observed_kappa).sum()) / (1 + N_PERM)
 print(f"  Observed mean κ: {observed_kappa:.4f}")
 print(f"  Null distribution: mean={null_kappa.mean():.4f}, std={null_kappa.std():.4f}")
 print(f"  Permutation p = {p_perm:.4f}")
@@ -353,15 +354,17 @@ for p in range(N_PERM_COND):
     ss_r_perm = max(0, np.sum((kappa_perm - gm_perm) ** 2) - ss_subject - ss_c_perm)
     null_F[p] = (ss_c_perm / 2) / (ss_r_perm / (N_obs - N_subj - 2) + 1e-12)
 
-p_cond = (null_F >= obs_F).sum() / N_PERM_COND
+p_cond = (1 + (null_F >= obs_F).sum()) / (1 + N_PERM_COND)
 print(f"  Condition F = {obs_F:.2f}, permutation p = {p_cond:.4f}")
 
-# ICC
+# Between-subject share of variance. This is var(subject means) over that plus the mean
+# within-subject variance. It is not the ICC(3,1) formula, and was mislabelled as such
+# until 2026-11 (docs/v1/DEFECT_FIXES.md, D7). The key name `icc` is kept for old pickles.
 subject_means = kappa_sc.mean(axis=1)
 icc_between = subject_means.var()
 icc_within = kappa_sc.var(axis=1).mean()
 icc = icc_between / (icc_between + icc_within + 1e-12)
-print(f"  ICC(3,1) = {icc:.3f}")
+print(f"  Between-subject variance share (not ICC(3,1)) = {icc:.3f}")
 
 exp72 = {
     'v_subj': v_subj, 'v_cond': v_cond, 'v_resid': v_resid,
@@ -715,7 +718,7 @@ for p_idx in range(N_PERM_FROB):
             perm_matrix[j, k] = diff.mean()
     null_frob[p_idx] = np.linalg.norm(perm_matrix, 'fro')
 
-p_frob = (null_frob >= obs_frob).sum() / N_PERM_FROB
+p_frob = (1 + (null_frob >= obs_frob).sum()) / (1 + N_PERM_FROB)
 print(f"\n  Frobenius norm of mean ΔC: {obs_frob:.4f}")
 print(f"  Permutation p (pattern-level): {p_frob:.4f}")
 

@@ -263,7 +263,9 @@ def fading_memory_tau(
     rng = np.random.RandomState(seed)
     X = (rng.randn(T, 1) * baseline_noise).astype(float)
     X[pulse_start:pulse_start + pulse_dur, :] += pulse_amp
-    S, _ = res.run_full(X)
+    # run_full returns (membrane, spikes). The statistic is defined on spikes.
+    # Fixed 2026-11: this line unpacked the membrane as S (docs/v1/DEFECT_FIXES.md, D1).
+    _, S = res.run_full(X)
     baseline = S[:pulse_start].mean(axis=0)
     delays = np.arange(0, max_delay, 5)
     devs = []

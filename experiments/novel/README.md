@@ -1,5 +1,12 @@
 # Novel experiments: what the inspectable chain buys you
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. Its N1 claim (random projection beats PCA) and its PCA-nuisance
+> mechanism are superseded: see `experiments/v2/v2_pca_tuned.json` and
+> `docs/RESEARCH_MAP.md`, item 9. The two results files in this directory already retract
+> parts of this README. The committed JSON files here cannot be tied to the code that
+> wrote them (`experiments/records.lock.json`, unverified records).
+
 These experiments target the hardest reviewer question for an
 interpretability-first neuromorphic model that is deliberately **not** an
 accuracy leader: *if the raw ERP classifies affect more accurately, why use the
@@ -64,7 +71,7 @@ necessary for what*:
   temporal resolution, electrode identity), N3 reports both the **held-out
   condition-accuracy drop** and the **subject-to-condition variance ratio ρ**.
 - ρ ties directly to the dissertation's reported ρ ≈ 7.2 subject-covariance
-  entanglement and to the *IEEE SPL* submission on the same phenomenon.
+  entanglement.
 
 *Why it matters:* an interpretability *necessity map* — evidence that the
 inspectable factors are causally load-bearing for condition decoding, and a

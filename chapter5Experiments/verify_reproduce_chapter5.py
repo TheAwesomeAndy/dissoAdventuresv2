@@ -224,7 +224,11 @@ def main():
     print("\n── Subject-Stratified CV (No Leakage) ──")
     check("StratifiedGroupKFold used (prevents subject leakage)",
           "StratifiedGroupKFold" in source)
-    check("PCA fitted per fold (no leakage)", "fit_transform" in source)
+    # This check used to read "PCA fitted per fold (no leakage)". It only looks for the
+    # string fit_transform, and the archived script fits PCA on ALL observations before
+    # the split. The label now says what the code does (docs/v1/DEFECT_FIXES.md, D8).
+    check("PCA fit_transform present (archived script: fitted on all data, not per fold)",
+          "fit_transform" in source)
 
     # ── 11. Output Structure ──
     print("\n── Output Structure ──")

@@ -269,7 +269,9 @@ def main():
                     pi_=rng_p.permutation(len(all_r))
                     dp_=all_r[pi_[:np_]].mean(0)-all_r[pi_[np_:]].mean(0)
                     F_null.append(np.var(dp_))
-                p_int=np.mean(np.array(F_null)>=F_obs)
+                # (1 + count) / (1 + n): a permutation p-value is never exactly zero.
+                # Fixed 2026-11 (docs/v1/DEFECT_FIXES.md, D4).
+                p_int=(1+np.sum(np.array(F_null)>=F_obs))/(1+len(F_null))
             else:F_obs=0;p_int=1.0
             interaction_results[diag][met]={'cat_ds':cat_ds,'F_interact':float(F_obs),
                                             'p_interact':float(p_int),'n_pos':len(rp),'n_neg':len(rn)}

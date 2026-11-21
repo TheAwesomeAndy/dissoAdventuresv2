@@ -44,7 +44,7 @@ The 4-class regime operates in a weaker signal environment (2.4% condition varia
 **Purpose:** Complete 4-class experimental program with 11 experiments.
 - **Input:** `shape_features_4class.pkl`, `clinical_profile.csv`
 - **Output:** `ch5_4class_results.pkl`, PDF figures in `ch5_4class_figures/`
-- **Validation:** Subject-stratified 10-fold CV, PCA fitted per fold on training data only
+- **Validation:** Subject-stratified 10-fold CV. **Correction (2026-11):** this line used to say PCA was fitted per fold on training data only. The code fits PCA on all observations before the split (`ch5_4class_01_feature_extraction.py` lines 358-361, `ch5_4class_03_classification_full.py` lines 187-188), so these results are not leak-free (`docs/v1/DEFECT_FIXES.md`, D8)
 
 **Classification experiments (EXP 1-6):**
 

@@ -1,5 +1,11 @@
 # External-cohort replication — results
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. The comparison below standardizes PCA scores before the readout,
+> the setup later shown to handicap PCA (`experiments/v2/v2_pca_tuned.json`). It has not
+> been rerun with the tuned control, so the random-projection advantage reported here
+> should not be cited.
+
 The two dataset-independent claims replicate on a **genuinely external** IAPS
 affective-picture ERP cohort: **DataVerseNL `doi:10.34894/TCRZEM`** (Revers et
 al.), 228 complete-panel participants, different lab, different acquisition

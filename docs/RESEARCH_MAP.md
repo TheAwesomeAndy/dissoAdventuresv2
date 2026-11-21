@@ -104,9 +104,6 @@ statements come from the code reading in `docs/REPOSITORY_AUDIT.md`.
   and condition for 10.3% (three conditions), both far outside their permutation nulls.
 - **Withdrawn.** The v1 ratio rho (reported as 7.2) has no noise floor: structureless
   features give 69. Use `arspinet_v2/nuisance.py`.
-- **Publication.** The repository's v1 README lists a paper on this topic as submitted
-  to IEEE Signal Processing Letters. The manuscript is not in the repository, so
-  whether it relies on the withdrawn ratio or on item 9 could not be checked.
 
 ### 9. Random projection against PCA: withdrawn
 
@@ -213,5 +210,4 @@ statements come from the code reading in `docs/REPOSITORY_AUDIT.md`.
 |---|---|---|
 | PhD dissertation (Lane, 2026) | LaTeX source in `dissertation/`; no PDF | Reported confirmatory values differ from the committed pipeline; reconciled in `COMPUTATIONAL_ERRATUM.md` |
 | Two IEEE LISAT conference papers (2023, 2024) | not present | none |
-| Letter submitted to IEEE Signal Processing Letters (2026) | not present | none; see item 8 |
 | Defense slides | `ARSPI-Net_Defense.tex`, `ARSPI-Net_Defense.pdf` | figures from `defense_figures/` |

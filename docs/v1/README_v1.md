@@ -6,8 +6,9 @@
 
 > **This is the v1 README, kept for provenance.** It was the repository's root README
 > through commit `913d457` and was moved here on 2026-11-21. The text is v1's, apart
-> from this note and the repository links, which were pointed at this repository on
-> 2026-11-12. Paths and links in it are relative to the repository root. Several statements
+> from this note, the repository links (pointed at this repository on 2026-11-12), and
+> one entry removed from the publication list at the owner's request: a letter that was
+> listed as under review and was not accepted. Paths and links in it are relative to the repository root. Several statements
 > below are superseded or withdrawn by the v2 validation: see `V2_UPGRADE.md` and
 > `docs/RESEARCH_MAP.md` at the repository root. The current entry point is the root
 > `README.md`.
@@ -34,7 +35,6 @@ The repository and corrected dissertation use the following scope restrictions.
 
 1. Lane, A., Nelson, B. D., and Tang, K. W. (2023). “Towards ARSPI-Net: Development of an Efficient Hybrid Deep Learning Framework.” *Proceedings of the IEEE Long Island Systems, Applications and Technology Conference*.
 2. Lane, A., Nelson, B. D., and Tang, K. W. (2024). “Towards ARSPI-NET: Advancing EEG Feature Extraction with Neuromorphic Algorithms.” *Proceedings of the IEEE Long Island Systems, Applications and Technology Conference*.
-3. Lane, A. A., Tang, K. W., and Nelson, B. D. (2026). “Subject-Covariance Entanglement in Affective EEG Embeddings.” *IEEE Signal Processing Letters*, submitted and under review.
 
 ## Authoritative dissertation source
 

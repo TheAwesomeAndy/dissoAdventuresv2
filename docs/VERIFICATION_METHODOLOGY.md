@@ -1,5 +1,12 @@
 # Verification Methodology and Trustworthiness
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. Three of its statements do not hold: scripts with zero coverage
+> exist (`defense_figures/`, `experiments/interpretability/`, `experiments/chapter3/`),
+> reservoir parameters are not consistent across scripts (Chapter 6 uses a different,
+> sparse network), and the test count is out of date. See `docs/REPOSITORY_AUDIT.md`,
+> findings E5 and I7, and `docs/REPRODUCIBILITY.md` for the current checks.
+
 This document explains how every script in the ARSPI-Net repository is independently verified, what the verification tests prove, and why readers should trust the experimental results.
 
 ---

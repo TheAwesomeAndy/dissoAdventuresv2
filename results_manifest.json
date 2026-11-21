@@ -32,6 +32,7 @@
     }
   },
   "test_caveat": "The repository's 491 verification tests establish code behavior (scripts run, functions compute what their names say, output is deterministic under fixed seeds). They do NOT establish that the statistical estimand, preprocessing boundary, or generalization claim is correct. Tier is a property of study design, not of test status.",
+  "standing_note": "Each result carries a standing_2026_11 field, added after the v2 validation and the 2026-11-21 audit. Values, tiers and scripts are unchanged from v1 except that the generating commit of the confirmatory record was corrected from f6a0c66 to 05acc31, the commit its provenance block names. The current position on every claim is docs/RESEARCH_MAP.md.",
   "results": [
     {
       "id": "conf_3class_srp64",
@@ -58,16 +59,17 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation); dissertation/main.tex abstract",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.606,
         "ci95": [
           0.578,
           0.634
         ]
-      }
+      },
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_4class_srp64",
@@ -94,16 +96,17 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation); dissertation/main.tex abstract",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.532,
         "ci95": [
           0.506,
           0.558
         ]
-      }
+      },
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_3class_rawerp16",
@@ -129,16 +132,17 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.681,
         "ci95": [
           0.651,
           0.711
         ]
-      }
+      },
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_4class_rawerp16",
@@ -165,7 +169,7 @@
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.605,
         "ci95": [
@@ -173,7 +177,8 @@
           0.63
         ]
       },
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI."
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_3class_conventional",
@@ -200,7 +205,7 @@
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.494,
         "ci95": [
@@ -208,7 +213,8 @@
           0.519
         ]
       },
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI."
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_4class_conventional",
@@ -235,7 +241,7 @@
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.367,
         "ci95": [
@@ -243,7 +249,8 @@
           0.389
         ]
       },
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI."
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_3class_fusion",
@@ -269,16 +276,17 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.62,
         "ci95": [
           0.591,
           0.648
         ]
-      }
+      },
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_4class_fusion",
@@ -304,12 +312,13 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Corrected raw-data validation)",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "balanced_accuracy": 0.535
-      }
+      },
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_advantage_over_conventional",
@@ -345,7 +354,7 @@
       "output_table": "dissertation/chgraph.tex Sec. Classification Experiments; main.tex abstract",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "three_condition_pp": 11.3,
         "three_condition_ci95": [
@@ -358,7 +367,8 @@
           19.8
         ]
       },
-      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit f6a0c66). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI."
+      "notes": "Value is what the committed reconstruction pipeline (experiments/confirmatory/run_confirmatory_validation.py) produces on the authorized SHAPE data, recorded in the committed execution record experiments/confirmatory/confirmatory_results.json (provenance block, generating commit 05acc31). It is an independent reimplementation: relative to the DISSERTATION it matches on the raw-ERP and conventional rows and runs higher on the SRP/reservoir and destruction-control rows (see dissertation_reported and COMPUTATIONAL_ERRATUM.md). check_against_manifest.py --tol 0.05 verifies this value against the committed record in CI.",
+      "standing_2026_11": "Confirmed. Recomputed by the v2 code in November 2026 (experiments/v2/v2_results.json, v1_reproduction block; replayed again on 2026-11-21)."
     },
     {
       "id": "conf_permutation_test",
@@ -386,12 +396,13 @@
       "output_table": "dissertation/chgraph.tex Sec. Classification Experiments",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "p_value": 0.0099,
         "n_permutations": 100
       },
-      "notes": "Permutation p reproduces exactly (0.0099 both granularities)."
+      "notes": "Permutation p reproduces exactly (0.0099 both granularities).",
+      "standing_2026_11": "Superseded. p = 0.0099 is the floor for 100 permutations and uses a ridge stand-in. v2 repeated the test with the headline estimator: 2,000 permutations, zero exceedances (experiments/v2/v2_results.json)."
     },
     {
       "id": "conf_destruction_controls",
@@ -453,7 +464,7 @@
       "output_table": "dissertation/chgraph.tex Sec. Classification Experiments; main.tex abstract",
       "script": "experiments/confirmatory/run_confirmatory_validation.py",
       "verification": "experiments/confirmatory/verify_confirmatory.py",
-      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit f6a0c66) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
+      "execution_status": "The authorized-data execution record is committed (experiments/confirmatory/confirmatory_results.json, provenance block, generating commit 05acc31) and check_against_manifest.py --tol 0.05 verifies this value against it in CI. Data-independent machinery verification is also committed.",
       "dissertation_reported": {
         "temporal_bin_shuffle": {
           "three_condition_pp": -7.4,
@@ -476,7 +487,8 @@
           "four_category_pp": -20.1
         }
       },
-      "notes": "Reproduced destruction-control drops are substantially larger than the dissertation-reported values (see dissertation_reported); the two use different control definitions/implementations."
+      "notes": "Reproduced destruction-control drops are substantially larger than the dissertation-reported values (see dissertation_reported); the two use different control definitions/implementations.",
+      "standing_2026_11": "Qualified. These controls destroy training and test data with an independent permutation per observation, which mixes information removal with noise injection. v2 reports each control in two modes (experiments/v2/v2_results.json)."
     },
     {
       "id": "exp_interp_L1_temporal",
@@ -497,7 +509,8 @@
         "reservoir default"
       ],
       "output_table": "dissertation/chConclusion.tex Table (operational interpretability)",
-      "script": "experiments/interpretability/run_level1_temporal_traceability.py"
+      "script": "experiments/interpretability/run_level1_temporal_traceability.py",
+      "standing_2026_11": "Withdrawal recommended. The 0.82 value correlates two windows of raw z-scored EEG and never involves the reservoir; the listed script states that it does not compute it (docs/REPOSITORY_AUDIT.md, I2; DISSERTATION_ERRATUM.md)."
     },
     {
       "id": "exp_interp_L2_geometric",
@@ -520,7 +533,8 @@
         "reservoir default"
       ],
       "output_table": "dissertation/chConclusion.tex Sec. Geometric Discovery",
-      "script": "chapter5Experiments/canonical_pytorch_baselines.py (--centered)"
+      "script": "chapter5Experiments/canonical_pytorch_baselines.py (--centered)",
+      "standing_2026_11": "Statistic replaced. The ratio has no noise floor (structureless features give about 69), and the listed script computes no variance decomposition. Calibrated components: subject 44.5%, condition 10.3% (experiments/v2/v2_results.json)."
     },
     {
       "id": "exp_interp_L3_dynamical",
@@ -541,7 +555,8 @@
         "reservoir default"
       ],
       "output_table": "dissertation/chConclusion.tex Table (operational interpretability)",
-      "script": "experiments/interpretability/run_level3_descriptor_erp_alignment.py"
+      "script": "experiments/interpretability/run_level3_descriptor_erp_alignment.py",
+      "standing_2026_11": "Withdrawal recommended, as exp_interp_L1_temporal. In the listed script 0.82 is a printed literal and every descriptor is spike-domain."
     },
     {
       "id": "exp_4class_per_observation_median_kappa",
@@ -568,7 +583,8 @@
       ],
       "output_table": "dissertation/chConclusion.tex operational-interpretability table; chSynthesis.tex Eq. kappa, fig7_A2",
       "script": "chapter7Experiments/run_chapter7_experiment_A.py",
-      "notes": "Conclusion table headline value. Per-observation estimand across 844 4-category observations."
+      "notes": "Conclusion table headline value. Per-observation estimand across 844 4-category observations.",
+      "standing_2026_11": "Archived. The electrode-permutation null assumes exchangeable electrodes; a valid null needs electrode coordinates. The committed result file holds 2,000 permutations per observation, not 5,000. The clustering defect fixed in 2026-11 (docs/v1/DEFECT_FIXES.md, D3) does not change kappa."
     },
     {
       "id": "exp_3class_group_coupling_kappa",
@@ -594,7 +610,8 @@
       ],
       "output_table": "experiments/ch6_ch7_3class/ch7_04_experiments.py; chSynthesis.tex 3-class figures",
       "script": "experiments/ch6_ch7_3class/ch7_04_experiments.py",
-      "notes": "Different estimand and granularity from the per-observation 0.273: subject-level median on the corrected 3-class stream."
+      "notes": "Different estimand and granularity from the per-observation 0.273: subject-level median on the corrected 3-class stream.",
+      "standing_2026_11": "Archived. As above. The listed script computes neither the described subject-level median nor a one-sample Wilcoxon test; its permutation p-values now use the (1 + count)/(1 + n) form (docs/v1/DEFECT_FIXES.md, D4)."
     },
     {
       "id": "exp_attention_prototype",
@@ -616,7 +633,8 @@
       ],
       "output_table": "dissertation/chgraph.tex Sec. saliency comparison",
       "script": "experiments/interpretability/run_arspinet_v2_attention_prototype.py",
-      "notes": "Condition-profile permutation not significant (p = 0.634)."
+      "notes": "Condition-profile permutation not significant (p = 0.634).",
+      "standing_2026_11": "Exploratory. The test in the listed script permutes 20 fold accuracies between methods, not condition profiles; its p-value now uses the (1 + count)/(1 + n) form."
     },
     {
       "id": "exp_4class_classification",
@@ -638,7 +656,8 @@
         "archived"
       ],
       "output_table": "dissertation/chgraph.tex; experiments/ch5_4class",
-      "script": "experiments/ch5_4class/ch5_4class_03_classification_full.py"
+      "script": "experiments/ch5_4class/ch5_4class_03_classification_full.py",
+      "standing_2026_11": "Not reproducible from the listed script, which has no centering code. The two values appear as fixed strings in experiments/ablation/layer_ablation.py."
     },
     {
       "id": "arch_baseline_centered_table",
@@ -694,7 +713,8 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Archived baseline comparison)",
       "script": "chapter5Experiments/canonical_pytorch_baselines.py, experiment_zero.py, sklearn_baselines.py",
-      "notes": "Descriptive legacy estimate. The centering estimand is transductive and not prospective; superseded for inference by the confirmatory table."
+      "notes": "Descriptive legacy estimate. The centering estimand is transductive and not prospective; superseded for inference by the confirmatory table.",
+      "standing_2026_11": "Archived. The deep-model rows come from a deprecated implementation that trains only the output layer; the canonical script cannot load the data as committed; centering is transductive."
     },
     {
       "id": "arch_pca64_svm",
@@ -718,7 +738,8 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Archived baseline classification)",
       "script": "chapter5Experiments/run_chapter5_experiments.py",
-      "notes": "Descriptive; global PCA prevents an architectural or sample-size claim."
+      "notes": "Descriptive; global PCA prevents an architectural or sample-size claim.",
+      "standing_2026_11": "Archived. PCA is fitted on all observations before the split. The listed script has no SVM row."
     },
     {
       "id": "arch_gnn_sweep",
@@ -743,7 +764,8 @@
       ],
       "output_table": "dissertation/chgraph.tex Table (Archived message-passing results)",
       "script": "chapter5Experiments/run_chapter5_experiments.py, chapter5Experiments/graph_diffusion_oversmoothing.py",
-      "notes": "Cannot establish a universal graph operating boundary under global preprocessing."
+      "notes": "Cannot establish a universal graph operating boundary under global preprocessing.",
+      "standing_2026_11": "Archived. The graph models are random-weight propagation, never trained, and GIN and EdgeConv are not in the listed script. The 33% variance figure is a fixed value in chapter5Experiments/reproduce_chapter5.py, not a computation."
     },
     {
       "id": "arch_4class_ch6_ch7",
@@ -766,7 +788,8 @@
       ],
       "output_table": "dissertation/chDynamics.tex, chSynthesis.tex; experiments/ablation",
       "script": "chapter6Experiments/run_chapter6_exp*.py, chapter7Experiments/run_chapter7_experiment_*.py, experiments/ablation/layer_ablation.py",
-      "notes": "Cohort-level, exploratory. Does NOT establish diagnostic subtypes, patient-level interpretation, or validated biomarkers."
+      "notes": "Cohort-level, exploratory. Does NOT establish diagnostic subtypes, patient-level interpretation, or validated biomarkers.",
+      "standing_2026_11": "Archived. Computed on a sparse reservoir that differs from the classification reservoir, on 211 participants and 844 observations (the corrected cohort is 210 and 840)."
     },
     {
       "id": "novel_n1_srp_vs_pca",
@@ -798,7 +821,8 @@
       ],
       "output_table": "experiments/novel/NOVEL_RESULTS.md N1; novel_results_3class.json",
       "script": "experiments/novel/run_novel_experiments.py",
-      "notes": "SRP significantly OUTPERFORMS fold-local PCA (interval excludes zero) on subject-entangled EEG. Fast-mode run."
+      "notes": "SRP significantly OUTPERFORMS fold-local PCA (interval excludes zero) on subject-entangled EEG. Fast-mode run.",
+      "standing_2026_11": "Superseded. With PCA left unwhitened and the readout regularization tuned by nested cross-validation, the SRP advantage disappears: +0.7 and +0.3 points with intervals spanning zero (experiments/v2/v2_pca_tuned.json). Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "novel_n2_reservoir_instrument",
@@ -827,7 +851,8 @@
       ],
       "output_table": "experiments/novel/NOVEL_RESULTS.md N2; novel_results_3class.json",
       "script": "experiments/novel/run_novel_experiments.py",
-      "notes": "Bounded to what was measured: feature-level reproducibility across reservoir seeds is near zero (ICC ~ 0), while decision-level balanced accuracy is seed-stable (64.0 +/- 1.0). Transfer function is a single-template demonstration; robustness curves use a single perturbation seed. The crossed reservoir-seed x projection-seed x CV-repeat instrument experiment is NOT yet run, so 'calibrated instrument' is not claimed."
+      "notes": "Bounded to what was measured: feature-level reproducibility across reservoir seeds is near zero (ICC ~ 0), while decision-level balanced accuracy is seed-stable (64.0 +/- 1.0). Transfer function is a single-template demonstration; robustness curves use a single perturbation seed. The crossed reservoir-seed x projection-seed x CV-repeat instrument experiment is NOT yet run, so 'calibrated instrument' is not claimed.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "novel_n3_necessity_map",
@@ -855,7 +880,8 @@
       ],
       "output_table": "experiments/novel/NOVEL_RESULTS.md N3; novel_results_3class.json",
       "script": "experiments/novel/run_novel_experiments.py",
-      "notes": "Temporal-bin order most necessary (-25.8pp). Intact rho=9.8 corroborates reported rho~7.2 entanglement."
+      "notes": "Temporal-bin order most necessary (-25.8pp). Intact rho=9.8 corroborates reported rho~7.2 entanglement.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "novel_m2_pca_nuisance_alignment",
@@ -894,7 +920,8 @@
       ],
       "output_table": "experiments/novel/NUISANCE_RESULTS.md M2; nuisance_results.json",
       "script": "experiments/novel/run_nuisance_study.py",
-      "notes": "Global PCA-64 is near-collinear with the subject subspace (1.33 deg) and inflates rho to 43.554. But N1's actual per-electrode operator does NOT: blockwise PCA sits 23.9 deg from subject and its rho (7.159) is BELOW ambient. The gross nuisance-alignment is therefore an aggressive-global-compression phenomenon and does NOT explain the N1 accuracy gap; corrects the earlier 'mechanism behind N1' claim. Accuracy gap itself (SRP 64.329 vs PCA 59.968, +4.36pp) reproduces exactly."
+      "notes": "Global PCA-64 is near-collinear with the subject subspace (1.33 deg) and inflates rho to 43.554. But N1's actual per-electrode operator does NOT: blockwise PCA sits 23.9 deg from subject and its rho (7.159) is BELOW ambient. The gross nuisance-alignment is therefore an aggressive-global-compression phenomenon and does NOT explain the N1 accuracy gap; corrects the earlier 'mechanism behind N1' claim. Accuracy gap itself (SRP 64.329 vs PCA 59.968, +4.36pp) reproduces exactly.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json). The variance ratio used here has no noise floor."
     },
     {
       "id": "novel_m1a_angle_rotation",
@@ -930,7 +957,8 @@
       ],
       "output_table": "experiments/novel/NUISANCE_RESULTS.md M1a; nuisance_results.json",
       "script": "experiments/novel/run_nuisance_study.py",
-      "notes": "Monotone, dataset-independent: PCA maximizes variance = nuisance once nuisance dominates."
+      "notes": "Monotone, dataset-independent: PCA maximizes variance = nuisance once nuisance dominates.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "novel_m5_reservoir_not_disentangler",
@@ -954,7 +982,8 @@
       ],
       "output_table": "experiments/novel/NUISANCE_RESULTS.md M5; nuisance_results.json",
       "script": "experiments/novel/run_nuisance_study.py",
-      "notes": "raw ERP-16 rho (8.7) <= BSC6 rho (11.4): the neuromorphic transform slightly increases entanglement. Any reduction to 9.8 is from the isotropic projection, not the reservoir."
+      "notes": "raw ERP-16 rho (8.7) <= BSC6 rho (11.4): the neuromorphic transform slightly increases entanglement. Any reduction to 9.8 is from the isotropic projection, not the reservoir.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json). The variance ratio used here has no noise floor."
     },
     {
       "id": "novel_m2_pca_nuisance_alignment_4class",
@@ -989,7 +1018,8 @@
       ],
       "output_table": "experiments/novel/NUISANCE_RESULTS.md cross-granularity; nuisance_results_4class.json",
       "script": "experiments/novel/run_nuisance_study.py",
-      "notes": "Global PCA 1.58 deg to subject, rho 31.798 (above ambient 17.203); blockwise (N1 operator) 23.9 deg, rho 15.528 (below ambient). Same operator-dependence as 3-condition; gross alignment does not explain the N1 gap on either label set."
+      "notes": "Global PCA 1.58 deg to subject, rho 31.798 (above ambient 17.203); blockwise (N1 operator) 23.9 deg, rho 15.528 (below ambient). Same operator-dependence as 3-condition; gross alignment does not explain the N1 gap on either label set.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json). The variance ratio used here has no noise floor."
     },
     {
       "id": "novel_n1_srp_vs_pca_4class",
@@ -1023,7 +1053,8 @@
       ],
       "output_table": "experiments/novel/NOVEL_RESULTS.md cross-granularity; novel_results_4class.json",
       "script": "experiments/novel/run_novel_experiments.py",
-      "notes": "Within-SHAPE cross-granularity consistency (same participants/acquisition, not an independent cohort): SRP > PCA at all dims, CI excludes zero (+3.9 [1.5,6.4] at 64)."
+      "notes": "Within-SHAPE cross-granularity consistency (same participants/acquisition, not an independent cohort): SRP > PCA at all dims, CI excludes zero (+3.9 [1.5,6.4] at 64).",
+      "standing_2026_11": "Superseded. With PCA left unwhitened and the readout regularization tuned by nested cross-validation, the SRP advantage disappears: +0.7 and +0.3 points with intervals spanning zero (experiments/v2/v2_pca_tuned.json). Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "novel_n3_necessity_map_4class",
@@ -1051,7 +1082,8 @@
       ],
       "output_table": "experiments/novel/NOVEL_RESULTS.md cross-granularity; novel_results_4class.json",
       "script": "experiments/novel/run_novel_experiments.py",
-      "notes": "Consistent with 3-condition: temporal-bin order most necessary (-28.2pp); rho inflates 14.9->70."
+      "notes": "Consistent with 3-condition: temporal-bin order most necessary (-28.2pp); rho inflates 14.9->70.",
+      "standing_2026_11": "Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "external_n1_srp_vs_pca_tcrzem",
@@ -1100,7 +1132,8 @@
       ],
       "output_table": "experiments/external/EXTERNAL_RESULTS.md N1; external_results.json",
       "script": "experiments/external/run_tcrzem_replication.py",
-      "notes": "External replication: SRP > PCA at all dims, CI excludes zero, larger than SHAPE (+5-6.7pp). Absolute accuracy near 3-class chance because cohort is far more subject-dominated (ambient rho ~111)."
+      "notes": "External replication: SRP > PCA at all dims, CI excludes zero, larger than SHAPE (+5-6.7pp). Absolute accuracy near 3-class chance because cohort is far more subject-dominated (ambient rho ~111).",
+      "standing_2026_11": "Exploratory. Run with the standardized-PCA setup later shown to handicap PCA; not rerun with the tuned control. Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     },
     {
       "id": "external_m2_pca_nuisance_alignment_tcrzem",
@@ -1129,7 +1162,8 @@
       ],
       "output_table": "experiments/external/EXTERNAL_RESULTS.md M2; external_results.json",
       "script": "experiments/external/run_tcrzem_replication.py",
-      "notes": "PCA 0.89 deg to subject (vs 21.15 to condition); even starker than SHAPE (1.32). Mechanism replicates on an independent cohort."
+      "notes": "PCA 0.89 deg to subject (vs 21.15 to condition); even starker than SHAPE (1.32). Mechanism replicates on an independent cohort.",
+      "standing_2026_11": "Exploratory. Run with the standardized-PCA setup later shown to handicap PCA; not rerun with the tuned control. Exploratory, unverified record: the producing code changed after the result file was written (experiments/records.lock.json)."
     }
   ],
   "confirmatory_pipeline": {
@@ -1143,7 +1177,7 @@
     "canonical_runner": "experiments/confirmatory/run_confirmatory_validation.py",
     "public_ci_scope": "Synthetic and data-independent implementation verification, PLUS a numerical comparison of the committed confirmatory execution record (confirmatory_results.json) against results_manifest.json at --tol 0.05. Restricted SHAPE records themselves are not redistributed to CI; the committed execution record is.",
     "authorized_data_requirement": "Satisfied: the canonical runner was run on the audited SHAPE cohort and confirmatory_results.json is committed with a provenance block; check_against_manifest.py --tol 0.05 passes (56/56). Re-run before a frozen release to refresh the record on the release commit.",
-    "empirical_regeneration_status": "Established by the committed execution record experiments/confirmatory/confirmatory_results.json (both granularities, provenance block, generating commit f6a0c66); CI verifies it numerically at --tol 0.05."
+    "empirical_regeneration_status": "Established by the committed execution record experiments/confirmatory/confirmatory_results.json (both granularities, provenance block, generating commit 05acc31); CI verifies it numerically at --tol 0.05."
   },
   "confirmatory_reconciliation": "As of this reconciliation, confirmatory 'value' fields are the numbers the committed runner (experiments/confirmatory/run_confirmatory_validation.py) actually produces on the authorized SHAPE data, recorded in experiments/confirmatory/confirmatory_results.json. 'dissertation_reported' preserves the figures printed in the dissertation, which came from the original analysis whose code is not in this repository. The committed reconstruction matches the dissertation on raw-ERP and conventional rows but is ~1.4-3.7pp higher on BSC6/SRP-64 and fusion and markedly different on destruction controls. check_against_manifest.py --tol 0.05 now passes because the manifest records the reproduced values, not the original ones. See COMPUTATIONAL_ERRATUM.md for the authority model and row-by-row reconciliation."
 }

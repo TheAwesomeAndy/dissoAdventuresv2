@@ -59,7 +59,7 @@ Four feature extraction methods are compared:
 | **BandPower** | Welch PSD in 5 frequency bands (delta 1-4, theta 4-8, alpha 8-13, beta 13-30, gamma 30-100 Hz) | 5 | 170 |
 | **Hjorth** | Activity (variance), Mobility (sqrt(var(dx)/var(x))), Complexity | 3 | 102 |
 
-**BSC₆ (Binned Spike Counts):** The spike train from each reservoir is divided into 6 equal temporal bins. Spike counts per bin per neuron are concatenated to produce a 1536-dimensional vector. PCA (fitted on training data only per fold) reduces this to 64 dimensions — the primary ARSPI-Net embedding.
+**BSC₆ (Binned Spike Counts):** The spike train from each reservoir is divided into 6 equal temporal bins. Spike counts per bin per neuron are concatenated to produce a 1536-dimensional vector. PCA reduces this to 64 dimensions — the primary ARSPI-Net embedding of these archived scripts. **Correction (2026-11):** this README used to say the PCA was fitted on training data only per fold. In the scripts in this directory it is fitted on all observations before the split (`run_chapter5_experiments.py`, `reproduce_chapter5.py`, `experiment_zero.py`), so these results are not leak-free. The leak-free protocol is `experiments/confirmatory/`; see `docs/v1/DEFECT_FIXES.md`.
 
 **MFR (Mean Firing Rate):** Average spike count per neuron across the full window. This rate-based code discards temporal structure — it serves as a control to prove temporal coding matters.
 
@@ -368,7 +368,7 @@ Verified components:
 - **Graph construction (3 tests):** Graph structure, electrode topology, and k-NN referenced
 - **Classification pipeline (3 tests):** StratifiedGroupKFold CV runs, returns correct fold count, finite accuracies
 - **Graph readout (1 test):** Mean pooling produces correct-dim vector
-- **No-leakage checks (2 tests):** StratifiedGroupKFold used, PCA fitted per fold
+- **Split checks (2 tests):** StratifiedGroupKFold used; `fit_transform` present. The second check was labelled "PCA fitted per fold" until 2026-11. It is a source-string match and the PCA in this script is fitted on all data (`docs/v1/DEFECT_FIXES.md`, D8)
 - **Output structure (3 tests):** Pickle saved, PDF figures generated, Agg backend used
 - **Deep baselines (2 tests):** Baseline results pickle exists and contains data
 

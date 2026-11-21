@@ -248,7 +248,8 @@ def run_analysis(bsc_binned, bsc_flat, labels, subjects, outdir):
     for _ in range(N_PERM):
         p = rng.permutation(combined)
         perm_diffs.append(p[:n].mean() - p[n:].mean())
-    p_val = (np.abs(perm_diffs) >= np.abs(obs_diff)).mean()
+    # (1 + count) / (1 + n). Fixed 2026-11 (docs/v1/DEFECT_FIXES.md, D4).
+    p_val = (1 + (np.abs(perm_diffs) >= np.abs(obs_diff)).sum()) / (1 + len(perm_diffs))
 
     print(f"\n  Attention: {m_a:.1%} ± {np.std(attn_accs):.1%}")
     print(f"  Standard:  {m_s:.1%} ± {np.std(std_accs):.1%}")

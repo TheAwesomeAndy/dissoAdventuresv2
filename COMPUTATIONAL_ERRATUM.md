@@ -1,5 +1,9 @@
 # Computational erratum — confirmatory classification values
 
+> **See also, added 2026-11-21:** `DISSERTATION_ERRATUM.md` lists every other statement in
+> the dissertation affected by the v2 validation and the repository audit. This file
+> remains the record for the confirmatory classification values.
+
 **Status:** authoritative for code-derived numbers. This document records a
 reconciliation between the values reported in the submitted dissertation and the
 values the committed pipeline in this repository actually produces.

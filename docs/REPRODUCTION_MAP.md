@@ -1,5 +1,12 @@
 # Reproduction Map: Script to Dissertation Result
 
+> **Status note, added 2026-11-21.** This document is part of the v1 record and is kept
+> as written. Known problems: several results are mapped to scripts that do not
+> compute them, the check count (491) predates later suites (the measured baseline is
+> 772), and the novel, external and v2 work is not covered. The complete, current index
+> is `docs/EXPERIMENT_REGISTRY.md`; details are in `docs/REPOSITORY_AUDIT.md`, findings
+> I1 and I2.
+
 This document maps the tables, figures, and statistical results in the ARSPI-Net
 dissertation to the scripts that produce them. Results are separated by
 inferential status.

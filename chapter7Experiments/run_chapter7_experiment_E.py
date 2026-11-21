@@ -61,7 +61,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SUBJECT_FEATURES_FILE = os.path.join(SCRIPT_DIR, 'chapter7_results', 'subject_features.csv')
 C_MATRIX_FILE = os.path.join(SCRIPT_DIR, 'chapter7_results', 'C_matrices.csv')
 PSYCH_FILE = os.path.join(SCRIPT_DIR, '..', 'SHAPE_Community_Andrew_Psychopathology.xlsx')
-FIGURE_DIR = '/mnt/user-data/outputs/pictures/chSynthesis'
+FIGURE_DIR = os.environ.get('ARSPI_FIGURE_DIR', os.path.join(SCRIPT_DIR, 'figures'))
 DX_LIST = ['SUD', 'MDD', 'PTSD', 'GAD', 'ADHD']
 N_REPEATS = 10
 N_SPLITS = 5
@@ -366,14 +366,11 @@ Metrics: AUC, balanced accuracy, macro-F1
     print("\n" + "=" * 60)
     print("4. QUANTITATIVE ANALYSIS")
     print("=" * 60)
+    # Until 2026-11 a fixed paragraph here stated what "the raw observation predicted"
+    # whatever the data showed (docs/v1/DEFECT_FIXES.md, D9).
     print("""
-The raw observation predicted:
-  - SUD detection near chance (no visible group separation)
-  - ADHD detection possible in D-only space (visible centroid offset)
-  - Topology features carry no univariate SUD or ADHD signal (0/68)
-  - Dynamics features carry both SUD and ADHD signal
-Now testing whether these raw patterns translate to multivariate
-classification performance.
+Testing whether the patterns seen in the raw observations above
+translate to multivariate classification performance.
 """)
     all_results = {}
     for dx in DX_LIST:
@@ -485,25 +482,18 @@ classification performance.
             print(f" {m:>12.4f}", end='')
         best = max(means, key=means.get)
         print(f" {best:>12}")
-    print(f"""
-The raw observations predicted the classification results:
-1. SUD DETECTION: Near chance across all conditions, as predicted by
-   the absence of visible group separation and 0/68 significant
-   topology features.
-2. ADHD DETECTION: D-only achieves the highest AUC in the experiment,
-   as predicted by the broader univariate effect spread and visible
-   PCA centroid offset. Adding topology degrades performance because
-   68 uninformative features dilute the signal in a rank-deficient
-   matrix (N/p = 0.69).
-3. GAD DETECTION: T-only achieves the best AUC — the one diagnosis
-   where topology outperforms dynamics.
-4. CONCATENATION NEVER IMPROVES: T+D ≤ max(T, D) for every diagnosis.
-   The two descriptor families do not carry complementary discriminative
-   information at the linear-readout level.
-5. κ AUGMENTATION for ADHD: Adding κ to T+D partially recovers
-   performance, suggesting coupling strength carries non-redundant
-   ADHD information.
-""")
+    # Computed summary. Until 2026-11 a fixed five-point narrative was printed here
+    # regardless of the results (docs/v1/DEFECT_FIXES.md, D9).
+    print("\nComputed summary:")
+    for dx in DX_LIST:
+        m = {c: all_results[dx][c]['auc'].mean() for c in cond_names}
+        best = max(m, key=m.get)
+        single = max(m['T-only'], m['D-only'])
+        print(f"  {dx}: best condition {best} (AUC {m[best]:.3f}); "
+              f"T+D {'exceeds' if m['T+D'] > single else 'does not exceed'} "
+              f"the better single family ({single:.3f}); "
+              f"adding kappa changes T+D by {m['T+D+kappa'] - m['T+D']:+.3f}")
+
     # ==============================================================
     # SUMMARY TABLE
     # ==============================================================
