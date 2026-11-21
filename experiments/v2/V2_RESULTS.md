@@ -204,4 +204,4 @@ Fractions of total feature variance from the two-way subject x condition layout,
 
 ## Provenance
 
-Generated 2026-11-11T23:33:46Z at commit `59d97f8a8df1` with Python 3.13.18, NumPy 2.5.3, SciPy 1.18.1, scikit-learn 1.9.1. Input files: 636 three-condition, 848 four-category. Code hashes are in the execution record.
+Generated 2026-11-21T21:47:28Z at commit `079c1eb79c72` with Python 3.13.18, NumPy 2.5.3, SciPy 1.18.1, scikit-learn 1.9.1. Input files: 636 three-condition, 848 four-category. Code hashes are in the execution record.

@@ -22,22 +22,19 @@
       "data": "SHAPE",
       "tier": "v2 validation",
       "provenance": "embedded",
-      "code_commit": "59d97f8a8df16e7ec73a4a5b7a8d3c4e1d9ae030",
-      "sha256": "edfe642cb42605a8ab9bbdfbbcde0fd9fc5e6877cc1309732c5b8e1077bb4044",
+      "code_commit": "079c1eb79c729d7a7ff9273b293e476e8c7f85ae",
+      "sha256": "0c4684e4073946d36daacfc1c18a0861a4882274037f9ccf7b474681ce7d08a8",
       "code_sha256": {
-        "arspinet_v2/controls.py": "43373f5d42c28fa7f8c74a4cfd0c7af210f39aad4e8995972e47df50595610a6",
-        "arspinet_v2/dynamics.py": "2d29ee3d820d17eec2c17603c50eb1416041a72d9de738876b5a634abac77583",
-        "arspinet_v2/evaluation.py": "f46a5b5f46dffa3d5f469afcbd17e55d4fa901adc97afb84894194df72fc07e8",
-        "arspinet_v2/features.py": "13fa00216596f39d7c541b93fbfc3397e64815ee87550c9b2faa843bb0b61ab5",
-        "arspinet_v2/nuisance.py": "4bd096e239ea06f5fe177fc21c0e3cbef87c9761cc35f2c1a185930f9cdcdfdb",
-        "arspinet_v2/reservoir.py": "b4d264b224681d0e80e5e46076d9d57ea5202f80af0991f8d7140fd61ad5d738",
+        "arspinet_v2/controls.py": "d7656ca82304ecbc8256f329bc0ad4f9be8a4c47bc2d1b3ed3b3cd732adf2d43",
+        "arspinet_v2/dynamics.py": "bf33486d03d9a54354a946d27e480bff9517136bb36cded783bbf822998ca312",
+        "arspinet_v2/evaluation.py": "ad01a1e2b2c32bbce7386db0885068a38194f41a4aed6790f87a9515ab41b20c",
+        "arspinet_v2/features.py": "cde71385dad7f0b58f0630ff5a45158f42a66e1c4e0971e30233a35c314c9300",
+        "arspinet_v2/nuisance.py": "e0a934268e48624c1f63cd4246d6766fc05284beaca56d2bae86163994d65e43",
+        "arspinet_v2/reservoir.py": "179a7ee41408380ed605e99217efb58541fc195d9d11420e5ba42203c59cbb73",
         "experiments/confirmatory/run_confirmatory_validation.py": "dbc56cbf5645b2c173f72991e5ff5a60f8e190cb3deccb15cca9efeac92fdbdd",
-        "experiments/v2/data.py": "34451637b6e3a707c7e71ff2c349687d34e75b631b54675ac1a69b621bb2c33b",
-        "experiments/v2/run_v2_validation.py": "1bf621389f4c15b9fb5a79492b07c4d77e0b8a021b51bc38358270743460bf35"
-      },
-      "pending_regeneration": {
-        "since": "2026-11-21",
-        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
+        "experiments/v2/config.toml": "348041c184ec63852097a9df158c247e8bdc11b03c7565524375db3e002d63e6",
+        "experiments/v2/data.py": "1c9f4d32a6b51ceed5d42031e04fc4a9cf75f29bdea1a8d0e28050071538e008",
+        "experiments/v2/run_v2_validation.py": "1216336720341b69b239a3d9c381ad5ca4b6cbb21e502816e534de511e591d58"
       }
     },
     "experiments/v2/v2_baseline_input.json": {
