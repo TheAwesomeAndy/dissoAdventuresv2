@@ -268,7 +268,13 @@ jobs:
           scripts/compare_records.py
 
       - name: Type-check the library
-        run: mypy
+        # Pinned, in its own environment. The library's files are hashed into result
+        # records, so a type-stub release must not be able to demand an edit to them.
+        # Raise these pins deliberately, together with any annotation they require.
+        run: |
+          python -m venv .typecheck
+          .typecheck/bin/pip install --quiet "mypy==2.4.1" "numpy==2.5.5"
+          .typecheck/bin/mypy
 
       - name: Check result records against the code that produced them
         run: python scripts/check_records.py

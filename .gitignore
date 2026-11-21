@@ -56,3 +56,5 @@ build/
 dist/
 .pytest_cache/
 .ruff_cache/
+.typecheck/
+.mypy_cache/
