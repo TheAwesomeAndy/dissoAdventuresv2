@@ -24,7 +24,9 @@ dependencies = [
 legacy = ["pandas>=2.2.3", "matplotlib>=3.9"]
 # reading the SCID-5 spreadsheet for experiments/v2/run_v2_depression.py
 clinical = ["pandas>=2.2.3", "openpyxl>=3.1"]
-dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.10", "pandas>=2.2.3", "matplotlib>=3.9"]
+# ruff is pinned: its formatter decides the bytes of files that are hashed into result
+# records, so a formatter release must not be able to demand an edit to them.
+dev = ["pytest>=8", "ruff==0.16.9", "mypy>=1.10", "pandas>=2.2.3", "matplotlib>=3.9"]
 
 [tool.setuptools]
 packages = ["arspinet_v2"]
