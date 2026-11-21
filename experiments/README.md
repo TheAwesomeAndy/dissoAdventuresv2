@@ -1,5 +1,11 @@
 # Extended Experiments
 
+> **Navigation note, added 2026-11-21.** This file is part of the v1 record and
+> describes three of the directories below. The complete, current index of every
+> experiment in the repository, with tier, command, protocol and known problems, is
+> `docs/EXPERIMENT_REGISTRY.md`. The index of committed result records is
+> `experiments/records.lock.json`.
+
 This directory contains experimental extensions that build on the core chapter experiments. These scripts were added in March 2026 to address cross-chapter questions, expand analyses to different class granularities, and directly test the dissertation's central thesis.
 
 ---

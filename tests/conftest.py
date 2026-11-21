@@ -41,6 +41,18 @@ def make_cohort(n_subj=40, n_cls=3, n_time=256, n_ch=6, seed=0, effect=1.0):
     return np.asarray(X), np.asarray(y), np.asarray(g)
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _limit_blas_threads():
+    """Small problems run slower, not faster, when BLAS oversubscribes shared runners."""
+    try:
+        from threadpoolctl import threadpool_limits
+    except ImportError:                                    # pragma: no cover
+        yield
+        return
+    with threadpool_limits(limits=2):
+        yield
+
+
 @pytest.fixture(scope="session")
 def repo() -> Path:
     return REPO

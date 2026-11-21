@@ -1,237 +1,221 @@
-# ARSPI-Net: An Interpretable Neuromorphic Framework for Clinical EEG Analysis
+# ARSPI-Net
 
 [![verify](https://github.com/TheAwesomeAndy/dissoAdventuresv2/actions/workflows/verify.yml/badge.svg)](https://github.com/TheAwesomeAndy/dissoAdventuresv2/actions/workflows/verify.yml)
 [![License: MIT](https://img.shields.io/badge/code%20license-MIT-blue.svg)](LICENSE)
-<!-- DOI badge added after the frozen release is archived. See RELEASE.md. -->
 
-> **This is ARSPI-Net v2.** It keeps the v1 confirmatory protocol and tests what an
-> external methods review found untested: the reservoir's fading memory, matched
-> non-reservoir controls, the destruction controls, the permutation test and the
-> subject-variance statistics. All of it was run on the authorized SHAPE data. The short
-> version: the v1 reservoir has no fading memory, the v2 reservoir does, recurrence adds
-> nothing measurable, six-bin amplitudes match or beat the reservoir code, random projection
-> ties PCA once PCA is left unwhitened and tuned, and v1's per-epoch z-scoring destroys
-> temporal localisation.
-> Read [`V2_UPGRADE.md`](V2_UPGRADE.md) first. Tables are in
-> [`experiments/v2/V2_RESULTS.md`](experiments/v2/V2_RESULTS.md). The text below is the
-> v1 README, kept for provenance. Where it and `V2_UPGRADE.md` disagree, v2 governs.
+ARSPI-Net (Affective Reservoir-Spike Processing and Inference Network) is a measurement
+chain for multichannel EEG. A fixed-weight leaky integrate-and-fire reservoir turns each
+electrode's signal into spikes. Spike counts in six time bins form a code. A fixed
+random projection compresses it, and a linear readout classifies affective picture
+conditions across participants.
 
-**Dissertation:** Lane, A. A. (2026). *Affective Reservoir-Spike Processing and Inference Network (ARSPI-Net): A Four-Level Interpretable Neuromorphic Framework for Clinical EEG Analysis.* PhD Dissertation, Department of Electrical and Computer Engineering, Stony Brook University.
+This repository holds three things:
 
-ARSPI-Net is a neuromorphic signal-processing framework for transforming multichannel EEG into explicit temporal, dynamical, and graph-organized representations. A fixed-weight leaky integrate-and-fire reservoir maps continuous EEG to spike trains. A six-bin spike-count code, BSC6, preserves coarse temporal order. A fixed data-independent projection compresses each electrode representation. Named dynamical descriptors, graph quantities, and structure-function coupling statistics remain available for direct inspection.
+1. **The v1 record**: code, figures and LaTeX source of the PhD dissertation (Lane,
+   2026, Stony Brook University) and its corrective audit.
+2. **The v2 validation**: tests of the dissertation's claims on the same data, with
+   matched controls. This is the current scientific position.
+3. **An ongoing study** of a preprocessing artefact that v2 uncovered, replicated on
+   public data.
 
-The primary contribution is a characterized measurement chain, not a state-of-the-art classification claim. On the SHAPE Community cohort, the reported raw ERP reference exceeds the reported reservoir representation. ARSPI-Net is therefore positioned as a decomposable neuromorphic transform whose intermediate variables support mechanistic tests of preserved, transformed, and suppressed signal structure.
+The contribution is a characterized measurement chain and an honest account of what it
+does and does not do. It is not a state-of-the-art classifier.
 
-## Scope
+## What the data say
 
-The repository and corrected dissertation use the following scope restrictions.
+Balanced accuracy on held-out participants, SHAPE Community cohort (211 participants,
+three conditions; 210 participants, four categories). Chance is 33.3% and 25%.
 
-- The four-level interpretability taxonomy is an audit framework proposed in the dissertation. It is not an externally standardized taxonomy.
-- Cross-architecture comparisons are conceptual unless they use a stated common protocol and dataset.
-- Clinical-label effects are cohort-level, exploratory, and hypothesis-generating. They do not establish diagnostic subtypes, patient-level interpretation, or validated biomarkers.
-- The corrected classification estimands use participant-grouped cross-validation, fold-local model fitting, and a fixed data-independent SRP-64 projection.
-- Legacy PCA-64, subject-centered, 10-fold, and message-passing results are retained as archived descriptive results. They are not used for the primary inference.
-- Generalization is restricted to the measured cohort until independently validated.
-- Energy efficiency motivates the architecture but is not a measured result because hardware energy and latency were not evaluated.
-
-## Publications
-
-1. Lane, A., Nelson, B. D., and Tang, K. W. (2023). “Towards ARSPI-Net: Development of an Efficient Hybrid Deep Learning Framework.” *Proceedings of the IEEE Long Island Systems, Applications and Technology Conference*.
-2. Lane, A., Nelson, B. D., and Tang, K. W. (2024). “Towards ARSPI-NET: Advancing EEG Feature Extraction with Neuromorphic Algorithms.” *Proceedings of the IEEE Long Island Systems, Applications and Technology Conference*.
-3. Lane, A. A., Tang, K. W., and Nelson, B. D. (2026). “Subject-Covariance Entanglement in Affective EEG Embeddings.” *IEEE Signal Processing Letters*, submitted and under review.
-
-## Authoritative dissertation source
-
-The LaTeX source is under `dissertation/`. The authoritative files for the **language- and consistency-corrected manuscript** are `main.tex`, the chapter files, `Appendixa.tex`, and `Disso.bib`. `dissertation/AUDIT_REPORT.md` records the language and consistency audit. `ArspiNetFinalVer_.zip` is retained only as an earlier packaged source. Where the package differs from `dissertation/`, the corrected `dissertation/` source governs.
-
-**Authority split for confirmatory numbers.** The `dissertation/` tree is authoritative for the corrected *manuscript*, not for asserting that its reported confirmatory *values* equal the committed runner's output. The dissertation reports BSC₆/SRP-64 = 60.6% / 53.2% (the submitted record); the committed pipeline is an independent reconstruction that reproduces 64.3% / 54.6%. These are reconciled in [`COMPUTATIONAL_ERRATUM.md`](COMPUTATIONAL_ERRATUM.md): the dissertation source is **not** edited to the reconstruction values, and the committed execution record is authoritative for code-derived numbers.
-
-## Dissertation map
-
-| Chapter | Scientific object | Source | Primary code and outputs |
-|---|---|---|---|
-| 1 | Motivation and problem formulation | `dissertation/ch1.tex` | `pictures/ch1/` |
-| 2 | Neuromorphic, graph, and EEG foundations | `dissertation/ch2.tex` | `pictures/ch2/` |
-| 3 | LIF reservoir dynamics and operating point | `dissertation/chLSM.tex` | `experiments/chapter3/`, `pictures/chLSM/` |
-| 4 | Spike-to-embedding transformation | `dissertation/chLSMEmbeddings.tex` | `chapter4Experiments/`, `pictures/chLSMEmbeddings/` |
-| 5 | Classification and graph propagation | `dissertation/chgraph.tex` | `chapter5Experiments/`, `experiments/ch5_4class/` |
-| 6 | Dynamical descriptors | `dissertation/chDynamics.tex` | `chapter6Experiments/`, `experiments/ch6_ch7_3class/` |
-| 7 | Structure-function coupling | `dissertation/chSynthesis.tex` | `chapter7Experiments/`, `experiments/ablation/` |
-| 8 | Synthesis and limitations | `dissertation/chConclusion.tex` | `pictures/conclusion/` |
-| A | Supplementary analyses | `dissertation/Appendixa.tex` | chapter-specific scripts and figures |
-
-Every indexed numerical result is recorded in `results_manifest.json`. The script-to-result mapping and inferential tiers are documented in `docs/REPRODUCTION_MAP.md`.
-
-## Confirmatory estimands (reproduced vs dissertation-reported)
-
-**Protocol:** five repeats of five-fold participant-grouped cross-validation. Each participant’s complete condition panel remains in one fold. Per-feature standardization and the linear readout are fitted on training participants only. BSC6 is compressed from 1,536 to 64 coordinates with a fixed `SparseRandomProjection` generated from a prespecified seed. Reported intervals are participant-cluster bootstrap intervals over repeated out-of-fold predictions. A separate deterministic ridge readout is used for 100 within-participant label permutations.
-
-**Cohorts:** 211 participants and 633 observations for Negative, Neutral, and Pleasant; 210 participants and 840 observations for Threat, Mutilation, Cute, and Erotic.
-
-> **Reproduction note (important).** The numbers below are what the **committed pipeline** (`experiments/confirmatory/run_confirmatory_validation.py`) actually produces on the authorized SHAPE data, recorded in `experiments/confirmatory/confirmatory_results.json` and checked into `results_manifest.json` (`check_against_manifest.py confirmatory_results.json --tol 0.05` passes). The **dissertation reports different figures** (e.g. BSC6/SRP-64 60.6% / 53.2%), preserved in the manifest under `dissertation_reported`. The committed pipeline is an **independent reconstruction**: it matches the dissertation on the raw-ERP and conventional rows (within ~1 pp) but runs **~1.4–3.7 pp higher on the BSC6/SRP-64 and fusion rows** and gives markedly larger destruction-control drops, because the original analysis code is not in this repository and the SRP/reservoir path is reimplemented. Where this README states a confirmatory number, it is the reproduced value; the dissertation value is given in parentheses. The full authority model and a row-by-row reconciliation are in [`COMPUTATIONAL_ERRATUM.md`](COMPUTATIONAL_ERRATUM.md).
-
-| Representation | Three conditions (dissertation) | Four categories (dissertation) |
+| Representation | Three conditions | Four categories |
 |---|---:|---:|
-| Raw ERP, 16 temporal bins | 69.6% [66.5, 72.5] (68.1) | 60.6% [57.9, 63.1] (60.5) |
-| Conventional spectral and Hjorth features | 48.7% [45.9, 51.5] (49.4) | 36.1% [33.9, 38.4] (36.7) |
-| **BSC6 / SRP-64** | **64.3% [61.1, 67.2]** (60.6) | **54.6% [51.9, 57.3]** (53.2) |
-| BSC6 / SRP-64 plus conventional features | 65.1% [61.9, 68.0] (62.0) | 55.0% [52.1, 57.8] (53.5) |
-| Chance | 33.3% | 25.0% |
+| Raw ERP, 16 time bins | 69.6% | 60.5% |
+| Six-bin amplitudes, no reservoir | 67.1% | 55.1% |
+| v2 reservoir code, mean of 10 weight draws | 65.1% | 55.4% |
+| v1 reservoir configuration | 64.3% | 54.6% |
+| LPP mean amplitude, 300 to 1000 ms | 58.4% | 45.8% |
+| Band power and Hjorth features | 48.6% | 36.0% |
 
-Reproduced BSC6/SRP-64 advantage over the conventional baseline: +15.7 pp [11.9, 19.5] for three conditions (dissertation +11.3) and +18.5 pp [15.2, 21.7] for four categories (dissertation +16.5). The participant-label permutation result **reproduces exactly**: p = 0.0099 at both granularities.
+- The evaluation protocol is leak-free, and the reservoir code is far above chance.
+- The reservoir does not beat plain amplitude binning. Recurrence adds nothing
+  measurable, and at its original gain the network has no fading memory.
+- Random projection does not beat PCA once PCA is left unwhitened and tuned.
+- The original preprocessing z-scores each epoch, which fabricates decoding at
+  latencies before the brain can respond. The effect replicates on public data
+  (ERP CORE): pre-stimulus decoding of 58.6% and 70.8% against a 50% chance level.
 
-### Mechanistic destruction controls (reproduced; dissertation in parentheses)
-
-| Control | Three conditions | Four categories |
-|---|---:|---:|
-| Shuffle temporal-bin order within observation and electrode | -24.8 pp [-28.8, -21.1] (-7.4) | -27.8 pp [-31.1, -24.4] (-12.9) |
-| Collapse temporal resolution | -17.6 pp (-4.9) | -22.4 pp (-8.6) |
-| Shuffle electrode identity | -24.1 pp (-13.9) | -22.0 pp (-20.1) |
-
-Ordered temporal structure and stable electrode identity contribute to held-out discrimination (every destruction reduces accuracy). The reproduced drops are substantially larger than the dissertation-reported ones; the two use different control implementations. These do not establish an anatomical interpretation for unlabeled channel identities.
-
-## Confirmatory reproduction status
-
-The canonical implementation is committed under `experiments/confirmatory/`:
-
-- `confirmatory_pipeline.py` defines the participant-grouped estimator, fixed projection, repeated out-of-fold pooling, bootstrap estimators, permutation test, and destruction controls.
-- `run_confirmatory_validation.py` reconstructs the audited SHAPE epochs, applies the specified exclusions, and writes `confirmatory_results.json`.
-- `verify_confirmatory.py` tests the machinery on synthetic data without requiring restricted records.
-- `check_against_manifest.py` compares an authorized-data execution against every confirmatory result recorded in `results_manifest.json`.
-
-The SHAPE data are restricted and are not included. Continuous integration verifies implementation behavior and preprocessing boundaries, not the empirical headline values. Exact agreement with the reported estimates must be established on the authorized data before the frozen release:
-
-```text
-python experiments/confirmatory/run_confirmatory_validation.py \
-    --data3 ./batch_data \
-    --data4 ./categories \
-    --out confirmatory_results.json
-
-python experiments/confirmatory/check_against_manifest.py \
-    confirmatory_results.json --tol 0.05
-```
-
-## Interpretability audit measurements
-
-| Level | Observable | Reported measurement | Chapter |
-|---|---|---|---|
-| 1 | Temporal traceability | pre-reservoir LPP r = 0.82; post-reservoir absolute r = 0.23 | 4 |
-| 2 | Representation geometry | subject-to-condition variance ratio rho = 7.2 | 5 |
-| 3 | Dynamical correspondence | amplitude-domain absolute r = 0.82; spike-domain absolute r = 0.23 | 6 |
-| 4 | Structure-function coupling | per-observation median kappa = 0.273; subject-level median approximately 0.22 | 7 |
-
-The two coupling values are distinct estimands. The 0.273 value is the median across 844 four-category observations. The approximately 0.22 value is the median across 211 subject-averaged three-condition values. They differ in sample unit, granularity, and processing stream.
-
-## Archived results
-
-The repository retains legacy results for provenance. These include globally fitted PCA, transductive subject-mean centering, legacy input slicing, dependent folds, and the original message-passing sweep. They are descriptive and must not be interpreted as prospective performance.
-
-| Archived method | Uncentered | Transductive centered |
-|---|---:|---:|
-| Band power plus SVM | 47.7% | 61.0% |
-| Raw EEG PCA-200 plus logistic regression | 64.9% | 86.4% |
-| Raw EEG plus logistic regression | 70.5% | 88.4% |
-| LSTM | 58.0% | 71.1% |
-| GRU | 59.9% | 78.4% |
-| EEGNet | 72.0% | 89.1% |
-| Reservoir plus logistic regression | 59.4% | 78.8% |
-
-The archived message-passing sweep reports 63.4% for PCA-64 concatenation plus SVM and 49.8%, 56.4%, and 48.5% for GIN, GCN, and EdgeConv. Global preprocessing and dependent folds prevent a universal graph-regime claim.
+Intervals, controls and limits are in [`V2_UPGRADE.md`](V2_UPGRADE.md). The standing of
+every claim, including those withdrawn, is in [`docs/RESEARCH_MAP.md`](docs/RESEARCH_MAP.md).
 
 ## Repository structure
 
 ```text
-dissoAdventuresv2/
-├── README.md
-├── LICENSE
-├── LICENSES.md
-├── CITATION.cff
-├── RELEASE.md
-├── results_manifest.json
-├── dissertation/
-├── chapter4Experiments/
-├── chapter5Experiments/
-├── chapter6Experiments/
-├── chapter7Experiments/
-├── experiments/
-│   ├── chapter3/
-│   ├── confirmatory/
-│   ├── novel/            # leak-free compression + nuisance-alignment study
-│   ├── external/         # independent-cohort replication (TCRZEM)
-│   ├── ch5_4class/
-│   ├── ch6_ch7_3class/
-│   ├── ablation/
-│   └── interpretability/
-├── validation/
-├── docs/
-├── scripts/
-└── pictures/
+arspinet_v2/               the library: reservoir, dynamics, features, evaluation, controls, nuisance
+experiments/
+  v2/                      v2 runners, committed records, generated report
+  zscore_artifact/         z-scoring artefact study on ERP CORE
+  confirmatory/            v1 corrected protocol and its record
+  records.lock.json        index of result records and the code that produced each
+  (other directories)      v1 record: extensions, exploratory studies
+chapter4Experiments/ ... chapter7Experiments/    v1 record: chapter analyses and verifiers
+defense_figures/  dissertation/  pictures/  validation/    v1 record
+tests/                     pytest suite (no data needed)
+scripts/                   tooling
+docs/                      architecture, registry, research map, reproducibility, audit
 ```
 
-## Data format
+`arspinet_v2/` and `experiments/v2/` are authoritative. The v1 record is frozen and
+contains known defects, listed in [`docs/REPOSITORY_AUDIT.md`](docs/REPOSITORY_AUDIT.md).
 
-The SHAPE study is described at <https://lab-can.com/shape/>. The restricted files are not distributed in this repository.
-
-**Three-condition directory, `batch_data/`:**
-
-- filename: `SHAPE_Community_{SUBJECT_ID}_IAPS{Neg,Neu,Pos}_BC.txt`
-- shape: 1229 time samples by 34 channels
-- format: baseline-corrected text, read with `numpy.loadtxt`
-
-**Four-category directory, `categories/`:**
-
-- filename: `SHAPE_Community_{SUBJECT_ID}_IAPS{Neg,Pos}_{Threat,Mutilation,Cute,Erotic}_BC.txt`
-- shape: 1229 time samples by 34 channels
-- format: baseline-corrected text, read with `numpy.loadtxt`
-
-The canonical runner removes samples 0 through 204, decimates samples 205 through 1228 by four to 256 samples, and z-scores each epoch and channel. Subject 127 is excluded from both granularities. Subject 195 is additionally excluded from the four-category cohort.
-
-## Dependencies
+## Installation
 
 ```text
-numpy>=2.0
-scipy>=1.13
-scikit-learn>=1.5
-pandas>=2.2.3
-matplotlib>=3.9
-torch>=1.12  # canonical PyTorch baselines only
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements-lock.txt
+pip install -e . --no-deps
+pip install pytest ruff
 ```
 
-## Verification
+Python 3.11 or newer. `requirements-lock.txt` is the exact environment behind the v2
+records; `pyproject.toml` gives the lower bounds CI uses.
 
-The GitHub Actions workflow runs the 491 declared data-independent checks and uploads per-suite logs. These checks establish that the scripts execute, the operators satisfy their stated implementation contracts, and fixed seeds produce deterministic outputs. They do not establish that an empirical result is true, clinically valid, externally generalizable, or reproduced from restricted data.
+## Quick start, no data required
 
-| Suite | Checks |
-|---|---:|
-| Chapter 4 | 31 |
-| Chapter 5 core | 32 |
-| Chapter 5 Experiment Zero | 37 |
-| Chapter 5 reproduction | 33 |
-| Chapter 5 baselines | 55 |
-| Chapter 6 core | 31 |
-| Chapter 6 reproduction | 42 |
-| Chapter 7 experiments | 38 |
-| Chapter 7 utilities | 40 |
-| Four-category extension | 25 |
-| Three-condition Chapter 6/7 extension | 28 |
-| Ablation | 23 |
-| Data validators | 20 |
-| Confirmatory pipeline | 18 |
-| Novel compression experiments | 13 |
-| Nuisance-alignment study | 14 |
-| External-replication harness | 11 |
-| **Total** | **491** |
+```text
+pytest -m "not slow"               # library, records and documentation checks, about 1 minute
+pytest                             # adds an end-to-end run on synthetic data, about 3 minutes
+python scripts/check_records.py    # every result record still matches the code that produced it
+python scripts/run_verifiers.py    # the 22 legacy suites, in an isolated copy, about 7 minutes
+```
 
-The workflow additionally runs three consistency gates that compare committed
-result files against `results_manifest.json` rather than exercising code:
-`experiments/confirmatory/check_against_manifest.py` (confirmatory rows),
-`experiments/novel/check_novel_manifest.py` (novel, nuisance, and external
-rows), and `validation/validate_dissertation_claims.py` (repository-to-
-dissertation consistency). A green run therefore also establishes that the
-committed JSON outputs and the manifest agree.
+Do not run the `verify_*.py` files of Chapters 4 and 7 directly. They overwrite tracked
+figures with synthetic output. `scripts/run_verifiers.py` runs them safely.
 
-See `docs/VERIFICATION_METHODOLOGY.md`, `docs/REPRODUCTION_MAP.md`, and `results_manifest.json` for the verification boundary and result provenance.
+Using the library:
 
-## Licensing and citation
+```python
+import numpy as np
+from arspinet_v2 import evaluation, features, reservoir
 
-Software and scripts are released under the MIT License. Dissertation text, original figures, third-party material, and restricted data have separate terms described in `LICENSES.md`. Citation metadata are in `CITATION.cff`. The frozen release and DOI procedure is specified in `RELEASE.md`.
+raw = np.random.default_rng(0).standard_normal((30, 256, 34))   # (observations, time, channels)
+y, groups = np.tile([0, 1, 2], 10), np.repeat(np.arange(10), 3)
+
+code = reservoir.encode(raw, rho=0.025)                         # (30, 34, 1536)
+X = features.project(code, features.make_srp(code.shape[2]))    # (30, 34 * 64)
+result = evaluation.evaluate(X, y, groups)                      # participant-grouped CV
+print(result["balanced_accuracy"], evaluation.bootstrap_ci(result))
+```
+
+## Data
+
+| Dataset | Access | Used by |
+|---|---|---|
+| SHAPE Community EEG (three conditions, four categories) | restricted human-subjects data; not distributed | v1, v2 |
+| SCID-5 diagnostic labels | restricted | one v2 analysis |
+| ERP CORE N170 and P3 | public, doi:10.18115/D5JW4R | z-scoring artefact study |
+| TCRZEM | restricted download | one v1 exploratory replication |
+
+Layouts and a file-integrity description are in
+[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md). No data file may be committed.
+
+## Core workflows
+
+With the SHAPE files in `./batch_data` and `./categories`:
+
+```text
+# v2 validation: fading memory, matched controls, destruction controls, permutation test
+python experiments/v2/run_v2_validation.py --data3 ./batch_data --data4 ./categories \
+    --cache ./v2_cache --out experiments/v2/v2_results.json --n-perm 2000 --jobs 4
+python experiments/v2/make_report.py
+
+# confirm in minutes that the tree still reproduces the committed record
+python experiments/v2/check_v2_replay.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache
+
+# v1 confirmatory protocol
+python experiments/confirmatory/run_confirmatory_validation.py \
+    --data3 ./batch_data --data4 ./categories --out confirmatory_results.json
+```
+
+With ERP CORE in `./erpcore`:
+
+```text
+python experiments/zscore_artifact/run_erpcore.py --data ./erpcore \
+    --out experiments/zscore_artifact/erpcore_results.json
+```
+
+Every experiment, with its question, command, protocol, record and known problems, is
+in [`docs/EXPERIMENT_REGISTRY.md`](docs/EXPERIMENT_REGISTRY.md).
+
+## Testing and validation
+
+| Layer | What it checks | Needs data |
+|---|---|---|
+| `tests/` (pytest) | library behaviour, bit parity with v1, golden reservoir dynamics, record integrity, prose-versus-record agreement, repository hygiene, synthetic end-to-end run | no |
+| `scripts/check_records.py` | each committed record against the hashes of its producing code, in the tree and in git | no |
+| 22 legacy suites (`scripts/run_verifiers.py`) | v1 machinery on synthetic data; manifest and provenance of the v1 confirmatory record | no |
+| `experiments/v2/check_v2_replay.py` | the v2 record replays exactly | yes |
+
+CI runs the first three on every push. None of the data-free checks establishes an
+empirical value.
+
+## Reproducibility limits
+
+- The SHAPE data are restricted, so the empirical results cannot be reproduced by the
+  public. The records are tied by hash to code recoverable from git.
+- A replay on 2026-11-21 reproduced the headline v2 values exactly. The rest of the v2
+  record is locked, not replayed.
+- The dissertation's own reported confirmatory values (60.6% and 53.2%) differ from what
+  the committed pipeline produces (64.3% and 54.6%).
+  [`COMPUTATIONAL_ERRATUM.md`](COMPUTATIONAL_ERRATUM.md) reconciles them.
+- Several v1 results have no generating code in the repository. They are listed in
+  [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md).
+- One cohort for everything involving the reservoir. Only the z-scoring artefact has
+  been replicated on a second dataset.
+
+## The v1 record
+
+The dissertation source is in `dissertation/`; its figures are in `pictures/`. The v1
+README is preserved at [`docs/v1/README_v1.md`](docs/v1/README_v1.md), with the v1
+result index in `results_manifest.json` and `docs/REPRODUCTION_MAP.md`.
+
+v1 reported an interpretability audit with one measurement per level. Their standing
+after v2:
+
+| Level | v1 measurement | Standing |
+|---|---|---|
+| 1 Temporal traceability | pre-reservoir LPP r = 0.82; post-reservoir absolute r = 0.23 | withdrawal recommended: the 0.82 statistic never involves the reservoir |
+| 2 Representation geometry | subject-to-condition variance ratio 7.2 | replaced by calibrated variance components (subject 44.5%, condition 10.3%) |
+| 3 Dynamical correspondence | amplitude-domain 0.82; spike-domain 0.23 | as Level 1 |
+| 4 Structure-function coupling | median kappa 0.273 | archived: the null is invalid without electrode coordinates |
+
+## Documentation
+
+| Document | Read it for |
+|---|---|
+| [`V2_UPGRADE.md`](V2_UPGRADE.md) | what v2 tested and found, with numbers |
+| [`docs/RESEARCH_MAP.md`](docs/RESEARCH_MAP.md) | each scientific idea: implementation, evidence, standing |
+| [`docs/EXPERIMENT_REGISTRY.md`](docs/EXPERIMENT_REGISTRY.md) | every experiment: command, protocol, record, caveats |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | layout, authoritative code, where new work goes |
+| [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) | environment, data, regenerating records, evidence levels |
+| [`docs/REPOSITORY_AUDIT.md`](docs/REPOSITORY_AUDIT.md) | the 2026-11-21 audit: findings, risks, plan |
+| [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md), [`docs/AGENT_HANDOFF.md`](docs/AGENT_HANDOFF.md) | rules and handoff format for AI agents |
+| [`COMPUTATIONAL_ERRATUM.md`](COMPUTATIONAL_ERRATUM.md) | dissertation-reported versus code-derived values |
+| [`experiments/v2/V2_RESULTS.md`](experiments/v2/V2_RESULTS.md) | full v2 tables (generated) |
+| [`experiments/zscore_artifact/RESULTS.md`](experiments/zscore_artifact/RESULTS.md) | the artefact study |
+
+## Contributing
+
+Read [`AGENTS.md`](AGENTS.md); it applies to people as well. In short: new reusable code
+goes in a new module of `arspinet_v2/`, new experiments under `experiments/<study>/`
+with a committed record and a registry entry, and nothing in the v1 record or the
+frozen files changes without a rerun on the data. Leave a handoff in `docs/handoffs/`.
+
+## Citation and licence
+
+Cite the dissertation: Lane, A. A. (2026). *Affective Reservoir-Spike Processing and
+Inference Network (ARSPI-Net): A Four-Level Interpretable Neuromorphic Framework for
+Clinical EEG Analysis.* PhD dissertation, Stony Brook University. Machine-readable
+citation in `CITATION.cff`.
+
+Code is MIT-licensed (`LICENSE`). Terms for text, figures and data are in `LICENSES.md`.
+ERP CORE is by Kappenman et al. (2021); only aggregate results derived from it are
+stored here.

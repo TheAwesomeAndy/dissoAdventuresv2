@@ -16,6 +16,10 @@ Checks, per record:
     3. a ``provenance.code_sha256`` block inside the record, if present, equals the lock;
     4. with git history available, the blobs at ``code_commit`` equal the lock.
 
+The lock also lists ``unverified_records``: committed result files whose producing code
+changed after they were written, or that were annotated by hand. Only their own hash is
+checked. They are evidence of what was once computed, not of what the code computes now.
+
 Changing a frozen file is allowed only together with a rerun on the authorized data and
 a regenerated record. Then refresh the lock entry:
 
@@ -104,6 +108,12 @@ def check(lock: dict | None = None, use_history: bool = True) -> list[str]:
         missing = set(embedded) - set(rec["code_sha256"])
         if missing:
             problems.append(f"{name}: record hashes files the lock does not list: {sorted(missing)}")
+    for name, rec in lock.get("unverified_records", {}).items():
+        path = REPO / name
+        if not path.exists():
+            problems.append(f"{name}: unverified record file is missing")
+        elif sha256_file(path) != rec["sha256"]:
+            problems.append(f"{name}: unverified record file differs from the lock")
     return problems
 
 
@@ -150,7 +160,8 @@ def main() -> int:
         for p in problems:
             print("  - " + p)
         return 1
-    print(f"record check: OK ({n} records, {len(frozen_files(lock))} frozen code files)")
+    print(f"record check: OK ({n} records, {len(frozen_files(lock))} frozen code files, "
+          f"{len(lock.get('unverified_records', {}))} unverified legacy records)")
     return 0
 
 

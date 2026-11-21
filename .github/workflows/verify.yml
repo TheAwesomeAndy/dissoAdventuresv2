@@ -234,3 +234,35 @@ jobs:
           for outcome in "${outcomes[@]}"; do
             test "$outcome" = "success" || exit 1
           done
+
+  tests:
+    # Unit and integration tests, lint and the record check. No data required.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+      MPLBACKEND: "Agg"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # full history so the record check can compare against git blobs
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the package and development tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Check result records against the code that produced them
+        run: python scripts/check_records.py
+
+      - name: Run the test suite
+        run: pytest

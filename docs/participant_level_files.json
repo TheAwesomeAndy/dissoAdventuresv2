@@ -1,0 +1,20 @@
+{
+  "about": "Tracked tabular and binary data files, classified during the 2026-11-21 audit. tests/test_repo_hygiene.py fails if a new data file is tracked without being classified here. 'files' are keyed by real SHAPE participant ID (finding S1 in docs/REPOSITORY_AUDIT.md); whether they stay in the repository is the data owner's decision. None contains a clinical or demographic column.",
+  "files": [
+    "chapter7Experiments/chapter7_results/C_matrices.csv",
+    "chapter7Experiments/chapter7_results/kappa_matrix.csv",
+    "chapter7Experiments/chapter7_results/observation_features.csv",
+    "chapter7Experiments/chapter7_results/subject_features.csv",
+    "chapter7Experiments/chapter7_results/ch7_full_results.pkl",
+    "chapter7Experiments/chapter7_results/ch7_expA_analysis.pkl",
+    "chapter7Experiments/chapter7_results/ch7_expB_results.npz",
+    "defense_figures/experiment_a_autonomous_vs_driven/outputs/experiment_a_data.csv",
+    "defense_figures/experiment_b_takens_dimension/outputs/experiment_b_data.csv"
+  ],
+  "aggregate_only": [
+    "chapter5Experiments/results/baseline_deep_results.pkl",
+    "defense_figures/experiment_c_memory_capacity/outputs/experiment_c_data.csv",
+    "defense_figures/experiment_d_channel_permutation/outputs/experiment_d_data.csv",
+    "defense_figures/figure_TB_theoretical_bounds/outputs/experiment_tb_data.csv"
+  ]
+}

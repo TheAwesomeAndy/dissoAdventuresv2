@@ -130,5 +130,37 @@
         "experiments/zscore_artifact/run_erpcore_across_null.py": "c673b1ae4857e2baa13ddbffc3b17e7d584df6cea1ffbab4c51d2488c93950ff"
       }
     }
+  },
+  "unverified_records": {
+    "experiments/novel/novel_results_3class.json": {
+      "produced_by": "experiments/novel/run_novel_experiments.py",
+      "tier": "v1 exploratory",
+      "sha256": "1cfa2d83e47175d100257de16cc7ab678bcaa6f513f19fa35ebf1879a8baa9af",
+      "reason": "No provenance block. experiments/novel/novel_pipeline.py and experiments/confirmatory/run_confirmatory_validation.py changed after this file was committed, and the file carries a hand-added 'note' field no runner writes. Values are checked only against results_manifest.json by experiments/novel/check_novel_manifest.py."
+    },
+    "experiments/novel/novel_results_4class.json": {
+      "produced_by": "experiments/novel/run_novel_experiments.py",
+      "tier": "v1 exploratory",
+      "sha256": "c286e27ddaf059da1fcc6119982cb87761d7b458e612d83b359a26d4fdaaf1eb",
+      "reason": "No provenance block. experiments/novel/novel_pipeline.py and experiments/confirmatory/run_confirmatory_validation.py changed after this file was committed, and the file carries a hand-added 'note' field no runner writes. Values are checked only against results_manifest.json by experiments/novel/check_novel_manifest.py."
+    },
+    "experiments/novel/nuisance_results.json": {
+      "produced_by": "experiments/novel/run_nuisance_study.py",
+      "tier": "v1 exploratory",
+      "sha256": "b59b1a67fea9d41abd7a41701af18debb928a18d0c1e8cdee58d4bf081515e85",
+      "reason": "No provenance block. experiments/novel/novel_pipeline.py and experiments/confirmatory/run_confirmatory_validation.py changed after this file was committed, and the file carries a hand-added 'note' field no runner writes. Values are checked only against results_manifest.json by experiments/novel/check_novel_manifest.py."
+    },
+    "experiments/novel/nuisance_results_4class.json": {
+      "produced_by": "experiments/novel/run_nuisance_study.py",
+      "tier": "v1 exploratory",
+      "sha256": "2d6ad4b8da7c450134044c7f94cb4d833c10fbf4c1dcc4f9ec6d3ec36d561bc2",
+      "reason": "No provenance block. experiments/novel/novel_pipeline.py and experiments/confirmatory/run_confirmatory_validation.py changed after this file was committed, and the file carries a hand-added 'note' field no runner writes. Values are checked only against results_manifest.json by experiments/novel/check_novel_manifest.py."
+    },
+    "experiments/external/external_results.json": {
+      "produced_by": "experiments/external/run_tcrzem_replication.py",
+      "tier": "v1 exploratory",
+      "sha256": "5cf5c9a78fb503c26f29058bf66bd2c8a45a623e141e8eb47502395c12983a1e",
+      "reason": "No provenance block. experiments/novel/novel_pipeline.py, experiments/novel/nuisance_study.py and experiments/confirmatory/run_confirmatory_validation.py changed after this file was committed, and the file carries a hand-added 'note' field no runner writes. Values are checked only against results_manifest.json by experiments/novel/check_novel_manifest.py."
+    }
   }
 }

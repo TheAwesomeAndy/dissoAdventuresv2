@@ -156,7 +156,8 @@ occipital and parietal sites). Three points follow from that literature.
 
 ## Limits of this record
 
-- One cohort. Nothing here is validated on a second dataset.
+- One cohort for every result that involves the reservoir. Only the z-scoring artefact
+  has been replicated on a second dataset (ERP CORE, see above).
 - The fading-memory rule was written in the session that ran it. It uses no labels, and
   the gain sweep is reported in full so the choice can be checked against any other rule.
 - The tuned-PCA and baseline-input runs reuse the v1 outer splits but were run once each.
