@@ -91,7 +91,7 @@ After regenerating a record:
 
 - **v2 pipeline: regenerated from the raw files and equal, given the thread count.**
   On 2026-11-21 and 22, after the library and runners were typed, formatted and given a
-  shared provenance block, the v2-era records were regenerated from the delivered text
+  shared provenance block, every v2-era record was regenerated from the delivered text
   files into a new cache and compared with the committed record by
   `scripts/compare_records.py` at tolerance zero. The table in section 5.1 gives the
   outcome per record.
@@ -124,7 +124,7 @@ After regenerating a record:
 |---|---|---|---|
 | `experiments/v2/v2_results.json` | 1,256 | equal | default on 4 cores, 4 workers |
 | `experiments/v2/v2_baseline_input.json` | 1,213 | equal | 2 (213 values differ with 4) |
-| `experiments/v2/v2_pca_tuned.json` | not yet known | regeneration in progress; still marked pending in the lock | 1, 2 workers |
+| `experiments/v2/v2_pca_tuned.json` | 122 | equal | 1, 2 workers |
 | `experiments/v2/v2_normalization_check.json` | 342 | equal | default on 4 cores |
 | `experiments/v2/v2_depression.json` | 170 | equal | 1 |
 | `experiments/zscore_artifact/erpcore_results.json` | 2,683 | equal | default on 4 cores |
