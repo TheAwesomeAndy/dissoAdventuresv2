@@ -95,7 +95,7 @@ After regenerating a record:
   files into a new cache and compared with the committed record by
   `scripts/compare_records.py` at tolerance zero. The table in section 5.1 gives the
   outcome per record.
-- **The BLAS thread count is part of the specification.** `v2_baseline_input.json` was
+- **The BLAS thread count is part of the specification.** `experiments/v2/v2_baseline_input.json` was
   first regenerated with four BLAS threads and 213 of its 1,213 values differed from the
   committed record, which had been produced with two. Regenerated with two threads, all
   1,213 values are equal. The differences are one observation in some repeats of some
@@ -115,7 +115,7 @@ After regenerating a record:
     (`arspinet_v2/provenance.py`);
   - quote v2 accuracies to one decimal place. The second decimal is not stable across
     thread counts.
-  `v2_results.json` does not show the effect: its 1,256 values are equal with one
+  `experiments/v2/v2_results.json` does not show the effect: its 1,256 values are equal with one
   thread and with the default on four cores.
 
 ### 5.1 Regeneration outcome
@@ -131,7 +131,7 @@ After regenerating a record:
 | `experiments/zscore_artifact/across_null.json` | 35 | equal | 1, 4 workers |
 
 The v1 confirmatory record was not regenerated in this pass. Its headline rows are
-recomputed inside `v2_results.json` (64.33% and 54.64%) and match it.
+recomputed inside `experiments/v2/v2_results.json` (64.33% and 54.64%) and match it.
 
 ### 5.2 Other sources of variation
 
