@@ -145,7 +145,7 @@
         "experiments/v2/config.toml"
       ],
       "commands": [
-        "python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels ./labels.xlsx --cache ./v2_cache --rho 0.025"
+        "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels ./labels.xlsx --cache ./v2_cache --rho 0.025"
       ],
       "records": [
         "experiments/v2/v2_depression.json"
@@ -179,7 +179,7 @@
         "experiments/v2/config.toml"
       ],
       "commands": [
-        "python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2"
+        "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2"
       ],
       "records": [
         "experiments/v2/v2_pca_tuned.json"
@@ -214,7 +214,7 @@
         "experiments/v2/config.toml"
       ],
       "commands": [
-        "python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache"
+        "OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache"
       ],
       "records": [
         "experiments/v2/v2_baseline_input.json"
@@ -344,7 +344,7 @@
         "experiments/zscore_artifact/run_erpcore_across_null.py"
       ],
       "commands": [
-        "python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4"
+        "OMP_NUM_THREADS=1 python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4"
       ],
       "records": [
         "experiments/zscore_artifact/across_null.json"

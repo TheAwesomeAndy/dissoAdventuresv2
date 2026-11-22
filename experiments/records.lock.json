@@ -5,6 +5,7 @@
     "experiments/confirmatory/confirmatory_results.json": {
       "produced_by": "experiments/confirmatory/run_confirmatory_validation.py",
       "command": "python experiments/confirmatory/run_confirmatory_validation.py --data3 ./batch_data --data4 ./categories --out experiments/confirmatory/confirmatory_results.json",
+      "blas_threads": "not recorded (produced before thread settings were logged; not regenerated in November 2026)",
       "data": "SHAPE",
       "tier": "v1 confirmatory",
       "provenance": "embedded",
@@ -19,6 +20,7 @@
     "experiments/v2/v2_results.json": {
       "produced_by": "experiments/v2/run_v2_validation.py",
       "command": "python experiments/v2/run_v2_validation.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache --out experiments/v2/v2_results.json --n-perm 2000 --jobs 4",
+      "blas_threads": "values are equal with 1 BLAS thread (first run) and with the default on 4 cores (regeneration); evaluation runs in 4 joblib workers",
       "data": "SHAPE",
       "tier": "v2 validation",
       "provenance": "embedded",
@@ -39,33 +41,32 @@
     },
     "experiments/v2/v2_baseline_input.json": {
       "produced_by": "experiments/v2/run_v2_baseline_input.py",
-      "command": "python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache --out experiments/v2/v2_baseline_input.json",
+      "command": "OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache --out experiments/v2/v2_baseline_input.json",
+      "blas_threads": "2. With 1 or 4 threads some rows differ by one observation (at most 0.24 points); see docs/REPRODUCIBILITY.md, section 5",
       "data": "SHAPE",
       "tier": "v2 validation",
       "provenance": "embedded",
-      "code_commit": "84c9f3603d585be40fc107edd2a9a1f024092a1e",
-      "sha256": "630eb50aa1d358c8d500158d56d85329198209143de35297629ff895ae71c4e5",
+      "code_commit": "29c2158b005945b1572890525992856e4ca8786c",
+      "sha256": "de5440551d96c8ba3e704154bbc270678b95d06631e0aff3a6e1b43d3653bb1f",
       "code_sha256": {
-        "arspinet_v2/controls.py": "43373f5d42c28fa7f8c74a4cfd0c7af210f39aad4e8995972e47df50595610a6",
-        "arspinet_v2/dynamics.py": "2d29ee3d820d17eec2c17603c50eb1416041a72d9de738876b5a634abac77583",
-        "arspinet_v2/evaluation.py": "f46a5b5f46dffa3d5f469afcbd17e55d4fa901adc97afb84894194df72fc07e8",
-        "arspinet_v2/features.py": "13fa00216596f39d7c541b93fbfc3397e64815ee87550c9b2faa843bb0b61ab5",
-        "arspinet_v2/nuisance.py": "4bd096e239ea06f5fe177fc21c0e3cbef87c9761cc35f2c1a185930f9cdcdfdb",
-        "arspinet_v2/reservoir.py": "b4d264b224681d0e80e5e46076d9d57ea5202f80af0991f8d7140fd61ad5d738",
+        "arspinet_v2/controls.py": "d7656ca82304ecbc8256f329bc0ad4f9be8a4c47bc2d1b3ed3b3cd732adf2d43",
+        "arspinet_v2/dynamics.py": "bf33486d03d9a54354a946d27e480bff9517136bb36cded783bbf822998ca312",
+        "arspinet_v2/evaluation.py": "ad01a1e2b2c32bbce7386db0885068a38194f41a4aed6790f87a9515ab41b20c",
+        "arspinet_v2/features.py": "cde71385dad7f0b58f0630ff5a45158f42a66e1c4e0971e30233a35c314c9300",
+        "arspinet_v2/nuisance.py": "e0a934268e48624c1f63cd4246d6766fc05284beaca56d2bae86163994d65e43",
+        "arspinet_v2/reservoir.py": "179a7ee41408380ed605e99217efb58541fc195d9d11420e5ba42203c59cbb73",
         "experiments/confirmatory/run_confirmatory_validation.py": "dbc56cbf5645b2c173f72991e5ff5a60f8e190cb3deccb15cca9efeac92fdbdd",
-        "experiments/v2/data.py": "34451637b6e3a707c7e71ff2c349687d34e75b631b54675ac1a69b621bb2c33b",
-        "experiments/v2/data_baseline.py": "8584b6ac29ccdca3c963111c6eaf63b2684e1b040c36dbffe527f69fc763d89e",
-        "experiments/v2/run_v2_baseline_input.py": "4b41e14c4138abca1ff37206ee1cad9de4651fc3d759f7b51512da1de278f289",
-        "experiments/v2/run_v2_validation.py": "1bf621389f4c15b9fb5a79492b07c4d77e0b8a021b51bc38358270743460bf35"
-      },
-      "pending_regeneration": {
-        "since": "2026-11-21",
-        "reason": "library and runners were formatted, typed and given a shared provenance block and a config file; regeneration on the data is in progress and must reproduce the committed values exactly"
+        "experiments/v2/config.toml": "348041c184ec63852097a9df158c247e8bdc11b03c7565524375db3e002d63e6",
+        "experiments/v2/data.py": "1c9f4d32a6b51ceed5d42031e04fc4a9cf75f29bdea1a8d0e28050071538e008",
+        "experiments/v2/data_baseline.py": "e83b4abad812d0425558c8a70904177f34d68f3e4e6075f106772e53cf90ae69",
+        "experiments/v2/run_v2_baseline_input.py": "1a8e4becd65e159ce1d709a6fe8fcaad95a131422f8dd69d8ccda333eeb78564",
+        "experiments/v2/run_v2_validation.py": "1216336720341b69b239a3d9c381ad5ca4b6cbb21e502816e534de511e591d58"
       }
     },
     "experiments/v2/v2_pca_tuned.json": {
       "produced_by": "experiments/v2/run_v2_pca_tuned.py",
-      "command": "python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2",
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2",
+      "blas_threads": "1, with 2 joblib workers",
       "data": "SHAPE (cached v2 codes)",
       "tier": "v2 validation",
       "provenance": "embedded",
@@ -84,6 +85,7 @@
     "experiments/v2/v2_normalization_check.json": {
       "produced_by": "experiments/v2/run_v2_normalization_check.py",
       "command": "python experiments/v2/run_v2_normalization_check.py --data3 ./batch_data --cache ./v2_cache",
+      "blas_threads": "default on 4 cores",
       "data": "SHAPE",
       "tier": "v2 validation",
       "provenance": "embedded",
@@ -99,7 +101,8 @@
     },
     "experiments/v2/v2_depression.json": {
       "produced_by": "experiments/v2/run_v2_depression.py",
-      "command": "python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels labels.xlsx --cache ./v2_cache --rho 0.025",
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels labels.xlsx --cache ./v2_cache --rho 0.025",
+      "blas_threads": "1",
       "data": "SHAPE + SCID-5 labels",
       "tier": "v2 exploratory (pre-specified family, null result)",
       "provenance": "embedded",
@@ -118,6 +121,7 @@
     "experiments/zscore_artifact/erpcore_results.json": {
       "produced_by": "experiments/zscore_artifact/run_erpcore.py",
       "command": "python experiments/zscore_artifact/run_erpcore.py --data ./erpcore --out experiments/zscore_artifact/erpcore_results.json",
+      "blas_threads": "default on 4 cores",
       "data": "ERP CORE N170 and P3 (public)",
       "tier": "z-scoring artefact study",
       "provenance": "embedded",
@@ -129,7 +133,8 @@
     },
     "experiments/zscore_artifact/across_null.json": {
       "produced_by": "experiments/zscore_artifact/run_erpcore_across_null.py",
-      "command": "python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4",
+      "command": "OMP_NUM_THREADS=1 python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4",
+      "blas_threads": "1, with 4 joblib workers",
       "data": "ERP CORE N170 and P3 (public)",
       "tier": "z-scoring artefact study",
       "provenance": "embedded",

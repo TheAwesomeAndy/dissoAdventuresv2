@@ -128,7 +128,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** SHAPE three-condition epochs (./batch_data, restricted); SCID-5 labels spreadsheet (restricted, supplied with --labels)
 - **Code:** `experiments/v2/run_v2_depression.py`, `experiments/v2/config.toml`
 - **Run:**
-  - `python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels ./labels.xlsx --cache ./v2_cache --rho 0.025`
+  - `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels ./labels.xlsx --cache ./v2_cache --rho 0.025`
 - **Records and outputs:** `experiments/v2/v2_depression.json`
 - **Model and encoding:** three representations per participant (LPP mean amplitude, six-bin amplitudes, v2 reservoir code), the three condition vectors concatenated
 - **Validation protocol:** 5 x 5 StratifiedKFold over participants (one row per participant); class-weighted L2 logistic regression fitted in-fold
@@ -151,7 +151,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** cached v2 reservoir codes of both SHAPE cohorts (./v2_cache, derived from restricted data)
 - **Code:** `experiments/v2/run_v2_pca_tuned.py`, `experiments/v2/config.toml`
 - **Run:**
-  - `python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2`
+  - `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2`
 - **Records and outputs:** `experiments/v2/v2_pca_tuned.json`
 - **Model and encoding:** v2 headline code; SRP-64 or PCA-64 (basis fitted on outer-training participants, pooled over electrodes); standardized or centered only; C fixed at 1 or tuned
 - **Validation protocol:** v1 outer splits; nested 4-fold participant-grouped CV over C in 1e-4 to 1e2; PCA refitted inside inner folds
@@ -173,7 +173,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** SHAPE three-condition epochs (./batch_data, restricted); SHAPE four-category epochs (./categories, restricted)
 - **Code:** `experiments/v2/run_v2_baseline_input.py`, `experiments/v2/data_baseline.py`, `experiments/v2/config.toml`
 - **Run:**
-  - `python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache`
+  - `OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache`
 - **Records and outputs:** `experiments/v2/v2_baseline_input.json`
 - **Model and encoding:** v1 LIF operator, shared reservoir; input scaled by each epoch's own pre-stimulus SD, or microvolts divided by one study-wide constant (7.16)
 - **Validation protocol:** as V2-01, plus a 0 to 62 ms window where no picture-content response should exist
@@ -262,7 +262,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** ERP CORE N170 and P3 (public; ./erpcore)
 - **Code:** `experiments/zscore_artifact/run_erpcore_across_null.py`
 - **Run:**
-  - `python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4`
+  - `OMP_NUM_THREADS=1 python experiments/zscore_artifact/run_erpcore_across_null.py --data ./erpcore --out experiments/zscore_artifact/across_null.json --n-perm 1000 --jobs 4`
 - **Records and outputs:** `experiments/zscore_artifact/across_null.json`
 - **Model and encoding:** as ZS-01, across-participant regime
 - **Validation protocol:** one participant-grouped 5-fold split, same splits for observed and null
