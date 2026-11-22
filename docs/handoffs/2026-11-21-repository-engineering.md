@@ -6,6 +6,7 @@
   completes the pass (baseline was `913d457`)
 - **Supersedes:** none (first handoff in this format; the older, v1-era
   `defense_figures/HANDOFF_TO_NEXT_AGENT.md` covers only the defense figures)
+- **Superseded by:** `docs/handoffs/2026-11-22-decisions-regeneration-merge.md`
 
 ## Task objective
 
