@@ -89,12 +89,52 @@ After regenerating a record:
 
 ## 5. Determinism
 
-- **v2 pipeline: verified deterministic for what was replayed.** On 2026-11-21
-  `experiments/v2/check_v2_replay.py` recomputed the fading-memory sweep and eight
-  representation rows per cohort, with reservoir encodings recomputed from scratch, and
-  every replayed value equalled the record to its recorded precision. The preprocessed
-  epochs were reused from the November cache, so decimation and z-scoring were not
-  re-derived from the text files in that replay.
+- **v2 pipeline: regenerated from the raw files and equal, given the thread count.**
+  On 2026-11-21 and 22, after the library and runners were typed, formatted and given a
+  shared provenance block, the v2-era records were regenerated from the delivered text
+  files into a new cache and compared with the committed record by
+  `scripts/compare_records.py` at tolerance zero. The table in section 5.1 gives the
+  outcome per record.
+- **The BLAS thread count is part of the specification.** `v2_baseline_input.json` was
+  first regenerated with four BLAS threads and 213 of its 1,213 values differed from the
+  committed record, which had been produced with two. Regenerated with two threads, all
+  1,213 values are equal. The differences are one observation in some repeats of some
+  rows: at most 0.16 points per repeat and 0.24 points on any reported value, against
+  confidence intervals several points wide. No conclusion changes. Two separate
+  four-thread runs agreed with each other exactly, so the result is deterministic for a
+  fixed thread count. The affected rows are the ones with more features than training
+  rows, where the readout is fitted in the row space after a singular value
+  decomposition; a different thread count changes that decomposition in the last bits
+  and can move a prediction that sits on the decision boundary. One row tested directly
+  gave the committed values with two threads and a different, mutually identical result
+  with one and with four. Consequences:
+  - each lock entry in `experiments/records.lock.json` has a `blas_threads` field, and
+    the reproduction command sets `OMP_NUM_THREADS` and `OPENBLAS_NUM_THREADS` where the
+    record depends on them;
+  - every provenance block written from now on has a `threads` entry
+    (`arspinet_v2/provenance.py`);
+  - quote v2 accuracies to one decimal place. The second decimal is not stable across
+    thread counts.
+  `v2_results.json` does not show the effect: its 1,256 values are equal with one
+  thread and with the default on four cores.
+
+### 5.1 Regeneration outcome
+
+| Record | Values compared | Outcome | BLAS threads |
+|---|---|---|---|
+| `experiments/v2/v2_results.json` | 1,256 | equal | default on 4 cores, 4 workers |
+| `experiments/v2/v2_baseline_input.json` | 1,213 | equal | 2 (213 values differ with 4) |
+| `experiments/v2/v2_pca_tuned.json` | not yet known | regeneration in progress; still marked pending in the lock | 1, 2 workers |
+| `experiments/v2/v2_normalization_check.json` | 342 | equal | default on 4 cores |
+| `experiments/v2/v2_depression.json` | 170 | equal | 1 |
+| `experiments/zscore_artifact/erpcore_results.json` | 2,683 | equal | default on 4 cores |
+| `experiments/zscore_artifact/across_null.json` | 35 | equal | 1, 4 workers |
+
+The v1 confirmatory record was not regenerated in this pass. Its headline rows are
+recomputed inside `v2_results.json` (64.33% and 54.64%) and match it.
+
+### 5.2 Other sources of variation
+
 - **v1 confirmatory pipeline: deterministic by construction** (fixed seeds, no
   unseeded calls), and its headline rows were recomputed bit-identically by the v2 code.
 - **Legacy v1 scripts: not guaranteed.** Most PCA calls have no `random_state`, and a
