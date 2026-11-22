@@ -14,6 +14,7 @@ A record is only as good as this block, so two things are recorded beyond the ha
 from __future__ import annotations
 
 import hashlib
+import os
 import platform
 import subprocess
 from collections.abc import Iterable, Mapping
@@ -56,6 +57,30 @@ def environment() -> dict[str, str]:
     return env
 
 
+THREAD_VARIABLES = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
+
+
+def threads() -> dict[str, Any]:
+    """Thread settings in force when the record is written.
+
+    Results that go through LAPACK can change in the last recorded digit with the
+    number of BLAS threads (docs/REPRODUCIBILITY.md, section 5), so a record has to
+    say how many it was produced with.
+    """
+    out: dict[str, Any] = {v: os.environ.get(v) for v in THREAD_VARIABLES}
+    try:
+        from threadpoolctl import threadpool_info
+
+        out["blas"] = [
+            {k: lib.get(k) for k in ("internal_api", "version", "architecture", "num_threads")}
+            for lib in threadpool_info()
+            if lib.get("user_api") == "blas"
+        ]
+    except ImportError:
+        out["blas"] = "threadpoolctl not installed"
+    return out
+
+
 def provenance(repo: str | Path, code_files: Iterable[str], **extra: Any) -> dict[str, Any]:
     """Provenance block for a record produced by ``code_files`` (paths relative to ``repo``).
 
@@ -79,6 +104,7 @@ def provenance(repo: str | Path, code_files: Iterable[str], **extra: Any) -> dic
         "code_matches_commit": matches,
         "code_sha256": hashes,
         "environment": env,
+        "threads": threads(),
         # flat copies kept for readers of earlier records
         "python": env["python"],
         "numpy": env["numpy"],
