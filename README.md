@@ -36,8 +36,9 @@ three conditions; 210 participants, four categories). Chance is 33.3% and 25%.
 | Band power and Hjorth features | 48.6% | 36.0% |
 
 - The evaluation protocol is leak-free, and the reservoir code is far above chance.
-- The reservoir does not beat plain amplitude binning. Recurrence adds nothing
-  measurable, and at its original gain the network has no fading memory.
+- The reservoir does not beat plain amplitude binning, with the readout at its default
+  or tuned for each representation. Recurrence adds nothing measurable, and at its
+  original gain the network has no fading memory.
 - Random projection does not beat PCA once PCA is left unwhitened and tuned.
 - The original preprocessing z-scores each epoch, which fabricates decoding at
   latencies before the brain can respond. The effect replicates on public data

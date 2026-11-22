@@ -151,6 +151,42 @@ def test_numbers_quoted_in_v2_upgrade_come_from_the_records(v2, repo):
     assert not missing, f"V2_UPGRADE.md does not contain these record values: {missing}"
 
 
+def test_tuned_baseline_numbers_in_v2_upgrade_come_from_the_record(repo):
+    """Conclusion 7 of V2_UPGRADE.md, cell by cell, and what it says the numbers show."""
+    text = (repo / "V2_UPGRADE.md").read_text()
+    tuned = json.loads((repo / "experiments/v2/v2_baseline_tuned.json").read_text())["granularities"]
+    expected, gains = [], []
+    for g in tuned.values():
+        for k in ("v2_headline_bsc6_srp64", "amplitude6_matched_bins", "raw_erp16", "lpp_300_1000ms"):
+            expected.append(_fmt(g["variants"][f"{k}_Ctuned"]))
+            gains.append(g["tuning_gain_pp"][k]["difference_pp"])
+        expected.append(_pp(g["contrasts_tuned"]["amplitude6_matched_bins_minus_headline"]))
+        expected.append(_pp(g["contrasts_tuned"]["raw_erp16_minus_headline"]))
+        # "still ties six-bin amplitudes": the interval contains zero
+        lo, hi = g["contrasts_tuned"]["amplitude6_matched_bins_minus_headline"]["ci95_pp"]
+        assert lo < 0 < hi
+        # "still trails raw ERP-16": the point estimate favours raw ERP-16
+        assert g["contrasts_tuned"]["raw_erp16_minus_headline"]["difference_pp"] > 0
+    expected.append(_pp(tuned["three_condition"]["contrasts_C1"]["raw_erp16_minus_headline"]))
+    missing = [e for e in expected if e not in text]
+    assert not missing, f"V2_UPGRADE.md does not contain these record values: {missing}"
+    # docs/RESEARCH_MAP.md quotes the tuned point estimates as "three% and four%"
+    research_map = (repo / "docs/RESEARCH_MAP.md").read_text()
+    for k in ("v2_headline_bsc6_srp64", "amplitude6_matched_bins", "raw_erp16"):
+        a, b = (
+            tuned[n]["variants"][f"{k}_Ctuned"]["balanced_accuracy_percent"]
+            for n in ("three_condition", "four_category")
+        )
+        assert " ".join(f"{a:.1f}% and {b:.1f}%".split()) in " ".join(research_map.split()), k
+    assert f"between {abs(round(min(gains), 1)):.1f} and {max(gains):.1f} points" in text
+    # "for four categories it is clear either way"
+    assert tuned["four_category"]["contrasts_tuned"]["raw_erp16_minus_headline"]["ci95_pp"][0] > 0
+    assert tuned["four_category"]["contrasts_C1"]["raw_erp16_minus_headline"]["ci95_pp"][0] > 0
+    # "the interval now reaches zero, where at C = 1 it excluded it"
+    assert tuned["three_condition"]["contrasts_tuned"]["raw_erp16_minus_headline"]["ci95_pp"][0] <= 0
+    assert tuned["three_condition"]["contrasts_C1"]["raw_erp16_minus_headline"]["ci95_pp"][0] > 0
+
+
 def test_zscore_results_quote_the_records(repo):
     text = (repo / "experiments/zscore_artifact/RESULTS.md").read_text()
     null = json.loads((repo / "experiments/zscore_artifact/across_null.json").read_text())["paradigms"]

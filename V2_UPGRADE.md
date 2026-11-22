@@ -13,7 +13,9 @@ tagged `v1.0-defense` (`9496ba4`) is kept as the branch `archive/v1.0-defense-ta
 
 Every number below is read from a committed execution record:
 `experiments/v2/v2_results.json` (tables in `experiments/v2/V2_RESULTS.md`),
-`experiments/v2/v2_normalization_check.json` and `experiments/v2/v2_depression.json`.
+`experiments/v2/v2_normalization_check.json`, `experiments/v2/v2_depression.json`,
+`experiments/v2/v2_pca_tuned.json`, `experiments/v2/v2_baseline_input.json` and
+`experiments/v2/v2_baseline_tuned.json`.
 Values are balanced accuracy with participant-bootstrap 95% intervals. Cohorts are v1's:
 211 participants and 633 observations for three conditions, 210 and 840 for four
 categories.
@@ -32,8 +34,9 @@ categories.
 | Raw ERP-16 minus v2 reservoir | +3.2 pp [+0.4, +6.0] | +4.3 pp [+1.7, +6.8] |
 | SRP-64 minus PCA-64, both at their best tuned setting | +0.7 pp [-0.5, +1.9] | +0.3 pp [-1.1, +1.9] |
 
-Six conclusions follow. Conclusion 4 was revised after the tuned-PCA control, and
-conclusion 6 comes from the non-z-scored rerun.
+Seven conclusions follow. Conclusion 4 was revised after the tuned-PCA control,
+conclusion 6 comes from the non-z-scored rerun, and conclusion 7 from tuning the readout
+of every representation.
 
 1. **The v1 reservoir has no fading memory. The v2 reservoir does.** At v1's recurrent
    gain of 0.9 the recurrent current is 3.6 times the input current, activity sustains
@@ -88,6 +91,27 @@ conclusion 6 comes from the non-z-scored rerun.
    (median test-retest r = 0.9996). The rule was not changed after seeing this; the
    runner uses the feedforward reservoir (gain 0) and records the outcome. Record:
    `experiments/v2/v2_baseline_input.json`.
+7. **Tuning the readout for every representation leaves the ordering as it was.** v2
+   had tuned the regularization strength for the reservoir code and for PCA only, which
+   left open whether the amplitude baselines were being held back by C = 1. With C
+   chosen by the same nested participant-grouped cross-validation for each
+   representation:
+
+   | Readout tuned by nested CV | Three conditions | Four categories |
+   |---|---:|---:|
+   | v2 reservoir code (SRP-64) | 67.9% [65.2, 70.5] | 57.6% [55.0, 60.2] |
+   | Six-bin amplitudes | 68.1% [65.1, 70.9] | 57.0% [54.4, 59.5] |
+   | Raw ERP, 16 bins | 70.3% [67.4, 73.1] | 62.9% [60.1, 65.6] |
+   | LPP mean amplitude | 60.0% [57.1, 62.6] | 45.7% [43.2, 48.3] |
+   | Six-bin amplitudes minus reservoir | +0.2 pp [-1.8, +2.2] | -0.7 pp [-2.4, +1.1] |
+   | Raw ERP-16 minus reservoir | +2.4 pp [-0.0, +4.8] | +5.3 pp [+2.8, +7.7] |
+
+   Tuning is worth between 0.0 and 2.4 points depending on the row, and it helps the
+   baselines about as much as it helps the reservoir. The reservoir still
+   ties six-bin amplitudes and still trails raw ERP-16. For three conditions the
+   interval of that last difference now reaches zero, where at C = 1 it excluded it
+   (+3.2 pp [+0.4, +6.0]); for four categories it is clear either way. Nothing here
+   was chosen on outer-test accuracy. Record: `experiments/v2/v2_baseline_tuned.json`.
 
 ## Replication on public data
 
@@ -120,7 +144,7 @@ The mechanism and prediction were committed before the results. Details in
 | M4. Theory figure labels (Lyapunov "bound", Takens "lower bound", memory capacity) | Not edited. The dissertation is a submitted record | Open, for the erratum |
 | M5. Chapter 4 Fisher ratio is a p > n artefact | Not addressed | Open |
 | Reservoir input is z-scored per epoch | Found by v2. Rerun on baseline-referenced input with two scalings | Done. Artefact gone, reservoir loses to six-bin amplitudes. See conclusion 6 |
-| Readout regularization tuned for SRP and PCA only | Raw ERP-16 and six-bin amplitudes still use C = 1 | Open. Tuning may raise them further |
+| Readout regularization tuned for SRP and PCA only | `experiments/v2/run_v2_baseline_tuned.py`: nested-CV choice of C for the reservoir code, raw ERP-16, six-bin amplitudes and the LPP score | Done. The ordering does not change. See conclusion 7 |
 | Dissertation and slide inconsistencies (four accuracy values, PCA-64 wording, 840 against 844 observations, cohort descriptors) | Not edited | Open, for the erratum |
 
 ## What v2 changes in the code
@@ -181,6 +205,8 @@ python experiments/v2/run_v2_validation.py --data3 ./batch_data --data4 ./catego
     --cache ./v2_cache --out experiments/v2/v2_results.json --n-perm 2000 --jobs 4
 python experiments/v2/run_v2_normalization_check.py --data3 ./batch_data --cache ./v2_cache
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_baseline_tuned.py \
+    --cache ./v2_cache --rho 0.025 --jobs 4
 OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python experiments/v2/run_v2_baseline_input.py \
     --data3 ./batch_data --data4 ./categories --cache ./v2_cache
 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_depression.py \

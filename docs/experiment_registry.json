@@ -276,9 +276,11 @@
         "experiments/v2/config.toml"
       ],
       "commands": [
-        "python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --jobs 4"
+        "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --rho 0.025 --jobs 4"
       ],
-      "records": [],
+      "records": [
+        "experiments/v2/v2_baseline_tuned.json"
+      ],
       "model": "v2 headline reservoir code, raw ERP-16, six-bin amplitudes and the per-electrode LPP score, on v1 preprocessing",
       "protocol": "v1 outer splits; nested 4-fold participant-grouped CV over C in 1e-4 to 1e2, with the grid and rule of V2-04; standardized features. Nothing is chosen on outer-test accuracy",
       "statistics": "participant bootstrap (2000) for each variant and for paired contrasts",
@@ -290,7 +292,7 @@
       "dissertation": "Not in the dissertation. Closes the open item that only the reservoir code and PCA had been tuned.",
       "caveats": [
         "Input is z-scored per epoch, as in the headline table, so that the comparison matches V2-01. See V2-05 for input without z-scoring.",
-        "PENDING: the run is queued behind the record regeneration; the record is added when it completes."
+        "Run twice with equal values. With two BLAS threads the untuned (C = 1) rows move by at most 0.06 points; the tuned rows are equal."
       ]
     },
     {

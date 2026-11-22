@@ -130,6 +130,11 @@ After regenerating a record:
 | `experiments/zscore_artifact/erpcore_results.json` | 2,683 | equal | default on 4 cores |
 | `experiments/zscore_artifact/across_null.json` | 35 | equal | 1, 4 workers |
 
+`experiments/v2/v2_baseline_tuned.json` is new in this pass, so there was no earlier
+record to compare it with. It was run twice with one BLAS thread and the two runs are
+equal in all 169 values. With two threads its untuned rows move by at most 0.06 points
+and its tuned rows are equal.
+
 The v1 confirmatory record was not regenerated in this pass. Its headline rows are
 recomputed inside `experiments/v2/v2_results.json` (64.33% and 54.64%) and match it.
 

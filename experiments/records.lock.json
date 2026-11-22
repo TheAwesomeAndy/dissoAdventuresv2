@@ -79,6 +79,23 @@
         "experiments/v2/run_v2_pca_tuned.py": "9b6a940059e3281e0886135db04084fbb29c0971d0af895d877dca6101f19956"
       }
     },
+    "experiments/v2/v2_baseline_tuned.json": {
+      "produced_by": "experiments/v2/run_v2_baseline_tuned.py",
+      "command": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --rho 0.025 --jobs 4",
+      "blas_threads": "1, with 4 joblib workers. A second identical run gave equal values. With 2 threads the C = 1 rows differ by at most 0.06 points and the tuned rows are equal",
+      "data": "SHAPE (reads the cache written by run_v2_validation.py)",
+      "tier": "v2 validation",
+      "provenance": "embedded",
+      "code_commit": "1fb82413caaa59c11ef4db0c8d1170e1fcc58ef2",
+      "sha256": "0d34c142f14608b68d147c4532b1637d3b470c375ee126fdb40240a5fca8a951",
+      "code_sha256": {
+        "arspinet_v2/evaluation.py": "ad01a1e2b2c32bbce7386db0885068a38194f41a4aed6790f87a9515ab41b20c",
+        "arspinet_v2/features.py": "cde71385dad7f0b58f0630ff5a45158f42a66e1c4e0971e30233a35c314c9300",
+        "experiments/v2/config.toml": "348041c184ec63852097a9df158c247e8bdc11b03c7565524375db3e002d63e6",
+        "experiments/v2/run_v2_baseline_tuned.py": "315d638459cda07ec0ae5558c9300d33acb5f3ab98dfe7d13f3602e2e673347d",
+        "experiments/v2/run_v2_pca_tuned.py": "9b6a940059e3281e0886135db04084fbb29c0971d0af895d877dca6101f19956"
+      }
+    },
     "experiments/v2/v2_normalization_check.json": {
       "produced_by": "experiments/v2/run_v2_normalization_check.py",
       "command": "python experiments/v2/run_v2_normalization_check.py --data3 ./batch_data --cache ./v2_cache",

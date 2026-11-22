@@ -25,7 +25,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 | [V2-04](#v2-04) | Tuned-PCA control for the random-projection comparison | v2-validation | post-dissertation | yes |
 | [V2-05](#v2-05) | Reservoir on input without per-epoch z-scoring | v2-validation | post-dissertation | yes |
 | [V2-06](#v2-06) | Replay check of the v2 record | tooling | post-dissertation | no |
-| [V2-07](#v2-07) | Tuned readout for the amplitude baselines | v2-validation | post-dissertation | no |
+| [V2-07](#v2-07) | Tuned readout for the amplitude baselines | v2-validation | post-dissertation | yes |
 | [ZS-01](#zs-01) | Per-epoch z-scoring artefact on ERP CORE | public-replication | post-dissertation | yes |
 | [ZS-02](#zs-02) | Permutation null for across-participant pre-stimulus decoding | public-replication | post-dissertation | yes |
 | [CH3-01](#ch3-01) | Chapter 3: LIF reservoir characterization on synthetic input | illustrative | 3 | no |
@@ -216,8 +216,8 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Data:** cached preprocessed epochs and v2 reservoir codes of both SHAPE cohorts (./v2_cache, derived from restricted data)
 - **Code:** `experiments/v2/run_v2_baseline_tuned.py`, `experiments/v2/run_v2_pca_tuned.py`, `experiments/v2/config.toml`
 - **Run:**
-  - `python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --jobs 4`
-- **Records and outputs:** none
+  - `OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_baseline_tuned.py --cache ./v2_cache --rho 0.025 --jobs 4`
+- **Records and outputs:** `experiments/v2/v2_baseline_tuned.json`
 - **Model and encoding:** v2 headline reservoir code, raw ERP-16, six-bin amplitudes and the per-electrode LPP score, on v1 preprocessing
 - **Validation protocol:** v1 outer splits; nested 4-fold participant-grouped CV over C in 1e-4 to 1e2, with the grid and rule of V2-04; standardized features. Nothing is chosen on outer-test accuracy
 - **Statistics:** participant bootstrap (2000) for each variant and for paired contrasts
@@ -227,7 +227,7 @@ Each entry answers: what question, on what data, with which code, by what protoc
 - **Dissertation:** Not in the dissertation. Closes the open item that only the reservoir code and PCA had been tuned.
 - **Known problems and limits:**
   - Input is z-scored per epoch, as in the headline table, so that the comparison matches V2-01. See V2-05 for input without z-scoring.
-  - PENDING: the run is queued behind the record regeneration; the record is added when it completes.
+  - Run twice with equal values. With two BLAS threads the untuned (C = 1) rows move by at most 0.06 points; the tuned rows are equal.
 
 ## ZS-01
 

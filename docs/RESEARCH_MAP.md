@@ -79,9 +79,14 @@ statements come from the code reading in `docs/REPOSITORY_AUDIT.md`.
   - Accuracy is flat across gains from 0 to 0.9.
   - Six-bin amplitudes on the same bin edges match the reservoir code on z-scored input
     and beat it by about 3 points on input without z-scoring.
+  - Tuning the readout regularization for every representation by nested
+    cross-validation does not change the ordering: tuned reservoir code 67.9% and
+    57.6%, tuned six-bin amplitudes 68.1% and 57.0%, tuned raw ERP-16 70.3% and 62.9%
+    (V2-07).
 - **Implementation.** `arspinet_v2/dynamics.py` (tests and rule),
   `arspinet_v2/features.py` (`amplitude_bins`, the matched control).
-- **Records.** `experiments/v2/v2_results.json`, `experiments/v2/v2_baseline_input.json`.
+- **Records.** `experiments/v2/v2_results.json`, `experiments/v2/v2_baseline_input.json`,
+  `experiments/v2/v2_baseline_tuned.json`.
 - **Relation to v1.** The echo-state and Lyapunov evidence in Chapter 6 (CH6-01) was
   measured on a different, weaker network (reservoir class C in
   `docs/ARCHITECTURE.md`), with a perturbation too small to flip a threshold.
