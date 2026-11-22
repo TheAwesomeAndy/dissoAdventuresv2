@@ -402,9 +402,15 @@ Proposed items from section 8 that were also carried out:
   `arspinet_v2/` and every v2 runner are now typed, formatted and linted, runner
   parameters are in `experiments/v2/config.toml`, and every runner embeds a provenance
   block. All seven v2-era records were regenerated from the raw files and compared with
-  the committed values using `scripts/compare_records.py`. The outcome is recorded in
-  `docs/REPRODUCIBILITY.md`, section 5. Finding E14 no longer applies, and E13 is
-  resolved at the source.
+  the committed values using `scripts/compare_records.py`. All seven are equal in every
+  value, given the BLAS thread count each was first produced with. The regeneration
+  also found that `experiments/v2/v2_baseline_input.json` differs by one observation in
+  some rows when run with four threads where the original used two (at most 0.24
+  points; no conclusion changes). Thread settings are now recorded per record and in
+  every new provenance block. The outcome table is in `docs/REPRODUCIBILITY.md`,
+  section 5. Finding E14 no longer applies, and E13 is resolved at the source. In the
+  table of section 6, the rows marked Locked for the v2 and ERP CORE records are now
+  Replayed.
 - **Proposed 5, tune the readout for the amplitude baselines.**
   `experiments/v2/run_v2_baseline_tuned.py`; result in `V2_UPGRADE.md`.
 

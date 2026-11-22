@@ -160,7 +160,13 @@ occipital and parietal sites). Three points follow from that literature.
   has been replicated on a second dataset (ERP CORE, see above).
 - The fading-memory rule was written in the session that ran it. It uses no labels, and
   the gain sweep is reported in full so the choice can be checked against any other rule.
-- The tuned-PCA and baseline-input runs reuse the v1 outer splits but were run once each.
+- The tuned-PCA and baseline-input runs reuse the v1 outer splits. Each was run twice,
+  ten days apart, from the raw files, with equal values both times. That shows the code
+  is deterministic. It is not a second sample of anything.
+- Values that pass through the row-space readout fit can change by one observation with
+  the number of BLAS threads (at most 0.24 points in the baseline-input record). The
+  second decimal place of an accuracy is therefore not meaningful.
+  `docs/REPRODUCIBILITY.md`, section 5.
 - 2,000 permutations, not the 5,000 the review asked for. The runner's default is 5,000.
 - The depression analysis does not adjust for age or sex. Both are missing for about
   half of the cohort.
@@ -174,9 +180,11 @@ python experiments/v2/verify_v2.py                      # no data required
 python experiments/v2/run_v2_validation.py --data3 ./batch_data --data4 ./categories \
     --cache ./v2_cache --out experiments/v2/v2_results.json --n-perm 2000 --jobs 4
 python experiments/v2/run_v2_normalization_check.py --data3 ./batch_data --cache ./v2_cache
-python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2
-python experiments/v2/run_v2_baseline_input.py --data3 ./batch_data --data4 ./categories --cache ./v2_cache
-python experiments/v2/run_v2_depression.py --data3 ./batch_data --labels labels.xlsx --cache ./v2_cache
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_pca_tuned.py --cache ./v2_cache --jobs 2
+OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 python experiments/v2/run_v2_baseline_input.py \
+    --data3 ./batch_data --data4 ./categories --cache ./v2_cache
+OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 python experiments/v2/run_v2_depression.py \
+    --data3 ./batch_data --labels labels.xlsx --cache ./v2_cache
 python experiments/v2/make_report.py
 ```
 

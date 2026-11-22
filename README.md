@@ -161,8 +161,13 @@ empirical value.
 
 - The SHAPE data are restricted, so the empirical results cannot be reproduced by the
   public. The records are tied by hash to code recoverable from git.
-- A replay on 2026-11-21 reproduced the headline v2 values exactly. The rest of the v2
-  record is locked, not replayed.
+- All seven v2-era records were regenerated from the raw files on 2026-11-21 and 22 and
+  equal the committed values, given the BLAS thread count each was first produced with.
+  One record differs by a single observation in some rows under a different thread
+  count (at most 0.24 points). Quote v2 accuracies to one decimal place.
+  [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md), section 5, has the table.
+- The v1 confirmatory record was not regenerated in that pass. It is locked by hash, and
+  the v2 record recomputes its two headline values.
 - The dissertation's own reported confirmatory values (60.6% and 53.2%) differ from what
   the committed pipeline produces (64.3% and 54.6%).
   [`COMPUTATIONAL_ERRATUM.md`](COMPUTATIONAL_ERRATUM.md) reconciles them.

@@ -140,7 +140,10 @@ Only with the data and the owner's agreement:
    commit. `scripts/check_records.py` then reports them as PENDING. That state is
    allowed on a branch and refused on `main`;
 2. rerun the experiment on the authorized data, writing the new record outside the
-   repository first;
+   repository first. Use the BLAS thread setting in the record's lock entry
+   (`blas_threads`, and the `OMP_NUM_THREADS` / `OPENBLAS_NUM_THREADS` prefix of its
+   command). A different thread count can change a value by one observation, which
+   `scripts/compare_records.py` reports as a difference;
 3. `python scripts/compare_records.py <committed> <new>`. If the change was meant to be
    behaviour-preserving, every value must be equal;
 4. copy the new record in, `python scripts/check_records.py --update <record>`, commit;
